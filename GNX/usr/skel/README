@@ -1,0 +1,5 @@
+Files under /usr/skel contain sample control files that are
+normally placed in the home directory of users other than root.
+
+NOTE: these files only represent a sample setup and may not be correct
+for your installation.

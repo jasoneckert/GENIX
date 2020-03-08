@@ -1,0 +1,64 @@
+.ig
+	@(#)remind.1	1.2	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH REMIND 1
+.SH NAME
+remind \- date book
+.SH SYNOPSIS
+.B remind
+.SH DESCRIPTION
+.I
+Remind
+is a date oriented reminder service.
+It reads the file `reminder' in the current directory, checks for
+today's or tomorrow's date, and prints lines that match.
+A weekend tomorrow extends to the following Monday.
+Typically, .login or .profile files should be set to run 
+.I
+remind
+automatically.
+.PP
+Each line in `reminder'  consists of a date specification followed
+optionally by ';' and a reminder message.
+Most date formats are understood.
+Months may be specified as numbers or words.
+Including a time in the date will fail.
+Any extraneous words or numbers in the date will cause an error.
+A weekday may be specified with or without a date.
+The year is checked as well as the month and the day.
+Either `82' or `1982' is acceptable, the default is the current year.
+Ranges may be specified as n:m, or word1:word2.
+A line beginning with '#' may be used for comments.
+A sample reminder file might be:
+.RS 5
+.PP
+Friday; TGIF.
+.br
+Monday 1:7 Sept; Labor Day.
+.br
+4 July; Independence Day.
+.br
+8/17/1982; Dentist, 10am.
+.RE
+.PP
+Note that the second line matches the first Monday in September, Labor
+Day.
+It will print on the previous Friday, Saturday, and Sunday as well as Labor Day
+Monday.
+.PP
+A range specified from high to low, i.e. 30:20 will be checked as if
+it wrapped around the end of valid ranges for the field.
+.PP
+For readability, when
+.I
+remind
+prints a line the date expression is replaced with the matching date.
+.SH FILES
+reminder
+.SH SEE ALSO
+calendar(1)
+.SH DIAGNOSTICS
+If an error occurs in the date, the line is printed,
+the point the error occurred is flagged with '^', and an error message
+is printed.

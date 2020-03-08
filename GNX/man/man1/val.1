@@ -1,0 +1,220 @@
+.ig
+	@(#)val.1	1.3	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.nr f 0
+.bd S B 3
+.de SP
+.if n .ul
+\%[\fB\-\\$1\fR\\c
+.if n .ul 0
+\\$2\\$3
+..
+.de SF
+.if n .ul
+\%[\fB\-\\$1\fR]
+.if n .ul 0
+..
+.de ZZ
+.hc ^
+\fB^...\fR
+.hc
+..
+.de AR
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\fB\-\\$1\\fR
+\\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de C1
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\\$1
+\\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de A1
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\fB\-\\$1\fR[\fI\\$2\fR]
+\\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de A2
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\fB\-\\$1\fI\\$2\fR
+\\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de FI
+.PP
+.TP 30
+\\$1
+\\$2
+.i0
+..
+.ds F)  \fB\s-1FILES\s0\fR
+.ds W)  \fB\s-1WARNINGS\s0\fR
+.ds X)  \fB\s-1EXAMPLES\s0\fR
+.ds T)  \fB\s-1TABLE\s0\fR
+.ds K)  \fB\s-1DATA KEYWORDS\s0\fR
+.ds D)  \fB\s-1DDDDD\s0\fR
+.ds M)  \fB\s-1MR\s0\fR
+.ds R)  \fB\s-1RELEASE NUMBER\s0\fR
+.ds S)  \s-1SCCS\s0
+.ds I)  \fI\s-1SID\s0\fR
+.de F1
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 13
+.TP 7
+\fB\\$1\fI\\$2\fR
+\\$3
+.nr f 1
+..
+.de F2
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 13
+.TP 7
+\fB\\$1[\fI\\$2\fR]
+\\$3
+.nr f 1
+..
+.if t .ds )S \\|
+.TH VAL 1
+.SH NAME
+val \- validate \s-1SCCS\s0 file
+.SH SYNOPSIS
+\fBval \-\fR
+.br
+.B val
+.SF s
+.SP r \s-1SID\s0 ]
+.SP m name ]
+.SP y type ]
+files
+.SH DESCRIPTION
+.I Val\^
+determines if the specified
+.I file\^
+is an \*(S) file meeting the characteristics specified by the optional
+argument list.
+Arguments to
+.I val\^
+may appear in any order.
+The arguments consist of keyletter arguments, which begin with a \fB\-\fR, and
+named files.
+.PP
+.I Val\^
+has a special argument, \fB\-\fR, which causes reading of the standard input
+until an end-of-file condition is detected.
+Each line read is independently processed as if it were a command line argument
+list.
+.PP
+.I Val\^
+generates diagnostic messages on the standard output for each command line
+and file processed and also returns a single 8\fB-\fRbit code upon exit as
+described below.
+.PP
+The keyletter arguments are defined as follows.
+The effects of any keyletter argument apply independently to each named file
+on the command line.
+.AR s The
+presence of this argument silences the diagnostic message normally
+generated on the standard output for any error that is detected while processing each named file on
+a given command line.
+.A2 r \s-1SID\s0 The
+argument value
+\*(I)
+.RI ( S \s-1CCS\s0 " ID" entification
+String) is an \*(S) delta number.
+A check is made to determine if the
+\*(I)
+is ambiguous (e. g.,
+.B \*-r\c
+1 is ambiguous because it physically does not exist but implies 1.1, 1.2,
+etc. which may exist) or invalid (e. g.,
+.B \*-r\c
+1.0 or
+.B \*-r\c
+1.1.0 are invalid because neither case can exist as a valid delta number).
+If the
+\*(I)
+is valid and not ambiguous, a check is made
+to determine if it actually exists.
+.A2 m name The
+argument value
+.I name\^
+is compared with the \*(S) val.1 keyword in
+.IR file .
+.A2 y type The
+argument value
+.I type\^
+is compared with the \*(S) Unix System Command Manual Page keyword in
+.IR file .
+.RE
+.PP
+The 8\fB-\fRbit code returned by
+.I val\^
+is a disjunction of the possible errors, i.\ e., can be interpreted as
+a bit string where (moving from left to right) set bits are interpreted as follows:
+.nf
+.PP
+.RS
+bit 0 = missing file argument;
+bit 1 = unknown or duplicate keyletter argument;
+bit 2 = corrupted \*(S) file;
+bit 3 = can't open file or file not \*(S);
+bit 4 = \*(I) is invalid or ambiguous;
+bit 5 = \*(I) does not exist;
+bit 6 = Unix System Command Manual Page, \fB\-y\fR mismatch;
+bit 7 = val.1, \fB\-m\fR mismatch;
+.RE
+.fi
+.PP
+Note that
+.I val\^
+can process two or more files on a given command line and in turn can
+process multiple command lines (when reading the standard input).
+In these cases an aggregate code is returned \- a logical \fB\s-1OR\s0\fR of the
+codes generated for each command line and file processed.
+.SH "SEE ALSO"
+sccs(1),
+admin(1),
+delta(1),
+get(1),
+prs(1),
+prt(1).
+.SH DIAGNOSTICS
+Use
+.IR sccshelp (1)
+for explanations.
+.SH BUGS
+.I Val\^
+can process up to 50 files on a single command line.
+Any number above 50 will produce a
+.B core
+dump.

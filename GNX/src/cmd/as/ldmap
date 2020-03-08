@@ -1,0 +1,1309 @@
+
+
+ld version 3.22 (SCCS) Fri Dec  9 20:48:25 1983
+
+options: -m -lp -lc
+
+   image segment    address       	   segment type        size   total
+   ---------------  -------       	   ---------------  ------- -------
+   first mod entry   000000		   mod table           1008
+   first program     0003f0		   program            73982   74990
+   first static      013400		   link                2820   77810
+   last address+1    01ace4		   static             30905  108715
+
+module 02 <asops.s>
+------ --
+
+   static base       013400		   static size            0
+   program base      0003f0		   program size        6486
+   link table        013400		   link size              0
+
+exports
+-------
+
+c 001d42 _rtmn_size        c 001b82 _rtmnemonics      c 0006c8 _mnemonics       
+c 00040c _dirmnemonics     c 001d3a _drmn_size        c 001d3e _inmn_size       
+
+module 03 <init1.p>
+------ --
+
+   static base       013400		   static size          362
+   program base      001d48		   program size        5047
+   link table        003100		   link size            380
+
+imports
+-------
+
+dc03 0026c8 _trans_name_pt dc27 011563 _assert.def    av28 01a126 _output       
+dc29 01198b _write.textcha dc29 0119c8 _write.textcha dc29 011b3a _write.textint
+dc29 011a8d _write.textint dc29 0119f9 _write.textstr dc28 01166b _reset.text   
+dc29 011bb3 _writeln.text  dc29 011960 _flush.text    av23 019b80 _source_errors
+av23 019b7c _pass2         av23 019bd8 _currentlinkpa av23 019bd4 _locationcount
+av23 019be4 _sbuffer       av23 019bd0 _linenumber    av23 019bcc _symtable     
+av23 019bc8 _symroot       av23 019f64 _symnames      av23 019c44 _g_symnames   
+av23 019bc4 _total_sdi_cou av23 019bc0 _total_loc_dir av23 019bbc _first_pc_symb
+av23 019bb8 _last_pc_symbo av23 019b78 _equ_flag      av23 019b76 _upperlower   
+av23 019b74 _big_list      av23 019b72 _tree_display  av23 019b70 _vm_flag      
+av23 019b6e _line_trace    av23 019b6c _simple_list   av23 019b6a _printsymtable
+av23 019b68 _objsymtable   av23 019b66 _ext_to_sbrela av23 019b64 _back_compatib
+av23 019b62 _make_global   av23 019b60 _process_cxp   av23 019b5e _process_d_cxp
+av23 019b5c _eof_sbuffer   av23 019b5a _mod_name      av23 019b58 _do_list      
+av23 019b56 _done_list     av23 019bac _last_symbol   av23 019ba8 _freelabel    
+av23 019ba4 _this_symbol   av23 019ba0 _above_symbol  av23 019b9c _stabfilename 
+ac02 0006c8 _mnemonics     ac02 001b82 _rtmnemonics   ac02 001d3a _drmn_size    
+ac02 001d3e _inmn_size     ac02 001d42 _rtmn_size     av34 01a180 _errno        
+dc35 0125a6 _fclose        dc36 012634 _unlink        dc37 0126a5 _fwrite       
+dc38 01271c _ftell         dc39 012798 _fseek         dc40 0128f4 _mktemp       
+dc19 00fdf4 _bio           av21 0199fe _rtstart       dc21 0109d2 _scantoken    
+dc07 0057ee _construct_tem dc07 006a96 _scanexp       av06 01361a _labelptr     
+dc06 005579 _scanr         av09 013748 _currentmode   av09 013770 _import_count 
+av09 013760 _importstart   av09 01375c _modeindex     dc09 007f22 _pop_current_m
+dc09 0098ce _dirs          av08 013646 _opstart       dc08 007d27 _insts        
+dc04 003599 _read_line     dc04 00327c _reporterror   dc04 00371b _scan         
+dc13 00d339 _addtosymroot  dc13 00d738 _dirsx         dc05 003ad1 _processsymbol
+dc05 0037a0 _get_namelengt dc05 0038cd _search        dc05 003bae _prsymtable   
+dc10 00a2c2 _sdis          av12 0138b4 _pc_byte_count dc12 00cc8b _output_sym   
+dc12 00d0b4 _codegen       av11 013894 _last_alloc_sb dc11 00a525 _genrout      
+dc14 00d7ec _listsym       dc17 00f5a8 _display       av27 01a100 _ac_          
+av27 01a0fc _av_           dc20 00fe28 _fopen_n      
+
+exports
+-------
+
+c 002b85 _remove_t5        c 002b8c _remove_tmps      v 013400 _sizeb           
+c 002bd4 _sb_init          c 002e7f _clean_up         c 002b5a _closelistfiles  
+c 002b6f _closeonelist     v 01350c _sourcename       v 013414 _last_loc        
+c 002b7e _list_t4          v 0134ec _objfilename      v 013418 _obuffer         
+c 0026c8 _trans_name_ptr   v 013424 _lstbuff1         v 013420 _lstbuff2        
+v 01341c _lstbuff3         v 01342c _ibuffer1         v 013428 _ibuffer3        
+c 0026c1 _output_export_li c 002749 _output_import_li c 002c60 _output_strings  
+v 013410 _out_sym_count    c 00309e _init1            c 0029c5 _init2           
+
+module 04 <scan.p>
+------ --
+
+   static base       01356c		   static size          150
+   program base      00327c		   program size        1225
+   link table        003748		   link size             88
+
+imports
+-------
+
+dc04 00327c _reporterror   dc04 003599 _read_line     av28 01a126 _output       
+dc29 011a8d _write.textint dc29 0119f9 _write.textstr dc30 011cb5 _read.textstri
+dc29 011bb3 _writeln.text  dc30 011ce7 _readln.text   dc29 011960 _flush.text   
+dc30 011eab _eof.text      av23 019b82 _error_flag    av23 019b80 _source_errors
+av23 019b7c _pass2         av23 019be4 _sbuffer       av23 019bd0 _linenumber   
+av23 019b76 _upperlower    av23 019b72 _tree_display  av23 019b5c _eof_sbuffer  
+av23 019b56 _done_list     dc37 0126a5 _fwrite        av03 013424 _lstbuff1     
+dc04 003669 _getlchar     
+
+exports
+-------
+
+c 003599 _read_line        c 00327c _reporterror      v 01357a _charpos         
+c 0036de _skipblanks       c 003656 _processeoln      c 00371b _scan            
+v 01356c _current_char     v 013572 _lastpos          v 013582 _line            
+c 003697 _getschar         c 003669 _getlchar         c 00338f _insert_align_exp
+v 013576 _max_char_pos    
+
+module 05 <prsymtable.p>
+------ --
+
+   static base       013604		   static size           18
+   program base      0037a0		   program size        1193
+   link table        003c4c		   link size             60
+
+imports
+-------
+
+dc05 0037a0 _get_namelengt dc05 003867 _findsym       dc05 0037c2 _new_name     
+dc05 0038cd _search        av23 019bd0 _linenumber    av23 019bcc _symtable     
+av23 019f64 _symnames      av23 019dd4 _d_symnames    av23 019c44 _g_symnames   
+av23 019b6a _printsymtable av23 019b62 _make_global   dc04 00327c _reporterror  
+dc16 00da48 _scmpc         dc17 00da75 _newsymentry   dc31 011fd4 _new.def      
+
+exports
+-------
+
+c 003867 _findsym          c 003bae _prsymtable       c 003ad1 _processsymbol   
+c 0038a1 _process_typename c 0037c2 _new_name         c 0038cd _search          
+v 01360e _curr_symname     v 013606 _currsymname2     v 01360a _currsymnamed    
+v 013612 _largest_sym_size c 003b40 _assignlineref    c 0037a0 _get_namelength  
+
+module 06 <scanr.p>
+------ --
+
+   static base       013618		   static size            6
+   program base      003c88		   program size        6428
+   link table        0055a4		   link size            216
+
+imports
+-------
+
+dc06 003c88 _reset_estack  dc06 003d3c _scan_const    dc06 003e8b _scan_reg     
+dc06 004094 _scan_general_ dc06 0045de _getword       dc32 01207e _ins.def      
+av28 01a126 _output        dc29 011b3a _write.textint dc29 0119f9 _write.textstr
+dc29 011bb3 _writeln.text  av23 019b82 _error_flag    av23 019bd8 _currentlinkpa
+av23 019bd4 _locationcount av23 019bd0 _linenumber    av23 019bc8 _symroot      
+av23 019c44 _g_symnames    av23 019bc4 _total_sdi_cou av23 019bc0 _total_loc_dir
+av23 019bbc _first_pc_symb av23 019bb8 _last_pc_symbo av23 019b7a _sdi_flag     
+av23 019b66 _ext_to_sbrela av23 019b64 _back_compatib av23 019b60 _process_cxp  
+av23 019b5e _process_d_cxp av23 019ba8 _freelabel     av23 019ba4 _this_symbol  
+ac02 001b82 _rtmnemonics   av21 0199d6 _currtoken     dc21 0104fe _nexttoken    
+av05 013606 _currsymname2  dc05 003ad1 _processsymbol dc05 0038a1 _process_typen
+dc05 0037c2 _new_name      dc05 003b40 _assignlineref av04 01356c _current_char 
+av04 01357a _charpos       av04 013572 _lastpos       dc04 0036de _skipblanks   
+dc04 003669 _getlchar      dc04 003656 _processeoln   dc04 00327c _reporterror  
+av07 013622 _resetesp      av07 01362c _stack_start   av07 013628 _current_stack
+dc07 005756 _produce_exter dc07 005c67 _check_range   dc07 005af2 _convert_strin
+dc07 006a42 _simpleexp     dc07 006574 _resolve_expre av09 013748 _currentmode  
+dc09 007e45 _makepublic    dc31 011fd4 _new.def       dc06 00474c _scan_type_inf
+
+exports
+-------
+
+c 003c88 _reset_estack     c 005579 _scanr            c 003d3c _scan_const      
+c 003e8b _scan_reg         c 004094 _scan_general_exp c 00474c _scan_type_info  
+c 004461 _scan_cmfi        c 003cff _scan_const_expr  c 0041e1 _scan_const_opera
+c 004192 _scan_equ_operand c 004223 _scan_ext_operand c 003f25 _scan_freg       
+c 003e3e _scan_immed_expr  c 0042ca _scan_label_opera c 00440d _scan_mreg       
+c 004338 _scan_preg        c 00453f _scan_reg_list    c 004280 _scan_short_opera
+c 005538 _scancomment      c 003c98 _scanglobsymbol   c 005392 _scanlabel       
+v 01361a _labelptr         c 0045de _getword         
+
+module 07 <scanexp.p>
+------ --
+
+   static base       013620		   static size           16
+   program base      00567c		   program size        5191
+   link table        006ac4		   link size            140
+
+imports
+-------
+
+dc07 005af2 _convert_strin dc07 005c67 _check_range   dc07 005756 _produce_exter
+dc07 0056d9 _fixgen        dc07 0057ee _construct_tem dc07 0056cc _newterm      
+dc07 0056c0 _newexp        av23 019b82 _error_flag    av23 019bd4 _locationcount
+av23 019bc4 _total_sdi_cou av23 019bc0 _total_loc_dir av23 019bbc _first_pc_symb
+av23 019bb8 _last_pc_symbo av23 019b7a _sdi_flag      av23 019b78 _equ_flag     
+av23 019b66 _ext_to_sbrela av23 019b60 _process_cxp   av23 019b5e _process_d_cxp
+ac02 001b82 _rtmnemonics   av21 0199d6 _currtoken     dc21 0104fe _nexttoken    
+av06 01361a _labelptr      dc05 003ad1 _processsymbol dc05 003b40 _assignlineref
+dc04 003669 _getlchar      dc04 00327c _reporterror   av09 013748 _currentmode  
+av09 013760 _importstart   dc09 007e45 _makepublic    dc09 008327 _make_external
+av10 013824 _resolve_loc_f dc16 00da48 _scmpc         dc17 00da75 _newsymentry  
+dc31 011fd4 _new.def       dc07 006a42 _simpleexp    
+
+exports
+-------
+
+v 013622 _resetesp         c 006574 _resolve_expressi c 0065ac _resolve_1_expres
+c 005c67 _check_range      c 0056d9 _fixgen           c 006a42 _simpleexp       
+c 005756 _produce_external c 006a96 _scanexp          v 01362c _stack_start     
+c 0056cc _newterm          c 0056c0 _newexp           v 013628 _current_stack_re
+c 0057ee _construct_temp_s c 005af2 _convert_string  
+
+module 08 <insts.p>
+------ --
+
+   static base       013630		   static size          274
+   program base      006b50		   program size        4650
+   link table        007d7c		   link size            188
+
+imports
+-------
+
+dc08 006e12 _check_operand av23 019bd4 _locationcount av23 019bd0 _linenumber   
+av23 019bc4 _total_sdi_cou av23 019bc0 _total_loc_dir av23 019bf4 _global_interm
+av23 019bb4 _g_intermrec   av23 019bb0 _gen_intermrec av23 019b7a _sdi_flag     
+av23 019b70 _vm_flag       av23 019b66 _ext_to_sbrela av23 019b64 _back_compatib
+av23 019b5e _process_d_cxp ac02 0006c8 _mnemonics     dc21 00fe78 _check_for_com
+dc21 00ffaa _scan_comma    dc06 003c88 _reset_estack  dc06 0042ca _scan_label_op
+dc06 004223 _scan_ext_oper dc06 00453f _scan_reg_list dc06 004280 _scan_short_op
+dc06 004094 _scan_general_ dc06 004338 _scan_preg     dc06 004461 _scan_cmfi    
+dc06 0041e1 _scan_const_op dc06 003e8b _scan_reg      dc06 003f25 _scan_freg    
+dc06 00440d _scan_mreg     av04 01356c _current_char  dc04 0036de _skipblanks   
+dc04 003697 _getschar      dc04 00327c _reporterror   dc07 005c67 _check_range  
+av10 01384e _sdi_start     av10 013846 _current_sdi   dc10 009aa0 _get_size     
+dc11 00a3aa _increment_loc dc11 00a3fa _new_g_index   dc11 00a44d _new_g_gen    
+dc11 00a4b4 _new_g_intermr dc37 0126a5 _fwrite        av03 01342c _ibuffer1     
+dc15 00da17 _cmpc          dc17 00e805 _dispgen       dc17 00db7a _new_sdi_ptr  
+av09 013748 _currentmode   dc31 011fd4 _new.def      
+
+exports
+-------
+
+c 006e12 _check_operand    c 007a5b _process_instruct v 013646 _opstart         
+c 007d27 _insts           
+
+module 09 <dirs.p>
+------ --
+
+   static base       013744		   static size          216
+   program base      007e38		   program size        6884
+   link table        00991c		   link size            388
+
+imports
+-------
+
+dc09 007f22 _pop_current_m dc09 008327 _make_external dc09 007e45 _makepublic   
+dc09 008692 _storage_init  dc09 008e4c _process_field dc09 007fe6 _getdirindex  
+dc09 00977e _processlistdi dc09 009678 _processstordi dc09 008fbd _processprocdi
+dc09 008f45 _processrelocd av28 01a126 _output        dc29 0119f9 _write.textstr
+dc29 011bb3 _writeln.text  av23 019b82 _error_flag    av23 019bd8 _currentlinkpa
+av23 019bd4 _locationcount av23 019bd0 _linenumber    av23 019bcc _symtable     
+av23 019bc8 _symroot       av23 019f64 _symnames      av23 019bc4 _total_sdi_cou
+av23 019bc0 _total_loc_dir av23 019bbc _first_pc_symb av23 019bb8 _last_pc_symbo
+av23 019bf4 _global_interm av23 019bb4 _g_intermrec   av23 019b7a _sdi_flag     
+av23 019b78 _equ_flag      av23 019b70 _vm_flag       av23 019b64 _back_compatib
+av23 019b62 _make_global   av23 019b5a _mod_name      av23 019ba8 _freelabel    
+av23 019ba4 _this_symbol   av23 019ba0 _above_symbol  av23 019b9c _stabfilename 
+av23 019b98 _global_type_i ac02 00040c _dirmnemonics  av21 0199d6 _currtoken    
+dc21 0104fe _nexttoken     dc21 01015a _scannumber    dc21 00ffaa _scan_comma   
+av06 01361a _labelptr      dc06 003c88 _reset_estack  dc06 003cff _scan_const_ex
+dc06 003d3c _scan_const    dc06 003e3e _scan_immed_ex dc06 00453f _scan_reg_list
+dc06 005538 _scancomment   dc06 004094 _scan_general_ dc06 003c98 _scanglobsymbo
+dc06 004192 _scan_equ_oper av04 01356c _current_char  av04 01357a _charpos      
+av04 013572 _lastpos       dc04 0036de _skipblanks    dc04 003669 _getlchar     
+dc04 003697 _getschar      dc04 00327c _reporterror   dc04 00338f _insert_align_
+av11 013894 _last_alloc_sb av11 013890 _last_alloc_pc dc11 00a3aa _increment_loc
+dc11 00a3fa _new_g_index   dc11 00a4b4 _new_g_intermr av10 013842 _loc_start    
+av10 01383e _current_loc   av05 01360e _curr_symname  dc05 003867 _findsym      
+dc05 003ad1 _processsymbol dc05 0037c2 _new_name      dc05 003b40 _assignlineref
+dc07 0056c0 _newexp        dc07 0056cc _newterm       dc07 0057ee _construct_tem
+dc07 005c67 _check_range   dc37 0126a5 _fwrite        av03 01342c _ibuffer1     
+av03 013428 _ibuffer3      dc13 00d386 _appendtoroot  dc13 00d3e1 _pop_root_leve
+dc13 00d403 _adjust_proc_l dc13 00d440 _scan_storage_ dc13 00d5d9 _scan_proc_ins
+dc13 00d2b8 _process_title dc13 00d2d1 _process_subti dc13 00d2ea _process_eject
+dc13 00d2f7 _process_nolis dc13 00d308 _process_list  dc13 00d321 _process_width
+dc08 006e12 _check_operand dc15 00da17 _cmpc          dc16 00da48 _scmpc        
+dc17 00da75 _newsymentry   dc17 00dbb3 _new_loc_ptr   dc18 00f638 _make_short   
+dc31 011fd4 _new.def      
+
+exports
+-------
+
+v 01375c _modeindex        c 008e4c _process_field    c 00977e _processlistdir  
+c 009678 _processstordir   c 008fbd _processprocdir   c 008f45 _processrelocdir 
+c 009830 _processdirective c 008692 _storage_init     v 013748 _currentmode     
+c 007f22 _pop_current_mode c 0098ce _dirs             c 007fe6 _getdirindex     
+v 01374a _assembly_mode    v 013770 _import_count     v 013760 _importstart     
+v 013764 _importchain      v 013774 _export_count     v 01376c _exportchain     
+v 013768 _exportstart      c 007e45 _makepublic       c 008327 _make_external   
+
+module 10 <sdis.p>
+------ --
+
+   static base       01381c		   static size           54
+   program base      009aa0		   program size        2142
+   link table        00a300		   link size             88
+
+imports
+-------
+
+dc10 009aa0 _get_size      dc10 009ec6 _resolve_op_ex av28 01a126 _output       
+dc29 01198b _write.textcha dc29 011a8d _write.textint dc29 0119f9 _write.textstr
+dc29 011bb3 _writeln.text  av23 019b82 _error_flag    av23 019bd4 _locationcount
+av23 019bd0 _linenumber    av23 019bbc _first_pc_symb av23 019b60 _process_cxp  
+av23 019b5e _process_d_cxp dc04 00327c _reporterror   dc07 005c67 _check_range  
+dc07 006574 _resolve_expre av11 01388c _first_irec    dc17 00db41 _new_l_ptr    
+dc17 00e305 _disp_l_ptr_li dc17 00e4cc _disp_sdi_ptr_ dc17 00e5ce _disp_loc_ptr_
+dc17 00e6d6 _disp_irec_lis
+
+exports
+-------
+
+v 013824 _resolve_loc_flag c 009ec6 _resolve_op_expre c 00a282 _resolve_sdis    
+c 00a2c2 _sdis             v 01384e _sdi_start        v 01384a _sdi_chain_start 
+v 013846 _current_sdi      v 01383e _current_loc      c 009aa0 _get_size        
+v 013842 _loc_start       
+
+module 11 <genrout.p>
+------ --
+
+   static base       013854		   static size           68
+   program base      00a358		   program size         561
+   link table        00a58c		   link size             28
+
+imports
+-------
+
+dc11 00a358 _newpc         dc11 00a381 _newsb         av23 019bd4 _locationcount
+av09 01374a _assembly_mode av09 013748 _currentmode   dc17 00dc74 _new_irec     
+dc26 0114f7 _fnew         
+
+exports
+-------
+
+v 01388c _first_irec       v 01387c _first_genirec    v 01386c _first_girec     
+v 013874 _first_sbgenirec  v 013864 _first_sbgirec    v 013884 _first_sbirec    
+c 00a358 _newpc            c 00a381 _newsb            c 00a3fa _new_g_index     
+c 00a44d _new_g_gen        c 00a4b4 _new_g_intermrec  v 013894 _last_alloc_sb   
+v 013890 _last_alloc_pc    v 013878 _last_genirec     v 013868 _last_girec      
+v 013888 _last_irec        v 013870 _last_sbgenirec   v 013860 _last_sbgirec    
+v 013880 _last_sbirec      c 00a525 _genrout          c 00a3aa _increment_locati
+
+module 12 <codegen.p>
+------ --
+
+   static base       013898		   static size          626
+   program base      00a5a8		   program size       11259
+   link table        00d1a4		   link size            172
+
+imports
+-------
+
+dc12 00d088 _output_sym_en dc12 00cc8b _output_sym    dc32 012058 _ext.def      
+dc32 01207e _ins.def       av28 01a126 _output        dc29 011b3a _write.textint
+dc29 0119f9 _write.textstr dc29 011bb3 _writeln.text  dc29 011960 _flush.text   
+av23 019b82 _error_flag    av23 019bd4 _locationcount av23 019bd0 _linenumber   
+av23 019bf4 _global_interm av23 019b74 _big_list      av23 019b68 _objsymtable  
+av23 019b66 _ext_to_sbrela av23 019b60 _process_cxp   av23 019b5e _process_d_cxp
+dc07 0065ac _resolve_1_exp dc04 00327c _reporterror   av10 013846 _current_sdi  
+dc10 009ec6 _resolve_op_ex av11 013894 _last_alloc_sb av34 01a180 _errno        
+dc37 0126a5 _fwrite        av03 013420 _lstbuff2      av03 01341c _lstbuff3     
+av03 013418 _obuffer       av03 013414 _last_loc      av03 013410 _out_sym_count
+dc03 0026c8 _trans_name_pt av09 013748 _currentmode   av09 013770 _import_count 
+av09 013760 _importstart   dc15 00da17 _cmpc          dc18 00f638 _make_short   
+dc17 00f561 _disp_stab_rec dc17 00f587 _disp_stab_cha dc25 0112bf _gen_byte     
+dc25 0112e4 _gen_word      dc25 01132b _gen_doub      dc25 0113bc _gen_word_cons
+dc25 011403 _gen_doub_cons
+
+exports
+-------
+
+v 0138b4 _pc_byte_count    c 00d0b4 _codegen          c 00cc8b _output_sym      
+c 00d088 _output_sym_ents  c 00aec7 _gencode          v 013906 _byte_buffer     
+v 0138b8 _byte_count      
+
+module 13 <dirsx.p>
+------ --
+
+   static base       013b0c		   static size            0
+   program base      00d250		   program size        1299
+   link table        00d764		   link size            136
+
+imports
+-------
+
+dc13 00d339 _addtosymroot  av23 019b82 _error_flag    av23 019bd4 _locationcount
+av23 019bd0 _linenumber    av23 019bcc _symtable      av23 019bc8 _symroot      
+av23 019b6c _simple_list   av23 019b5c _eof_sbuffer   av23 019b58 _do_list      
+av23 019b56 _done_list     av23 019ba8 _freelabel     av23 019ba4 _this_symbol  
+av23 019ba0 _above_symbol  av23 019b98 _global_type_i ac02 00040c _dirmnemonics 
+av21 0199d6 _currtoken     dc21 0104fe _nexttoken     av06 01361a _labelptr     
+dc06 005392 _scanlabel     dc06 005538 _scancomment   av09 01374a _assembly_mode
+dc09 007fe6 _getdirindex   dc09 008f45 _processrelocd dc09 00977e _processlistdi
+dc09 009678 _processstordi dc08 007a5b _process_instr dc37 0126a5 _fwrite       
+av03 013424 _lstbuff1      av04 01356c _current_char  av04 01357a _charpos      
+dc04 0036de _skipblanks    dc04 003669 _getlchar      dc04 00327c _reporterror  
+dc17 00db05 _newsymtree   
+
+exports
+-------
+
+c 00d2b8 _process_title    c 00d2d1 _process_subtitil c 00d2ea _process_eject   
+c 00d2f7 _process_nolist   c 00d308 _process_list     c 00d321 _process_width   
+c 00d440 _scan_storage_dir c 00d5d9 _scan_proc_insts  c 00d3e1 _pop_root_level  
+c 00d738 _dirsx            c 00d386 _appendtoroot     c 00d339 _addtosymroot    
+c 00d403 _adjust_proc_labe
+
+module 14 <traverse.p>
+------ --
+
+   static base       013b0c		   static size            0
+   program base      00d7ec		   program size         474
+   link table        00d9c8		   link size             52
+
+imports
+-------
+
+dc14 00d947 _traversesymta dc14 00d7ec _listsym       av28 01a126 _output       
+dc29 01198b _write.textcha dc29 0119c8 _write.textcha dc29 011a8d _write.textint
+dc29 0119f9 _write.textstr dc29 011bb3 _writeln.text  av23 019bcc _symtable     
+av05 013612 _largest_sym_s dc17 00dd68 _writegen      dc07 0065ac _resolve_1_exp
+dc04 00327c _reporterror  
+
+exports
+-------
+
+c 00d7ec _listsym          c 00d947 _traversesymtable c 00d998 _traverse        
+
+module 15 <cmpc.s>
+------ --
+
+   static base       013b0c		   static size            0
+   program base      00d9fc		   program size          47
+   link table        013b0c		   link size              0
+
+exports
+-------
+
+c 00da17 _cmpc            
+
+module 16 <scmpc.s>
+------ --
+
+   static base       013b0c		   static size            0
+   program base      00da2c		   program size          57
+   link table        013b0c		   link size              0
+
+exports
+-------
+
+c 00da48 _scmpc           
+
+module 17 <disp.p>
+------ --
+
+   static base       013b0c		   static size        24040
+   program base      00da68		   program size        7039
+   link table        00f5e8		   link size             80
+
+imports
+-------
+
+dc17 00da68 _uniquei       dc17 00dd68 _writegen      dc17 00e8aa _dispsymentree
+dc17 00e805 _dispgen       dc17 00e78f _write_hex     dc17 00f561 _disp_stab_rec
+av28 01a126 _output        dc29 01198b _write.textcha dc29 0119c8 _write.textcha
+dc29 011b3a _write.textint dc29 011a8d _write.textint dc29 0119f9 _write.textstr
+dc29 011bb3 _writeln.text  av23 019bb4 _g_intermrec   av23 019bb0 _gen_intermrec
+av23 019b72 _tree_display  av23 019b6e _line_trace    ac02 001b82 _rtmnemonics  
+av11 01386c _first_girec   dc31 011fd4 _new.def      
+
+exports
+-------
+
+c 00da68 _uniquei          c 00da75 _newsymentry      c 00db05 _newsymtree      
+c 00db7a _new_sdi_ptr      c 00dbb3 _new_loc_ptr      c 00db41 _new_l_ptr       
+c 00dc74 _new_irec         c 00f5a8 _display          c 00e805 _dispgen         
+c 00e305 _disp_l_ptr_list  c 00e4cc _disp_sdi_ptr_lis c 00e5ce _disp_loc_ptr_lis
+c 00e6d6 _disp_irec_list   c 00f561 _disp_stab_rec    c 00f587 _disp_stab_chain 
+c 00e8aa _dispsymentree    c 00dc2e _disp_genirec     c 00dbeb _disp_girec      
+c 00ee2d _dispattrib       c 00ef5e _dispexpr         c 00f144 _dispfact        
+c 00e1f5 _displine         c 00eed4 _dispscale        c 00ee55 _dispstack       
+c 00e9d4 _dispsymentrylist c 00ec1b _dispsymtreelist  c 00f290 _disptoken       
+c 00f0c8 _disptrm          c 00dd68 _writegen         c 00e78f _write_hex       
+
+module 18 <float.p>
+------ --
+
+   static base       0198f4		   static size          108
+   program base      00f638		   program size        1966
+   link table        00fde8		   link size             12
+
+imports
+-------
+
+dc32 012058 _ext.def       dc32 01207e _ins.def       dc04 00327c _reporterror  
+
+exports
+-------
+
+c 00fdbb _float_mod        c 00fc2e _asc_2_real       c 00f638 _make_short      
+
+module 19 <dumbio.p>
+------ --
+
+   static base       019960		   static size            0
+   program base      00fdf4		   program size          51
+   link table        00fe28		   link size              0
+
+exports
+-------
+
+c 00fdf4 _bio              c 00fdfb _dummy           
+
+module 20 <fopenfile2.p>
+------ --
+
+   static base       019960		   static size            2
+   program base      00fe28		   program size          74
+   link table        00fe74		   link size              4
+
+imports
+-------
+
+dc41 012970 _fopen        
+
+exports
+-------
+
+c 00fe28 _fopen_n          c 00fe42 _fopenf          
+
+module 21 <scantoken.p>
+------ --
+
+   static base       019964		   static size          482
+   program base      00fe78		   program size        3324
+   link table        010b74		   link size             64
+
+imports
+-------
+
+dc21 01015a _scannumber    av23 019b76 _upperlower    av23 019b5a _mod_name     
+ac02 001b82 _rtmnemonics   av04 01356c _current_char  av04 01357a _charpos      
+av04 013576 _max_char_pos  av04 013572 _lastpos       av04 013582 _line         
+dc04 0036de _skipblanks    dc04 003669 _getlchar      dc04 003697 _getschar     
+dc04 00327c _reporterror   dc15 00da17 _cmpc          dc18 00fc2e _asc_2_real   
+dc31 011fd4 _new.def      
+
+exports
+-------
+
+v 0199fe _rtstart          c 00fe78 _check_for_comma  c 0109d2 _scantoken       
+c 00ffaa _scan_comma       c 01015a _scannumber       c 0104fe _nexttoken       
+v 0199d6 _currtoken        v 01996c _global_string   
+
+module 22 <pexit.s>
+------ --
+
+   static base       019b4c		   static size            0
+   program base      010bb4		   program size          52
+   link table        019b48		   link size              4
+
+imports
+-------
+
+dc42 012a8c _exit         
+
+exports
+-------
+
+c 010bd0 _pexit1           c 010bdc _pexit2          
+
+module 23 <asm.p>
+------ --
+
+   static base       019b4c		   static size         1448
+   program base      010be8		   program size        1378
+   link table        01114c		   link size            216
+
+imports
+-------
+
+av28 01a126 _output        dc29 01198b _write.textcha dc29 0119c8 _write.textcha
+dc29 011b3a _write.textint dc29 0119f9 _write.textstr dc28 011660 __kill.file   
+dc29 011bb3 _writeln.text  dc37 0126a5 _fwrite        dc37 012648 _fread        
+av21 0199d6 _currtoken     dc21 0104fe _nexttoken     av03 01342c _ibuffer1     
+av03 013428 _ibuffer3      dc03 0029c5 _init2         dc03 002b8c _remove_tmps  
+dc03 002b7e _list_t4       dc03 002b85 _remove_t5     dc03 002b5a _closelistfile
+dc03 002b6f _closeonelist  dc03 0026c1 _output_export dc03 002749 _output_import
+dc03 002c60 _output_string dc03 002e7f _clean_up      dc03 002bd4 _sb_init      
+dc03 00309e _init1         av04 01356c _current_char  dc04 0036de _skipblanks   
+dc04 00327c _reporterror   av06 01361a _labelptr      dc06 005392 _scanlabel    
+dc06 005538 _scancomment   av09 01374a _assembly_mode av09 013748 _currentmode  
+dc09 009830 _processdirect dc08 007a5b _process_instr dc14 00d947 _traversesymta
+av10 01384e _sdi_start     av10 013846 _current_sdi   dc10 00a282 _resolve_sdis 
+av11 013894 _last_alloc_sb av11 013890 _last_alloc_pc av11 01388c _first_irec   
+av11 013884 _first_sbirec  av11 01387c _first_genirec av11 013874 _first_sbgenir
+av11 01386c _first_girec   av11 013864 _first_sbgirec dc11 00a3fa _new_g_index  
+dc11 00a4b4 _new_g_intermr dc25 01125c _flush_bytes   dc12 00aec7 _gencode      
+dc12 00d088 _output_sym_en dc24 011240 _ptime         dc22 010bd0 _pexit1       
+
+exports
+-------
+
+v 019b5c _eof_sbuffer      v 019b5a _mod_name         v 019bbc _first_pc_symbol 
+v 019b6c _simple_list      v 019bc8 _symroot          v 019bcc _symtable        
+v 019ba8 _freelabel        v 019f64 _symnames         v 019b7c _pass2           
+v 019be4 _sbuffer          v 019b60 _process_cxp      v 019b5e _process_d_cxp   
+v 019b6a _printsymtable    c 010f67 _program          v 019b9c _stabfilename    
+v 019b70 _vm_flag          v 019b7a _sdi_flag         v 019bd8 _currentlinkpage 
+v 019b80 _source_errors    v 019ba4 _this_symbol      v 019b7e _warn_flag       
+v 019b68 _objsymtable      v 019bb8 _last_pc_symbol   v 019bac _last_symbol     
+v 019bd0 _linenumber       v 019b6e _line_trace       v 019b72 _tree_display    
+v 019bf4 _global_interm_re v 019b98 _global_type_info v 019ba0 _above_symbol    
+v 019bb0 _gen_intermrec    c 010be8 _dummy1           v 019c44 _g_symnames      
+v 019bb4 _g_intermrec      v 019bd4 _locationcounter  v 019bc4 _total_sdi_count 
+v 019bc0 _total_loc_dirs   v 019dd4 _d_symnames       v 019b58 _do_list         
+v 019b56 _done_list        v 019b76 _upperlower       v 019b66 _ext_to_sbrelativ
+v 019b62 _make_global      v 019b78 _equ_flag         v 019b64 _back_compatible 
+v 019b74 _big_list         v 019b82 _error_flag       v 019b54 _err_phase0      
+v 019b52 _err_phase1       v 019b50 _err_phase15      v 019b4e _err_phase2      
+
+module 24 <ptime.s>
+------ --
+
+   static base       01a0f8		   static size            0
+   program base      011224		   program size          54
+   link table        01a0f4		   link size              4
+
+imports
+-------
+
+dc43 012a9c _times        
+
+exports
+-------
+
+c 011240 _ptime           
+
+module 25 <genbytes.p>
+------ --
+
+   static base       01a0f8		   static size            0
+   program base      01125c		   program size         592
+   link table        0114ac		   link size             48
+
+imports
+-------
+
+dc25 01125c _flush_bytes   dc25 01132b _gen_doub      av28 01a126 _output       
+dc29 011b3a _write.textint dc29 0119f9 _write.textstr dc29 011bb3 _writeln.text 
+av34 01a180 _errno         dc37 0126a5 _fwrite        av03 013418 _obuffer      
+av12 013906 _byte_buffer   av12 0138b8 _byte_count    av12 0138b4 _pc_byte_count
+
+exports
+-------
+
+c 01125c _flush_bytes      c 01147e _genbytes         c 0112bf _gen_byte        
+c 0112e4 _gen_word         c 01132b _gen_doub         c 0113bc _gen_word_const  
+c 011403 _gen_doub_const   c 0113a6 _gen_sym_ent     
+
+module 26 <fnew.s>
+------ --
+
+   static base       01a0fc		   static size            0
+   program base      0114dc		   program size          40
+   link table        01a0f8		   link size              4
+
+imports
+-------
+
+dc31 011fd4 _new.def      
+
+exports
+-------
+
+c 0114f7 _fnew            
+
+module 27 <ert0.s>
+------ --
+
+   static base       01a0fc		   static size           12
+   program base      011504		   program size         122
+   link table        011580		   link size             12
+
+imports
+-------
+
+dc23 010f67 _program       dc42 012a8c _exit          dc62 012fd8 %initfun      
+
+exports
+-------
+
+v 01a104 _environ          v 01a100 _ac_              v 01a0fc _av_             
+c 011563 _assert.def       c 01153b start             c 011576 _break           
+
+module 28 <rtl.p>
+------ --
+
+   static base       01a108		   static size          120
+   program base      01158c		   program size         910
+   link table        01191c		   link size             68
+
+imports
+-------
+
+dc28 01158c runtimeerror   dc28 0115be _deref.text    dc28 0116dd _close.text   
+dc28 0116a2 _rewrite.text  dc28 01166b _reset.text    dc27 011563 _assert.def   
+dc41 012970 _fopen         dc44 012aa8 _fdopen        dc35 0125a6 _fclose       
+dc45 012b20 _fputc         dc46 012b5c _fgetc         ac33 0120ac space         
+ac33 0123b3 errors         dc40 0128f4 _mktemp        dc29 0119f9 _write.textstr
+dc29 011bb3 _writeln.text  dc29 011960 _flush.text   
+
+exports
+-------
+
+c 0116a2 _rewrite.text     c 01171f _rewrite.textnona c 01166b _reset.text      
+c 011762 _reset.textnoname c 011807 %initfun28        c 0116dd _close.text      
+c 0117b5 _put.text         v 01a108 newchar           v 01a10a charsp           
+v 01a158 charstack         v 01a16c tmpnames          c 011660 __kill.file      
+v 01a126 _output           c 01162a _get.text         c 01158c runtimeerror     
+c 0115be _deref.text       v 01a136 _input            v 01a146 deffname         
+v 01a116 _erroroutput     
+
+module 29 <rtl3.p>
+------ --
+
+   static base       01a180		   static size            0
+   program base      011960		   program size         746
+   link table        011c4c		   link size             44
+
+imports
+-------
+
+dc29 011960 _flush.text    dc29 01198b _write.textcha dc29 0119c8 _write.textcha
+dc29 0119f9 _write.textstr dc29 011a8d _write.textint dc29 011a22 _write.textstr
+dc35 012524 _fflush        dc28 01158c runtimeerror   av28 01a126 _output       
+dc28 0115be _deref.text    dc28 0117b5 _put.text     
+
+exports
+-------
+
+c 011bd2 _page.text        c 011960 _flush.text       c 011bef %initfun29       
+c 01198b _write.textchar2  c 0119c8 _write.textchar3  c 011b3a _write.textintege
+c 011a8d _write.textintege c 0119f9 _write.textstring c 011bb3 _writeln.text    
+c 011a22 _write.textstring c 011b4c _write.textboolea c 011b75 _write.textboolea
+c 011bc2 _writeln.output  
+
+module 30 <rtl1.p>
+------ --
+
+   static base       01a180		   static size            0
+   program base      011c78		   program size         820
+   link table        011fac		   link size             40
+
+imports
+-------
+
+dc30 011c78 _read.textchar dc28 01158c runtimeerror   av28 01a116 _erroroutput  
+av28 01a136 _input         av28 01a126 _output        dc29 011960 _flush.text   
+dc28 0115be _deref.text    dc28 01162a _get.text      dc30 011ed4 _eoln.text    
+dc30 011eab _eof.text     
+
+exports
+-------
+
+c 011cb5 _read.textstring3 c 011ce7 _readln.text      c 011c78 _read.textchar2  
+c 011d54 _read.textinteger c 011d1b _readln.input     c 011eab _eof.text        
+c 011ed4 _eoln.text        c 011efd _eof.input        c 011f27 _eoln.input      
+c 011f51 %initfun30       
+
+module 31 <newdis.p>
+------ --
+
+   static base       01a180		   static size            0
+   program base      011fd4		   program size         123
+   link table        012050		   link size              8
+
+imports
+-------
+
+dc47 012b94 _malloc        dc47 012ccb _free         
+
+exports
+-------
+
+c 011ff2 _newdis           c 011fd4 _new.def          c 011fe3 _dispose.def     
+
+module 32 <extins.s>
+------ --
+
+   static base       01a180		   static size            0
+   program base      012058		   program size          83
+   link table        0120ac		   link size              0
+
+exports
+-------
+
+c 01207e _ins.def          c 012058 _ext.def         
+
+module 33 <erro>
+------ --
+
+   static base       01a180		   static size            0
+   program base      0120ac		   program size         855
+   link table        012404		   link size              0
+
+exports
+-------
+
+c 0123b3 errors            c 0120ac space            
+
+module 34 <cerror.s>
+------ --
+
+   static base       01a180		   static size            4
+   program base      012404		   program size           7
+   link table        01240c		   link size              0
+
+exports
+-------
+
+c 012404 cerror            v 01a180 _errno           
+
+module 35 <flsbuf.c>
+------ --
+
+   static base       01a184		   static size           34
+   program base      01240c		   program size         513
+   link table        012610		   link size             36
+
+imports
+-------
+
+dc48 012d9c _write         dc49 012dac _isatty        dc50 012dd4 _close        
+dc47 012ccb _free          av51 01a328 __iob          dc47 012b94 _malloc       
+av62 01a4e0 __sobuf        dc35 012524 _fflush        dc35 0125a6 _fclose       
+
+exports
+-------
+
+c 0125a6 _fclose           c 012607 %initfun35        c 012524 _fflush          
+c 012586 __cleanup         c 01240c __flsbuf         
+
+module 36 <unlink.s>
+------ --
+
+   static base       01a1a8		   static size            0
+   program base      012634		   program size          13
+   link table        012644		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012634 _unlink          
+
+module 37 <rdwr.c>
+------ --
+
+   static base       01a1a8		   static size           32
+   program base      012648		   program size         203
+   link table        012714		   link size              8
+
+imports
+-------
+
+dc35 01240c __flsbuf       dc52 012e04 __filbuf      
+
+exports
+-------
+
+c 012648 _fread            c 01270d %initfun37        c 0126a5 _fwrite          
+
+module 38 <ftell.c>
+------ --
+
+   static base       01a1c8		   static size           33
+   program base      01271c		   program size         120
+   link table        012794		   link size              4
+
+imports
+-------
+
+dc53 012ee4 _lseek        
+
+exports
+-------
+
+c 01271c _ftell            c 01278e %initfun38       
+
+module 39 <fseek.c>
+------ --
+
+   static base       01a1ec		   static size           33
+   program base      012798		   program size         333
+   link table        0128e8		   link size             12
+
+imports
+-------
+
+dc35 012524 _fflush        dc53 012ee4 _lseek         dc52 012e04 __filbuf      
+
+exports
+-------
+
+c 012798 _fseek            c 0128df %initfun39       
+
+module 40 <mktemp.c>
+------ --
+
+   static base       01a210		   static size           36
+   program base      0128f4		   program size         114
+   link table        012968		   link size              8
+
+imports
+-------
+
+dc54 012ef8 _getpid        dc55 012f08 _access       
+
+exports
+-------
+
+c 012960 %initfun40        c 0128f4 _mktemp          
+
+module 41 <fopen.c>
+------ --
+
+   static base       01a234		   static size           33
+   program base      012970		   program size         260
+   link table        012a74		   link size             24
+
+imports
+-------
+
+dc56 012f1c _open          dc53 012ee4 _lseek         av51 01a328 __iob         
+av34 01a180 _errno         dc57 012f2c _creat         dc50 012dd4 _close        
+
+exports
+-------
+
+c 012a6e %initfun41        c 012970 _fopen           
+
+module 42 <exit.s>
+------ --
+
+   static base       01a258		   static size            0
+   program base      012a8c		   program size           9
+   link table        012a98		   link size              4
+
+imports
+-------
+
+dc35 012586 __cleanup     
+
+exports
+-------
+
+c 012a8c _exit            
+
+module 43 <times.s>
+------ --
+
+   static base       01a258		   static size            0
+   program base      012a9c		   program size           9
+   link table        012aa8		   link size              0
+
+exports
+-------
+
+c 012a9c _times           
+
+module 44 <fdopen.c>
+------ --
+
+   static base       01a258		   static size           34
+   program base      012aa8		   program size         111
+   link table        012b18		   link size              8
+
+imports
+-------
+
+av51 01a328 __iob          dc53 012ee4 _lseek        
+
+exports
+-------
+
+c 012aa8 _fdopen           c 012b11 %initfun44       
+
+module 45 <fputc.c>
+------ --
+
+   static base       01a27c		   static size           33
+   program base      012b20		   program size          53
+   link table        012b58		   link size              4
+
+imports
+-------
+
+dc35 01240c __flsbuf      
+
+exports
+-------
+
+c 012b20 _fputc            c 012b4f %initfun45       
+
+module 46 <fgetc.c>
+------ --
+
+   static base       01a2a0		   static size           33
+   program base      012b5c		   program size          52
+   link table        012b90		   link size              4
+
+imports
+-------
+
+dc52 012e04 __filbuf      
+
+exports
+-------
+
+c 012b8a %initfun46        c 012b5c _fgetc           
+
+module 47 <malloc.c>
+------ --
+
+   static base       01a2c4		   static size           58
+   program base      012b94		   program size         506
+   link table        012d90		   link size             12
+
+imports
+-------
+
+dc58 012f40 _sbrk          dc47 012ccb _free          dc47 012b94 _malloc       
+
+exports
+-------
+
+c 012ce5 _realloc          c 012ccb _free             c 012d88 %initfun47       
+c 012b94 _malloc          
+
+module 48 <write.s>
+------ --
+
+   static base       01a300		   static size            0
+   program base      012d9c		   program size          12
+   link table        012da8		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012d9c _write           
+
+module 49 <isatty.c>
+------ --
+
+   static base       01a300		   static size           34
+   program base      012dac		   program size          34
+   link table        012dd0		   link size              4
+
+imports
+-------
+
+dc59 012f93 _gtty         
+
+exports
+-------
+
+c 012dc8 %initfun49        c 012dac _isatty          
+
+module 50 <close.s>
+------ --
+
+   static base       01a324		   static size            0
+   program base      012dd4		   program size          12
+   link table        012de0		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012dd4 _close           
+
+module 51 <data.c>
+------ --
+
+   static base       01a324		   static size          352
+   program base      012de4		   program size          17
+   link table        012df8		   link size             12
+
+imports
+-------
+
+av62 01a8e0 __sibuf        av62 01a4e0 __sobuf        av62 01ace0 __lastbuf     
+
+exports
+-------
+
+c 012de4 %initfun51        v 01a328 __iob            
+
+module 52 <filbuf.c>
+------ --
+
+   static base       01a484		   static size           54
+   program base      012e04		   program size         207
+   link table        012ed4		   link size             16
+
+imports
+-------
+
+dc60 012fb4 _read          av51 01a328 __iob          dc47 012b94 _malloc       
+dc35 012524 _fflush       
+
+exports
+-------
+
+c 012ecd %initfun52        c 012e04 __filbuf         
+
+module 53 <lseek.s>
+------ --
+
+   static base       01a4bc		   static size            0
+   program base      012ee4		   program size          13
+   link table        012ef4		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012ee4 _lseek           
+
+module 54 <getpid.s>
+------ --
+
+   static base       01a4bc		   static size            0
+   program base      012ef8		   program size          10
+   link table        012f04		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012ef8 _getpid          
+
+module 55 <access.s>
+------ --
+
+   static base       01a4bc		   static size            0
+   program base      012f08		   program size          13
+   link table        012f18		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012f08 _access          
+
+module 56 <open.s>
+------ --
+
+   static base       01a4bc		   static size            0
+   program base      012f1c		   program size          12
+   link table        012f28		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012f1c _open            
+
+module 57 <creat.s>
+------ --
+
+   static base       01a4bc		   static size            0
+   program base      012f2c		   program size          13
+   link table        012f3c		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012f2c _creat           
+
+module 58 <sbrk.s>
+------ --
+
+   static base       01a4bc		   static size            4
+   program base      012f40		   program size          51
+   link table        012f74		   link size              8
+
+imports
+-------
+
+dc34 012404 cerror         am** 01ace4 _end          
+
+exports
+-------
+
+c 012f40 _sbrk             c 012f60 _brk             
+
+module 59 <stty.c>
+------ --
+
+   static base       01a4c0		   static size           32
+   program base      012f7c		   program size          52
+   link table        012fb0		   link size              4
+
+imports
+-------
+
+dc61 012fc4 _ioctl        
+
+exports
+-------
+
+c 012faa %initfun59        c 012f7c _stty             c 012f93 _gtty            
+
+module 60 <read.s>
+------ --
+
+   static base       01a4e0		   static size            0
+   program base      012fb4		   program size          12
+   link table        012fc0		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012fb4 _read            
+
+module 61 <ioctl.s>
+------ --
+
+   static base       01a4e0		   static size            0
+   program base      012fc4		   program size          13
+   link table        012fd4		   link size              4
+
+imports
+-------
+
+dc34 012404 cerror        
+
+exports
+-------
+
+c 012fc4 _ioctl           
+
+module 62 <%initfun>
+------ --
+
+   static base       01a4e0		   static size         2052
+   program base      012fd8		   program size          36
+   link table        012ffc		   link size             68
+
+imports
+-------
+
+dc28 011807 %initfun28     dc29 011bef %initfun29     dc30 011f51 %initfun30    
+dc35 012607 %initfun35     dc37 01270d %initfun37     dc38 01278e %initfun38    
+dc39 0128df %initfun39     dc40 012960 %initfun40     dc41 012a6e %initfun41    
+dc44 012b11 %initfun44     dc45 012b4f %initfun45     dc46 012b8a %initfun46    
+dc47 012d88 %initfun47     dc49 012dc8 %initfun49     dc51 012de4 %initfun51    
+dc52 012ecd %initfun52     dc59 012faa %initfun59    
+
+exports
+-------
+
+c 012fd8 %initfun          v 01a4e0 __sobuf           v 01a8e0 __sibuf          
+v 01ace0 __lastbuf        

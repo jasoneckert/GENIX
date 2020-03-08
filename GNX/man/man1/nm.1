@@ -1,0 +1,143 @@
+.ig
+	@(#)nm.1	1.9	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.if t .ds U _\ 
+.if n .ds U \*U
+.TH NM 1  
+.SH NAME
+nm \- print name list (nnm for cross-support)
+.SH SYNOPSIS
+.B nm
+[
+.B \-aghlmnopru
+] [ \f2file\fP ... ]
+.sp
+.B nnm
+[
+.B \-aghlmnopru
+] [ \f2file\fP ... ]
+.SH DESCRIPTION
+.I Nm
+prints the name list (symbol table) of each object
+.I file
+in the argument list.
+If an argument
+is an archive, a listing for each object
+file in the archive will be produced.
+If no
+.I file
+is given, the symbols in
+.I a.out
+are listed.
+.PP
+Each symbol name is preceded by its value (blanks if undefined)
+and one of the letters
+.B U
+(undefined),
+.B A
+(absolute),
+.B T
+(text segment symbol),
+.B D
+(data segment symbol),
+.B B
+(bss segment symbol),
+.B C
+(common symbol),
+.B f
+(file name),
+or
+.B \-
+for full symbol table entries (see
+.B \-a
+below).
+If the symbol is local (non-external) the type letter is in
+lower case.
+The output is sorted alphabetically.
+.PP
+Options are:
+.TP 8
+.B \-a
+Include all symbol table entries as candidates for printing; normally
+symbols destined for
+.IR ddt (1)
+are excluded.
+This option uses a different format from the other 
+options so combining it with 
+.B \-u
+or
+.B \-q
+is prohibited. The format has six parts:
+.RS 10
+.IP
+value
+.br
+name
+.br
+type
+.br
+symbol name
+.br
+type information
+.br
+addressing mode
+.RE
+.RS 8
+.LP
+The first three parts are hexadecimal numbers which represent the three
+long words of the symbol table entries n\*Uvalue, n\*Uname, and n\*Utype
+(see 
+.IR stab (5)).
+Value specifies the displacement for the 
+addressing mode.  The lower 5 bits of n\*Uname tell the addressing
+mode and the higher 26 bits give the offset into
+the string table.  N\*Utype is broken into several groups of
+bits which give type information for this symbol table entry.
+The fourth part is the name of the symbol.
+This is followed by type information that explains the type word.
+Finally,
+.I nm
+prints the addressing mode for the symbol.
+Displacements in the addressing mode are 
+in decimal.
+.RE
+.TP
+.B  \-g
+Print only global (external) symbols.
+.TP 8
+.B  \-h
+Print the 
+.I a.out 
+file header.
+.TP 8
+.B  \-l
+Print the link table.
+.TP 8
+.B  \-m
+Print the Module Table.
+.TP 8
+.B \-n
+Sort numerically rather than alphabetically.
+.TP 8
+.B  \-o
+Prepend file or archive element name to each
+output line rather than only once.
+.TP 8
+.B  \-p
+Don't sort; print in symbol-table order.
+.TP 8
+.B  \-r
+Sort in reverse order.
+.TP 8
+.B  \-u
+Print only undefined symbols.
+.SH SEE ALSO
+ar(1), a.out(5), stab(5)
+.SH CROSS-SUPPORT
+In a cross-support environment 
+.I nm
+is called
+.I nmm
+and the default name of the object file is
+.IR a16.out .

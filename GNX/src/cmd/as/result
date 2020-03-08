@@ -1,0 +1,70 @@
+nasm  -q -o asops.o asops.s
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c init1.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c scan.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c prsymtable.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c scanr.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c scanexp.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c insts.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c dirs.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c sdis.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c genrout.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c codegen.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c dirsx.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c traverse.p
+nasm  -q -o cmpc.o cmpc.s
+nasm  -q -o scmpc.o scmpc.s
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c disp.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c float.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c dumbio.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c fopenfile2.p
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c scantoken.p
+nasm  -q -o pexit.o pexit.s
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c asm.p
+nasm  -q -o ptime.o ptime.s
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c genbytes.p
+nasm  -q -o fnew.o fnew.s
+nmeld  -m  asops.o init1.o scan.o prsymtable.o scanr.o scanexp.o insts.o  dirs.o sdis.o genrout.o codegen.o dirsx.o traverse.o cmpc.o  scmpc.o disp.o float.o dumbio.o fopenfile2.o scantoken.o  pexit.o asm.o ptime.o genbytes.o fnew.o -lp -lc
+mv a16.out asm2
+cp e2bio.e bio.e
+chmod +w bio.e
+nmpc -c lst.p
+nmeld lst.o fopenfile2.o pexit.o -lp -lc
+mv a16.out list2

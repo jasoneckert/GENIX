@@ -1,0 +1,11 @@
+nmcc -O  -DSCCS -c dr.c
+nmcc -O  -DSCCS -c put.c
+nmcc -O  -DSCCS -c acts.c
+nmcc -s dr.o put.o acts.o -o ./cref
+cc mtab.c -o mtab
+./mtab atable ./atab
+./mtab ctable ./ctab
+./mtab etable ./etab
+cc mign.c -o mign
+./mign asym ./aign
+./mign csym ./cign

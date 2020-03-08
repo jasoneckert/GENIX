@@ -1,0 +1,35 @@
+.ig
+	t.mac: version 1.2 of 11/29/83
+	
+
+	@(#)t.mac	1.2	(NSC)	11/29/83
+..
+.ds ZZ \f3.\|.\|.\fP
+.ds ST \v'.3m'\s+2*\s0\v'-.3m'
+.ds DO \h'\w'do 'u'
+.ds Ca \h'\w'case 'u'
+.ds WH \h'\w'while 'u'
+.ds VT \|\f3|\fP\|
+.ds TH \h'\w'then 'u'
+.ds DC \*(DO\*(CA
+.ds AP >\h'-.2m'>
+.ds HE <\h'-.2m'<
+..	\" macros for algol 68c reference manual
+.ds DA 1977 November 1
+.ds md \v'.25m'
+.ds mu \v'-.25m'
+.ds U \*(mu\s-3
+.ds V \s0\*(md
+.ds L \*(md\s-3
+.ds M \s0\*(mu
+.ds S \s-1
+.ds T \s0
+..	\" small 1
+.ds O \*S1\*T
+.ds h \|
+.ds s \|\|
+..	\" ellipsis
+.ds e .\|.\|.
+..	\" subscripts
+.ds 1 \*(md\s-41\s0\*(mu
+.ds 2 \*(md\s-42\s0\*(mu

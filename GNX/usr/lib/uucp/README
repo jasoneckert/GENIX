@@ -1,0 +1,6 @@
+Mon Aug 22 15:55:07 PDT 1983
+
+The L* and USERFILE files in this directory are samples.  They should
+be replaced with versions tailored to your environment.  The `nsc' entry
+in the distributed /etc/passwd is a sample uucp dialin account, and should
+also be replaced with locally appropriate entries.

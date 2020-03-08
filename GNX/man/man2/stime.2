@@ -1,0 +1,24 @@
+.ig
+	@(#)stime.2	1.2	6/30/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH STIME 2 
+.SH NAME
+stime \- set time
+.SH SYNOPSIS
+.nf
+.B stime(tp)
+.B long *tp;
+.fi
+.SH DESCRIPTION
+.I Stime
+sets the system's idea of the time and date.
+Time, pointed to by
+.I tp,
+is measured in seconds from 0000 GMT Jan 1, 1970.
+Only the super-user may use this call.
+.SH "SEE ALSO"
+date(1), time(2), ctime(3)
+.SH DIAGNOSTICS
+Zero is returned if the time was set;
+\-1 if user is not the super-user.

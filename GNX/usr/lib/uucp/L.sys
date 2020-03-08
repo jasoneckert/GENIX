@@ -1,0 +1,3 @@
+othersys Any ACU 1200 sanjose555-1212 login:-BREAK-login: anon asswd: secret
+localsys Any tty07 9600 tty07 login: uucp asswd: uucp
+poll-us Any ACU 300

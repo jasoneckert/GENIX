@@ -1,0 +1,32 @@
+
+/*
+ * curses.ext: version 1.2 of 4/28/83
+ * Curses Library Source File
+ *
+ * @(#)curses.ext	1.2	(National Semiconductor)	4/28/83
+ */
+
+/*
+ * External variables for the library
+ */
+
+/* LINTLIBRARY */
+
+# include	"curses.h"
+# include	"unctrl.h"
+
+extern bool	_echoit, _rawmode, My_term, _endwin;
+
+extern char	ttytype[], *_unctrl[];
+
+extern int	_tty_ch, LINES, COLS;
+
+extern SGTTY	_tty;
+
+char		_putchar();
+
+#ifdef DEBUG
+# define	outf	_outf
+
+FILE		*outf;
+#endif

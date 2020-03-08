@@ -1,0 +1,48 @@
+.ig
+	@(#)vlock.2v	1.2	10/27/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH VLOCK 2V
+.SH NAME
+vlock \- lock process pages into memory
+.SH SYNOPSIS
+.nf
+.B vlock(function, address)
+.B char *address;
+.fi
+.SH DESCRIPTION
+.I Vlock
+is used to lock or unlock a page (1024 bytes) of a process in memory.
+Locked pages cannot be swapped or moved around in memory, even if the
+process is not runnable.  This capability is useful when talking to
+peripherals which need to do DMA into memory, or if very fast response
+times are required.
+.I Function
+is 0 to unlock a page, or 1 to lock a page.
+.I Address
+is the address of the page to be locked or unlocked.  If the page is
+successfully locked,
+.I vlock
+returns the physical address of the page in memory.
+.PP
+Pages of a process which are not locked are swappable.  If the process does a
+.IR fork (2),
+the parent's locked pages will still be locked.  Shared text pages will also
+be locked for the child process.  However, pages in the data or stack segment
+of the child will not be locked.  An
+.IR exec (2)
+or
+.IR exit (2)
+unlocks all the pages of the process.  The
+.I vlock
+call is restricted to the super-user.  It is never necessary to lock pages
+that have been mapped using
+.IR vspy (2V).
+.PP
+.SH "SEE ALSO"
+vspy(2V), nice(2)
+.SH DIAGNOSTICS
+-1 is returned if any argument is invalid, or if the user is not privileged.
+.SH BUGS
+The system does not check to see how many pages are locked.  Thus the
+system can crash if not enough swappable pages remain.

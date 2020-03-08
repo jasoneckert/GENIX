@@ -1,0 +1,106 @@
+.ig
+	@(#)walkdir.3	1.3	11/3/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH WALKDIR 3
+.SH NAME
+walkdir \- recursively find files in a directory hierarchy
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.B #include <dir.h>
+.B #include <stat.h>
+.B #include <walkdir.h>
+.PP
+.B walkdir(startpath, calledroutine, flags)
+.B char *startpath;
+.B int (*calledroutine)();
+.PP
+.B calledroutine(path, statbuf, error)
+.B char *path;
+.B struct stat *statbuf;
+.fi
+.SH DESCRIPTION
+.I Walkdir
+provides a way to examine all files downward from a given file specification,
+by recursively examining directories and returning all file names found.
+As
+.I walkdir
+finds each file name,
+it invokes
+.IR calledroutine ,
+supplying the file name as the first argument.
+.PP
+.I Startpath
+is the path where the search starts.
+If the specified path names a file other than a directory,
+.I walkdir
+will return only that file's name.
+If the path is a directory,
+then the names of all files in that directory will be returned,
+including those in all lower directories.
+For example,
+to process the name of every file in the file system,
+.I startpath
+would be "/".
+.PP
+.I Calledroutine
+is the user-defined routine which will be called for each file found.
+It has three arguments.
+.I Path
+is the path to the current file, and can be used to reference the found file.
+.I Statbuf
+is a pointer to the status of the file (see
+.IR stat (2)).
+.I Error
+is a flag indicating if the given file specification cannot be referenced
+(one common error is a directory that is unreadable).
+.I Calledroutine
+should return zero to proceed to the next file.  If it returns nonzero,
+.I walkdir
+will abort the examination of the current directory.
+This can be used to
+skip over uninteresting directories.
+.I Path
+and
+.I statbuf
+are only valid during the call to
+.IR calledroutine ,
+and are overwritten between calls, so that they must be copied if they
+are needed later.
+.PP
+.I Flags
+specify the exact way in which the search is to take place, and consists of
+one or more of the following bits ORed together
+(defined in
+.IR /usr/include/walkdir.h ).
+.PP
+.nf
+#define SD_RETDIRF	0x01	/* return directories before files */
+#define SD_RETDIRL	0x02	/* return directories after files */
+#define SD_RETFILE	0x04	/* return files */
+#define SD_RETERR	0x08	/* return files with errors */
+#define SD_TYPERR	0x10	/* type error messages */
+.fi
+.PP
+To return directories, one of SD_RETDIRF or SD_RETDIRL must be set.
+To return non-directories, SD_RETFILE must be set.
+To have inaccessible
+files returned, SD_RETERR must be set (if not set,
+.I error
+does not need examination).
+If SD_TYPERR is set, then
+.I walkdir
+will automatically type error messages to standard error
+for inaccessible files.
+.SH "SEE ALSO"
+directory(3S),
+scandir(3)
+.SH DIAGNOSTICS
+.I Walkdir
+returns zero if all files were successfully examined.
+Otherwise,
+it returns the number of inaccessible files,
+or -1 if
+.I startpath
+itself was inaccessible.

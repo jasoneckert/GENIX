@@ -1,0 +1,44 @@
+ac(8) ac: login accounting.
+adduser(8) adduser: procedure for adding new users.
+analyze(8) analyze: how do postmortem crash analysis.
+badsect(8) badsect: create files to contain bad sectors.
+catman(8) catman: create the cat files for the manual.
+chown(8) chown, chgrp: change owner or group.
+clri(8) clri: clear i-node.
+crash(8) crash: what happens when the system crashes.
+cron(8) cron: clock daemon.
+dcerr(8) dcerr: decipher disk errors.
+dcheck(8) dcheck: file system directory consistency check.
+dcutest(8) dcutest: disk formatter and test program.
+delivermail(8) delivermail: deliver mail to arbitrary people.
+dmesg(8) dmesg: collect system diagnostic messages to form error log.
+dump(8) dump: incremental file system dump.
+dumpdir(8) dumpdir: print the names of files on a dump tape.
+fsck(8) fsck: file system consistency check and interactive repair.
+getty(8) getty: set terminal mode.
+halt(8) halt: stop the processor.
+icheck(8) icheck: file system storage consistency check.
+init(8) init: process control initialization.
+makekey(8) makekey: generate encryption key.
+mkfs(8) mkfs: construct a file system.
+mklost+found(8) mklost+found: make a lost+found directory for fsck.
+mknod(8) mknod: build special file.
+mkpt(8) mkpt: change the disk partition tables.
+mmerr(8) mmerr: decipher MMU status register.
+mount(8) mount, umount: mount and dismount file system.
+ncheck(8) ncheck: generate names from i-numbers.
+pstat(8) pstat: print system facts.
+quot(8) quot: summarize file system ownership.
+rc(8) rc: command script for auto-reboot and daemons.
+reboot(8) reboot: UNIX bootstrapping procedures.
+renice(8) renice: alter priority of running process by changing nice.
+restor(8) restor: incremental file system restore.
+sa(8) sa, accton: system accounting.
+savecore(8) savecore: save a core dump of the operating system.
+setroot(8) setroot: fix file system ownership and protection.
+shutdown(8) shutdown: close down the system at a given time.
+sticky(8) sticky: executable files with persistent text.
+sync(8) sync: update the super block.
+tcerr(8) tcerr: decipher tape errors.
+update(8) update: periodically update the super block.
+vipw(8) vipw: edit the password file with vi.

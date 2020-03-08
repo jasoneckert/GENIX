@@ -1,0 +1,21 @@
+#! /bin/sh
+
+# :yyfix: version 1.1 of 2/15/83
+# 
+#
+# @(#):yyfix	1.1 (NSC) 2/15/83
+
+>rodata.c
+for i in $*
+do ed - y.tab.c <<!
+/^\(.*\)$i[ 	]*\[]/s//extern \1 $i[];\\
+\1 $i []/
+.ka
+/}/kb
+'a-r rodata.c
+'a,'bw rodata.c
+'a,'bd
+w
+q
+!
+done

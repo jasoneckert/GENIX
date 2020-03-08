@@ -1,0 +1,45 @@
+.ig
+	test.umlaut: version 1.1 of 5/5/83
+	Mesa Unix System Test File
+
+	@(#)test.umlaut	1.1	(NSC)	5/5/83
+..
+.sc
+.lp
+.ec $
+umlaut is: $*:
+.ec
+.sp
+\w"umlau\*:t"
+.sp
+.XX "umlau\*:t"
+null
+.sp
+.de XX
+null
+..
+.XX "umlau\\\\*:t"
+.br
+.XX "umlau\\*:t"
+.br
+.XX "umlau\*:t"
+.sp
+.de XX
+.ec ^
+$1 = ^$1
+.br
+$2 = ^$2
+.ec
+..
+.XX "umlau\*:t"
+.sp
+.de XX
+$1 = \\$1
+.br
+$2 = \\$2
+..
+.XX "umlau\*:t"
+.sp
+.i "umlau\*:t"
+.sp
+.b "umlau\*:t"

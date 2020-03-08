@@ -1,0 +1,21 @@
+rm -f lpd.x
+nmcc -O -DSCCS  -o lpd.x lpd.c
+chmod 770 lpd.x
+rm -f lpf.x
+nmcc -O -DSCCS  -o lpf.x lpf.c
+chmod 770 lpf.x
+rm -f lpr.x
+nmcc -O -DSCCS  -o lpr.x lpr.c
+chmod 770 lpr.x
+rm -f lpq.x
+nmcc -O -DSCCS  -o lpq.x lpq.c
+chmod 770 lpq.x
+rm -f lprm.x
+nmcc -O -DSCCS  -o lprm.x lprm.c
+chmod 770 lprm.x
+rm -f slpd.x
+nmcc -O -DSCCS  -o slpd.x slpd.c
+chmod 770 slpd.x
+rm -f slpf.x
+nmcc -O -DSCCS  -o slpf.x slpf.c
+chmod 770 slpf.x

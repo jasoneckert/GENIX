@@ -1,0 +1,103 @@
+.ig
+	@(#)monfix.1	1.5	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH MONFIX 1
+.SH NAME
+monfix \- a monitor maker
+.SH SYNOPSIS
+.B monfix
+[ options ]
+.I file
+.SH DESCRIPTION
+.I Monfix
+modifies the first 16 bytes of the text segment of
+.I file
+for an NS16032-based board.
+.I File
+must contain an a.out format program.
+.PP
+.I Monfix
+makes the first text byte the entry point since any NS16032
+board bootstrap program requires that the first text byte be
+the entry point.
+.PP
+.I Monfix 
+adds three instructions to the file: load module register,
+load static base register,
+and branch to the real entry point.
+The values for these three addresses are computed from
+the a.out header.  The default load address is zero.
+Instructions generated and starting addresses are:
+.sp
+.RS 8
+address	    instruction
+.RE
+.sp
+.RS 11
+.nf
+0	lprw	mod,modvalue	
+4	lprd	sb,sbvalue	
+10	br	entrypoint	
+.fi
+.RE
+.PP
+.B \-b
+.I number
+.RS 5
+Use
+.I number
+as the address where the program will
+be loaded.  Zero is default.
+.RE
+.PP
+.B \-e
+.I number
+.RS 5
+Real entry point is at address
+.IR number .
+.I Monfix
+uses
+.I number 
+as the parameter for the br (third) instruction.
+.RE
+.PP
+.B \-m
+.I number
+.RS 5
+Initial MOD register value is
+.IR number .
+.I Monfix
+uses
+.I number
+as the parameter for the lprw (first) instruction.
+.RE
+.PP
+.B \-s  
+.I number
+.RS 5
+Initial static base register value is
+.IR number .
+.I Monfix
+uses
+.I number
+as the parameter for the lprd (second) instruction.
+.RE
+.PP
+All
+.I numbers
+are hexadecimal.
+.PP
+The default 
+.I file 
+is 
+.IR a.out .
+.SH FILES
+.nr aa \w'a\.out'
+.ta \n(aau+(3n)
+a.out	default output file
+.SH "SEE ALSO"
+nburn(1)
+.SH "CROSS-SUPPORT"
+In a cross-support environment, the default output filee is 
+.IR a16.out .

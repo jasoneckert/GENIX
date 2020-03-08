@@ -1,0 +1,20 @@
+#
+# Aliases in this file will NOT be expanded in the header from
+# Mail but WILL be visible over networks or from /bin/mail.
+#
+#	>>>>>>>>>>	The program "newaliases" must be run after
+#	>> NOTE >>	this file is updated for any changes to
+#	>>>>>>>>>>	show through to delivermail.
+#
+
+msgs:"|/usr/ucb/msgs -s"
+
+# aliases for machine to machine communication
+#rnews:"|/usr/lib/news/uurec"
+decode:"|/usr/ucb/uudecode"
+
+# Alias for mailer daemon
+nobody:/dev/null
+~MAILER~DAEMON~:root
+~mailer~daemon~:root
+MAILER-DAEMON:root

@@ -1,0 +1,230 @@
+.ig
+	@(#)ld.1	1.7	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.if t .ds U _\ 
+.if n .ds U _
+.TH LD 1 
+.SH NAME
+ld \- NS16000 link editor (nmeld for cross-support)
+.SH SYNOPSIS
+.B ld
+[ option ] ...
+.I module ...
+.sp 1
+.B nmeld
+[ option ] ...
+.I module ...
+.SH DESCRIPTION
+.I Ld
+combines several
+object modules into one and resolves external
+references.
+In the simplest case several object
+.I modules
+are given, and
+.I ld
+combines them, producing
+an 
+.I a.out 
+file which is ready for execution.
+The output of
+.I ld
+is left on the file
+.IR a.out .
+This file is deleted
+if errors occurred during the load.
+.PP
+The argument modules are concatenated in the order
+specified.  The entry point of the output is the
+symbol 
+.B start
+(unless the \f3\-e\fP option is specified).
+Module zero is unused.
+.PP
+The resulting image consists of the module table, followed by each module's
+program and link table.
+The link table for a module begins after
+the program segment for that module.  Finally, the static base segment 
+for each module is concatenated at the end of the image.
+Each segment
+begins on a 32 bit boundary except for the first static base segment, which
+begins on a 1024 byte boundary if the user has not specified the 
+.B \-p
+option.
+.PP
+If common symbols are left unresolved,
+.I ld
+exports them and allocates space for them.
+These symbols are defined in the %initfun module (see below).
+Common symbols are aligned on 32 bit boundaries.
+.PP
+Symbols with the special name 
+.B %initfun 
+are coalesced together into one %initfun module.
+.I Ld
+makes each unique by appending
+relative mod number and creating a dummy module containing calls to
+all %initfun entry points.
+This feature is currently used by the compilers 
+for initializing run-time addresses.
+.PP
+The symbols
+.BR \*Uetext ,
+.BR \*Uedata ,
+and
+.BR \*Uend ,
+are defined as follows:
+.B \*Uetext
+is the first address past the text segment;
+.B \*Uedata
+is the first address past the last static base area;
+.B \*Uend
+is the first address past the end of the bss area.
+.PP
+.I Ld
+understands several options.
+.TP
+.SM
+.B "\-R \*S\f2address module"
+Exclude program segment of
+.I module
+from image.
+.B \-R
+assumes that
+.I module
+is already in shared memory or is present in ROM at
+.IR address .
+Program relative exports are computed accordingly.
+.TP 
+.SM
+.B "\-T \*S\f2base-address"
+Load entire image at
+.IR base-address .
+(Note:  This option is only supported on the DB16000 Development Board.)
+.TP
+.B "\-0 \-1 \-2 \-3"
+Leave this number of blank module table entries at the beginning of the
+table in the 
+.I a.out
+file.  Default is 2.
+.TP
+.B \-w
+Disable warnings.
+Presently, warnings are issued when
+a static base relative symbol is imported
+as an external procedure descriptor.
+.TP
+.B "\-e \f2symbol"
+Obtain the transfer address from the value of
+.IR symbol .
+.TP
+.B \-v
+List the utilities
+.I ld
+calls and their arguments on standard output.
+Information produced by the verbose 
+.B \-v
+flag is useful for debugging.
+.TP 
+.B "\-o \f2filename"
+Use
+.I filename
+instead of
+.I a.out
+for output.
+.TP
+.B \-m
+Print a load map on the file
+.BR ldmap .
+.TP
+.B "\-m\f2mapfilename"
+Print a load map on the file
+.I mapfilename
+instead of on 
+.BR ldmap .
+.TP
+.SM
+.B \-M
+Produce a primitive load map on standard output, listing the names
+of the files which will be loaded.
+.TP
+.B \-p
+Do not page-align the static base segment.
+This saves space if it is going into a ROM.
+.TP
+.B \-r
+Allow the output file of 
+.I ld
+to be ``re-linked,'' i.e. to be the input to
+another run of 
+.IR ld .
+.I Ld
+will not define any common symbols and does not give 
+error messages 
+for undefined symbols.
+.TP
+.B \-l\f2libname
+Search the library /usr/lib/lib<libname>.a
+for all unresolved symbols and load the
+necessary object files.
+If no
+.B \-e
+option is given, then the start address of the image will be 
+the symbol
+.BR start .
+.IP
+.I Ld
+searches a library when it encounters the library name in the
+option line so the placement of the 
+.B \-l
+switch is significant (especially when more than one
+.B \-l
+is used), and it should probably go at the end of the 
+.I ld
+command.
+.IP
+If an archive file is given to the loader, it assumes that the file is
+a library.
+.IP
+Library searches are multipass operations, continuing until no
+furthur symbols can be resolved from that library.  All libraries must be
+archive libraries created with
+.IR ranlib (1)
+and contain a _\*U.SYMDEF file as the first file in the library.
+.TP
+.B \-s
+Strip the symbol table and string table from the output file.
+.SH FILES
+.nr aa \w'/usr/lib/lib*.a'
+.ta \n(aau+(3n) 
+.br
+/usr/lib/lib*.a	libraries
+.br
+a.out	default output file
+.SH "SEE ALSO"
+as(1), ar(1), cc(1), ranlib(1)
+.SH "CROSS-SUPPORT"
+In a cross-support environment, 
+.I ld
+is called
+.IR nmeld , 
+and the default output file is 
+.IR a16.out .  
+.B Nmeld
+locates 
+libraries under the
+.B -l
+flag in /usr/NSC/lib.  The file that
+.I nmeld
+builds is not executable.
+.SH BUGS
+Many flags that are defined in
+.I ld
+in the Berkeley version of the
+command are not yet supported fully.  Some of these flags will be
+supported in the future.
+Unsupported flags are currently ignored, but cause a message to be printed
+out explaining that the features are not implemented.  These flags
+are:
+.BR "\-S \-x \-X \-y \-z \-n \-N \-t \-A \-D \-d" .

@@ -1,0 +1,490 @@
+.ig
+	m3: version 1.2 of 11/29/83
+	
+
+	@(#)m3	1.2	(NSC)	11/29/83
+..
+.tr |
+.rm mx
+.mh
+Tabs, Leaders, and Fields
+.sc
+Tabs and leaders.
+The \s-1ASCII\s+1 horizontal tab character and the \s-1ASCII\s+1
+\s-1SOH\s+1 (hereafter known as the \f2leader\f1 character)
+can both be used to generate either horizontal motion or
+a string of repeated characters.
+The length of the generated entity is governed
+by internal \f2tab stops\f1 specifiable
+with \f3ta\f1.
+The default difference is that tabs generate motion and leaders generate
+a string of periods;
+\f3tc\f1 and \f3lc\f1
+offer the choice of repeated character or motion.
+There are three types of internal tab stops\(em\
+\f2left\f1 adjusting, \f2right\f1 adjusting,
+and \f2centering\f1.
+In the following table:
+\f2D\f1 is the distance from the current position on the \f2input\f1 line
+(where a tab or leader was found)
+to the next tab stop;
+\f2next-string\f1 consists
+of the input characters following the tab (or leader) up to the next tab (or leader) or end of line;
+and
+\f2W\f1 is the width of \f2next-string\f1.
+.TS
+center box;
+c2|c2|c
+c2|c2|c
+c2|c2|l.
+Tab	Length of motion or	Location of
+type	repeated characters	\f2next-string\f1
+_
+Left	\f2D\f1	Following \f2D\f1
+Right	\f2D\-W\f1	Right adjusted within \f2D\f1
+Centered	\f2D\-W\(sl\f12	Centered on right end of \f2D\f1
+.TE
+The length of generated motion is allowed to be negative, but
+that of a repeated character string cannot be.
+Repeated character strings contain an integer number of characters, and
+any residual distance is prepended as motion.
+Tabs or leaders found after the last tab stop are ignored, but may be used
+as \f2next-string\f1 terminators.
+.pg
+Tabs and leaders are not interpreted in \f2copy mode\f1.
+\f3\et\f1 and \f3\ea\f1 always generate a non-interpreted
+tab and leader respectively, and
+are equivalent to actual tabs and leaders in \f2copy mode\f1.
+.sc
+Fields.
+A \f2field\f1 is contained between
+a \f2pair\f1 of \f2field delimiter\f1 characters,
+and consists of sub-strings
+separated by \f2padding\f1 indicator characters.
+The field length is the distance on the
+\f2input\f1 line from the position where the field begins to the next tab stop.
+The difference between the total length of all the sub-strings
+and the field length is incorporated as horizontal
+padding space that is divided among the indicated
+padding places.
+The incorporated padding is allowed to be negative.
+For example,
+if the field delimiter is \f3#\f1 and the padding indicator is \f3^\f1,
+\f3#^\f2xxx\f3^\f2right\|\f3#\f1
+specifies a right-adjusted string with the string \f2xxx\f1 centered
+in the remaining space.
+.h1
+.bt
+\f3&ta\f2|Nt|...\f1	0.8;|0.5in	none	E,\f3m\f1	\
+Set tab stops and types.
+\f2t=\f3R\f1, right adjusting;
+\f2t=\f3C\f1, centering;
+\f2t\f1 absent, left adjusting.
+\*(TR tab stops are preset every 0.5in.;
+\*(NR every 0.8in.
+The stop values are separated by spaces, and
+a value preceded by \f3+\f1
+is treated as an increment to the previous stop value.
+.bt
+\f3&tc\f2|c\f1	none	none	E	\
+The tab repetition character becomes \f2c\f1,
+or is removed specifying motion.
+.bt
+\f3&lc\f2|c\f1	\f3.\f1	none	E	\
+The leader repetition character becomes \f2c\f1,
+or is removed specifying motion.
+.bt
+\f3&fc\f2|a|b\f1	off	off	-	\
+The field delimiter is set to \f2a\f1;
+the padding indicator is set to the \f2space\f1 character or to
+\f2b\f1, if given.
+In the absence of arguments the field mechanism is turned off.
+.mh
+Input and Output Conventions and Character Translations
+.sc
+Input character translations.
+Ways of inputting the graphic character set were
+discussed in \(sc2.1.
+The \s-1ASCII\s+1 control characters horizontal tab (\(sc9.1),
+\s-1SOH\s+1 (\(sc9.1), and backspace (\(sc10.3) are discussed elsewhere.
+The newline delimits input lines.
+In addition,
+\s-1STX\s+1, \s-1ETX\s+1, \s-1ENQ\s+1, \s-1ACK\s+1, and \s-1BEL\s+1
+are accepted,
+and may be used as delimiters or translated into a graphic with \f3tr\f1 (\(sc10.5).
+\f2All\f1 others are ignored.
+.pg
+The \f2escape\f1 character \f3\e\f1
+introduces \f2escape sequences\f1\(em\
+causes the following character to mean
+another character, or to indicate
+some function.
+A complete list of such sequences is given in the Summary and Index on page 6.
+\f3\e\f1
+should not be confused with the \s-1ASCII\s+1 control character \s-1ESC\s+1 of the
+same name.
+The escape character \f3\e\f1 can be input with the sequence \f3\e\e\f1.
+The escape character can be changed with \f3ec\f1,
+and all that has been said about the default \f3\e\f1 becomes true
+for the new escape character.
+\f3\ee\f1 can be used to print whatever the current escape character is.
+If necessary or convenient, the escape mechanism may be turned off with \f3eo\f1,
+and restored with \f3ec\f1.
+.h1
+.bt
+\f3&ec\f2|c\f1	\f3\e\f1	\f3\e\f1	-	\
+Set escape character to \f3\e\f1, or to \f2c\f1, if given.
+.bt
+\f3&eo\f1	on	-	-	Turn escape mechanism off.
+.sc
+Ligatures.
+.lg 0
+Five ligatures are available
+in the current \*(TR character set \(em
+\f3\(fi\f1, \f3\(fl\f1, \f3\(ff\f1, \f3\(Fi\f1, and \f3\(Fl\f1.
+They may be input (even in \*(NR) by
+\f3\e(fi\f1, \f3\e(fl\f1, \f3\e(ff\f1, \f3\e(Fi\f1, and \f3\e(Fl\f1 respectively.
+.lg 0
+The ligature mode is normally on in \*(TR, and \f2automatically\f1 invokes 
+ligatures during input.
+.h1
+.bt
+\f3&lg\f2|N\f1	off;|on	on	-	Ligature mode
+is turned on if \f2N\f1 is absent or non-zero,
+and turned off if \f2N=\^\f10.
+If \f2N\f1=\^2, only the two-character ligatures are automatically invoked.
+Ligature mode is inhibited for
+request, macro, string, register, or file names,
+and in \f2copy mode\f1.
+No effect in \*(NR.
+.sc
+Backspacing, underlining, overstriking, etc.
+Unless in \f2copy mode\f1, the \s-1ASCII\s+1 backspace character is replaced
+by a backward horizontal motion having the width of the
+space character.
+Underlining as a form of line-drawing is discussed in \(sc12.4.
+A generalized overstriking function is described in \(sc12.1.
+.pg
+\*(NR automatically underlines
+characters in the \f2underline\f1 font,
+specifiable with \f3uf\f1,
+normally that on font position 2 (normally Times Italic, see \(sc2.2).
+In addition to \f3ft\f1 and \f3\ef\f2F\f1,
+the underline font may be selected by \f3ul\f1 and \f3cu\f1.
+Underlining is restricted to an output-device-dependent
+subset of \f2reasonable\f1 characters.
+.h1
+.bt
+\f3&ul\f2|N\f1	off	\f2N=\f11	E	\
+Underline in \*(NR (italicize in \*(TR) the next \f2N\f1
+input text lines.
+Actually, switch to \f2underline\f1 font, saving the
+current font for later restoration;
+\f2other\f1 font changes within the span of a \f3ul\f1
+will take effect,
+but the restoration will undo the last change.
+Output generated by \f3tl\f1 (\(sc14) \f2is\f1 affected by the
+font change, but does \f2not\f1 decrement \f2N\f1.
+If \f2N\f1\^>\^1, there is the risk that
+a trap interpolated macro may provide text
+lines within the span;
+environment switching can prevent this.
+.bt
+\f3&cu\f2|N\f1	off	\f2N=\f11	E	\
+A variant of \f3ul\f1 that causes \f2every\f1 character to be underlined in \*(NR.
+Identical to \f3ul\f1 in \*(TR.
+.bt
+\f3&uf\f2|F\f1	Italic	Italic	-	\
+Underline font set to \f2F\f1.
+In \*(NR,
+\f2F\f1 may \f2not\f1 be on position 1 (initially Times Roman).
+.sc
+Control characters.
+Both the control character \f3.\f1 and the \f2no-break\f1
+control character \f3\'\f1 may be changed, if desired.
+Such a change must be compatible with the design
+of any macros used in the span of the change,
+and
+particularly of any trap-invoked macros.
+.h1
+.bt
+\f3&cc\f2|c\f1	\f3.\f1	\f3.\f1	E	\
+The basic control character is set to \f2c\f1,
+or reset to "\f3.\f1".
+.bt
+\f3&c2\f2|c\f1	\f3\'	\'\f1	E	The \f2nobreak\f1 control character is set
+to \f2c\f1, or reset to "\f3\'\f1".
+.sc
+Output translation.
+One character can be made a stand-in for another character using \f3tr\f1.
+All text processing (e. g. character comparisons) takes place
+with the input (stand-in) character which appears to have the width of the final
+character.
+The graphic translation occurs at the moment of output
+(including diversion).
+.h1
+.bt
+\f3&tr\f2|abcd....\f1	none	-	O	Translate \
+\f2a\f1 into \f2b\f1, \f2c\f1 into \f2d\f1, etc.
+If an odd number of characters is given,
+the last one will be mapped into the space character.
+To be consistent, a particular translation
+must stay in effect from \f2input\f1 to \f2output\f1 time.
+.sc
+Transparent throughput.
+An input line beginning with a \f3\e!\f1 is read in \f2copy mode\f1 and \f2transparently\f1 output
+(without the initial \f3\e!\f1);
+the text processor is otherwise unaware of the line's presence.
+This mechanism may be used to pass control information to a post-processor
+or to imbed control lines in a macro created by a diversion.
+.sc
+Comments and concealed newlines.
+An uncomfortably long input line that must stay
+one line (e. g. a string definition, or nofilled text)
+can be split into many physical lines by ending all but
+the last one with the escape \f3\e\f1.
+The sequence \f3\e\f1(newline) is \f2always\f1 ignored\(em\
+except in a comment.
+Comments may be imbedded at the \f2end\f1 of any line by
+prefacing them with \f3\e"\f1.
+The newline at the end of a comment cannot be concealed.
+A line beginning with \f3\e"\f1 will appear as a blank line and
+behave like \f3.sp|1\f1;
+a comment can be on a line by itself by beginning the line with \f3.\e"\f1.
+.mh
+Local Horizontal and Vertical Motions, and the Width Function
+.sc
+Local Motions.
+The functions \f3\ev\'\f2N\f3\|\'\f1 and
+\f3\eh\'\f2N\f3\|\'\f1
+can be used for \f2local\f1 vertical and horizontal motion respectively.
+The distance \f2N\f1 may be negative; the \f2positive\f1 directions
+are \f2rightward\f1 and \f2downward\f1.
+A \f2local\f1 motion is one contained \f2within\f1 a line.
+To avoid unexpected vertical dislocations, it is necessary that
+the \f2net\f1 vertical local motion within a word in filled text
+and otherwise within a line balance to zero.
+The above and certain other escape sequences providing local motion are
+summarized in the following table.
+.tr ||
+.ds X \0\0\0
+.TS
+center box;
+c2|cs2||c2|cs2
+c1|c2c2||c2|c2c2.
+Vertical	Effect in	Horizontal	Effect in
+Local Motion	\*(TR	\*(NR	Local Motion	\*(TR	\*(NR
+_
+.sp.4
+.TC
+l2|ls2||l2|ls2.
+\f3\*X\ev\'\f2N\|\^\f3\'\f1	Move distance \f2N\f1	\
+\f3\*X\eh\'\f2N\|\^\f3\'\f1	Move distance \f2N\f1
+.TC
+_2|_2_2||l2|ls2.
+x	x	x	\f3\*X\e\f1(space)	Unpaddable space-size space
+.TC
+l2|l2|l2||l2|ls2.
+\f3\*X\eu\f1	\(12 em up	\(12 line up	\f3\*X\e0\f1	Digit-size space
+.TC
+l2|l2|l2||_2|_2_2.
+\f3\*X\ed\f1	\(12 em down	\(12 line down	x	x	x
+.TC
+l2|l2|l2||l2|l2|l2.
+\f3\*X\er\f1	1 em up	1 line up	\f3\*X\e\||\f1	1\(sl6 em space	ignored
+			\f3\*X\e^\f1	1\(sl12 em space	ignored
+.sp.4
+.TE
+.rm X
+.tr |
+As an example,
+\f3E\s-2\v'-.4m'2\v'.4m'\s+2\f1
+could be generated by the sequence
+\f3E\es\-2\ev\'\-0.4m\'2\ev\'0.4m\'\es+2\f1;
+it should be noted in this example that
+the 0.4|em vertical motions are at the smaller size.
+.sc
+Width Function.
+The \f2width\f1 function \f3\ew\'\f2string\f3\|\'\f1
+generates the numerical width of \f2string\f1 (in basic units).
+Size and font changes may be safely imbedded in \f2string\f1,
+and will not affect the current environment.
+For example,
+\&\f3.ti|\-\\w\'1.|\'u\f1 could be used to
+temporarily indent leftward a distance equal to the
+size of the string "\f31.|\f1".
+.pg
+The width function also sets three number registers.
+The registers \f3st\f1 and \f3sb\f1 are set respectively to the highest and
+lowest extent of \f2string\f1 relative to the baseline;
+then, for example,
+the total \f2height\f1 of the string is \f3\en(stu\-\en(sbu\f1.
+In \*(TR the number register \f3ct\f1 is set to a value
+between 0|and|3:
+0 means that all of the characters in \f2string\f1 were short lower
+case characters without descenders (like \f3e\f1);
+1 means that at least one character has a descender (like \f3y\f1);
+2 means that at least one character is tall (like \f3H\f1);
+and 3 means that both tall characters and characters with
+descenders are present.
+.sc
+Mark horizontal place.
+The escape sequence \f3\ek\f2x\f1 will cause the \f2current\f1 horizontal
+position in the \f2input line\f1 to be stored in register \f2x\f1.
+As an example,
+the construction \f3\ekx\f2word\|\f3\eh\'\|~\|\enxu+2u\'\f2word\f3\f1
+will embolden \f2word\f1 by backing up to almost its beginning and overprinting it,
+resulting in \kz\f2word\f1\h'|\nzu+2u'\f2word\f1.
+.mh
+Overstrike, Bracket, Line-drawing, and Zero-width Functions
+.sc
+Overstriking.
+Automatically centered overstriking of up to nine characters
+is provided by the \f2overstrike\f1 function
+\f3\eo\'\f2string\f3\|\'\f1.
+The characters in \f2string\f1 overprinted with centers aligned; the total width
+is that of the widest character.
+\f2string\f1 should \f2not\f1 contain local vertical motion.
+As examples,
+\f3\eo\'e\e\'\'\f1 produces \f3\o'e\''\f1, and
+\f3\eo\'\e(mo\e(sl\'\f1 produces \f3\o'\(mo\(sl'\f1.
+.sc
+Zero-width characters.
+The function \f3\ez\f2c\f1 will output \f2c\f1 without spacing over
+it, and can be used to produce left-aligned overstruck
+combinations.
+As examples,
+\f3\ez\e(ci\e(pl\f1 will produce \f3\z\(ci\(pl\f1, and
+\f3\e(br\ez\e(rn\e(ul\e(br\f1 will produce the smallest possible
+constructed box \f3\(br\z\(rn\(ul\(br\f1\|.
+.sc
+Large Brackets.
+The Special Mathematical Font contains a number of bracket construction pieces
+(\|\|\(lt\|\|\(lb\|\|\(rt\|\|\(rb\|\|\(lk\|\|\(rk\|\|\(bv\|\|\(lf\|\|\(rf\|\|\(lc\|\|\(rc\|\|)
+that can be combined into various bracket styles.
+The function \f3\eb\'\f2string\f3\|\'\f1 may be used to pile
+up vertically the characters in \f2string\f1
+(the first character on top and the last at the bottom);
+the characters are vertically separated by 1|em and the total
+pile is centered 1\(sl2\|em above the current baseline
+(\(12 line in \*(NR).
+For example,
+\f3\eb\'\|\e(lc\e(lf\|\'E\e\|~\|\eb\'\|\e(rc\e(rf\|\'\|\ex\'\|\-0.5m\'\|\ex\'0.5m\'\|\f1
+produces
+\x'-.5m'\x'.5m'\f3\b'\(lc\(lf'E\|\b'\(rc\(rf'\f1.
+.sc
+Line drawing.
+.tr &&
+The function \f3\e\|l\|\'\f2Nc\f3\|\'\f1 will draw a string of repeated \f2c\f1\|'s towards the right for a distance \f2N\f1.
+(\|\f3\el\f1 is \f3\e\f1(lower case L).
+If \f2c\f1 looks like a continuation of
+an expression for \f2N\f1, it may insulated from \f2N\f1 with a \f3\e&\f1.
+If \f2c\f1 is not specified, the \f3\(ru\f1 (baseline rule) is used
+(underline character in \*(NR).
+If \f2N\f1 is negative, a backward horizontal motion
+of size \f2N\f1 is made \f2before\f1 drawing the string.
+Any space resulting from \f2N\f1\|\(sl(size of \f2c\f1) having a remainder is put at the beginning (left end)
+of the string.
+In the case of characters
+that are designed to be connected such as
+baseline-rule\ \f3\(ru\f1\|,
+underrule\ \f3\(ul\f1\|,
+and
+root-en\ \f3\(rn\f1\|,
+the remainder space is covered by over-lapping.
+If \f2N\f1 is \f2less\f1 than the width of \f2c\f1,
+a single \f2c\f1 is centered on a distance \f2N\f1.
+As an example, a macro to underscore a string can be written
+.br
+.tr &.
+.x1
+.ft3
+.ne 2.1
+&de us
+\e\e$1\e\|l\|\'\|~\|0\e(ul\'
+&&
+.ft1
+.x2
+.ne2.1
+.de xu
+\\$1\l'|0\(ul'
+..
+or one to draw a box around a string
+.x1
+.ft3
+&de bx
+\e(br\e\|~\|\e\e$1\e\|~\|\e(br\e\|l\|\'\|~\|0\e(rn\'\e\|l\|\'\|~\|0\e(ul\'
+&&
+.ft1
+.x2
+.de bx
+\(br\|\\$1\|\(br\l'|0\(rn'\l'|0\(ul'
+..
+such that
+.x1
+.ft3
+&ul "underlined words"
+.ft1
+.x2
+and
+.x1
+.ft3
+&bx "words in a box"
+.ft1
+.x2
+yield
+.xu "underlined words"
+and
+.bx "words in a box"
+\h'-\w'.'u'.
+.pg
+The function \f3\eL\'\|\f2Nc\f3\|\'\f1 will draw a vertical line consisting
+of the (optional) character \f2c\f1 stacked vertically apart 1\|em
+(1 line in \*(NR),
+with the first two characters overlapped,
+if necessary, to form a continuous line.
+The default character is the \f2box rule\f1 |\(br| (\f3\|\e(br\f1);
+the other suitable character is the \f2bold vertical\f1 \|\(bv\| (\f3\|\e(bv\f1).
+The line is begun without any initial motion relative to the
+current base line.
+A positive \f2N\f1 specifies a line drawn downward and
+a negative \f2N\f1 specifies a line drawn upward.
+After the line is drawn \f2no\f1 compensating
+motions are made;
+the instantaneous baseline is at the \f2end\f1 of the line.
+.pg
+.de eb
+.sp -1
+.nf
+\h'-.5n'\L'|\\nzu-1'\l'\\n(.lu+1n\(ul'\L'-|\\nzu+1'\l'|0u-.5n\(ul'
+.fi
+..
+.ne 3i
+.mk z
+The horizontal and vertical line drawing functions may be used
+in combination to produce large boxes.
+The zero-width \f2box-rule\f1 and the \(12-em wide \f2underrule\f1
+were \f2designed\f1 to form corners when using 1-em vertical
+spacings.
+For example the macro
+.x1
+\s-1
+.ft3
+\&.de eb
+\&.sp \-1	\e"compensate for next automatic base-line spacing
+\&.nf	\e"avoid possibly overflowing word buffer
+.tr ||
+\&\eh\'\-.5n\'\eL\'\||\|\e\enau\-1\'\el\'\e\en(.lu+1n\e(ul\'\eL\'\-\||\|\e\enau+1\'\el\'\||\|0u\-.5n\e(ul\'    \e"draw box
+.tr |
+.lg 0
+\&.fi
+.lg 0
+\&..
+.ft1
+\s0
+.x2
+will draw a box around some text whose beginning vertical place was
+saved in number register \f2a\f1
+(e. g. using \f3.mk|a\f1)
+as done for this paragraph.
+.eb

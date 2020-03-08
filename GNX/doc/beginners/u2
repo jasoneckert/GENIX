@@ -1,0 +1,1254 @@
+.ig
+	u2: version 1.2 of 11/22/83
+	
+
+	@(#)u2	1.2	(NSC)	11/22/83
+..
+.SH
+II.  DAY-TO-DAY USE
+.SH
+Creating Files \(em The Editor
+.PP
+The \s-2GENIX\s0 operating system has several editors for
+typing papers, letters, and programs.
+The editors manipulate information in files in the system so the
+information can be updated, executed, printed, and so on.
+The basic text editor,
+.UL ed,
+is documented in 
+.UL ed (1) 
+and explained in
+.ul
+A Tutorial Introduction to the \s-2UNIX\s0 Text Editor,
+and therefore, not be described in this paper.
+.UL Ed 
+will be used here to create some files.
+.PP
+To create a file 
+called
+.UL junk
+with some text in it, do the following:
+.P1
+.ta .65i
+ed junk	\f1(invokes the text editor)\f3
+a	\f1(command to ``ed'', to add text)\f3
+.I
+now type in
+whatever text you want ...
+.ft 3
+\&.	\f1(signals the end of adding text)
+.P2
+The ``\f3.\f1'' that signals the end of adding text must be
+by itself at the beginning of a line.
+Until ``\f3.\f1'' is typed,
+no other
+.UL ed
+commands will be recognized and
+everything you type will be treated as added text.
+.PP
+At this point you can do various editing operations
+on the text you typed in, such as correcting spelling mistakes,
+rearranging paragraphs and the like.
+Finally, you must write the information you have typed
+into a file with the editor command
+.UL w :
+.P1
+w
+.P2
+.UL ed
+will respond with the number of characters it wrote
+into the file 
+.UL junk .
+.PP
+Type a
+.UL q
+command
+to quit the editor.
+If you try to quit without writing,
+.UL ed
+will print a
+.UL ?
+to remind you that you have not written the information to the file.
+Typing
+.UL q
+again exits the
+.UL ed
+program regardless.
+.PP
+Until the
+.UL w
+command is executed, all text that was entered is held in temporary memory.
+So if
+.UL ed
+is exited prior to the 
+.P1
+w
+.P2
+command, all entered text is lost.
+But after
+.UL w
+the information is store permanently;
+you can re-access it any time by typing
+.P1
+ed junk
+.P2
+Create a second file called 
+.UL temp
+in the same manner.
+You should now have two files:
+.UL junk
+and
+.UL temp .
+.SH
+What files are out there?
+.PP
+The
+.UL ls
+(for ``list'') command lists the names
+(not contents)
+of any of the files that
+.UC GENIX
+knows about.
+If you type
+.P1
+ls
+.P2
+the response will be
+.ta .65i
+.P1
+junk	temp
+.P2
+which are indeed the two files just created.
+The names are sorted into alphabetical order automatically,
+but other variations are possible.
+For example,
+the command
+.P1
+ls \ \-t
+.P2
+causes the files to be listed in the order in which they were last changed,
+most recent first.
+The
+.UL \ \-l
+option gives a ``long'' listing:
+.P1
+ls  -l
+.P2
+produces 
+.P1
+-rw-rw-rw-  1 bwk   41 Oct 22 10:56 junk
+-rw-rw-rw-  1 bwk   78 Oct 22 11:57 temp
+.P2
+The date and time are of the last change to the file.
+The 41 and 78 are the number of characters
+(which should agree with the numbers you got from
+.UL ed ).
+.UL bwk
+is the owner of the file, that is, the person
+who created it.
+The
+.UL \-rw\-rw\-rw\- 
+tells who has permission to read and write the file,
+in this case everyone.
+.PP
+Options can be combined:
+.UL ls\ \ \-lt
+gives the same thing as
+.UL ls\ \ \-l ,
+but sorted into time order.
+You can also name the files you're interested in,
+and 
+.UL ls
+will list the information about them only.
+More details can be found in 
+.UL ls (1).
+.PP
+The use of optional arguments that begin with a minus sign,
+like
+.UL \ \-t
+and
+.UL \ \-lt ,
+is a common convention for
+.UC GENIX
+programs.
+In general, if a program accepts such optional arguments,
+they precede any filename arguments.
+Various arguments must be separated with spaces:
+.UL ls\ \ \-l
+is not the same as
+.UL ls\ \-l .
+.SH
+Printing Files
+.PP
+Many programs print files.
+You can use the editor
+to print a file to your terminal.  This is useful as
+seeing text is often necessary for making changes and corrections.
+You can say
+.P1
+ed junk
+.P2
+and
+.UL ed
+will reply with the count of the characters in 
+.UL junk .
+Then print all the lines in the file with
+.P1
+1,$p
+.P2
+After you learn how to use the editor,
+you can be selective about the parts you print.
+.PP
+There are times when it's not feasible to use the editor for printing.
+For example, there is a limit on how big a file
+.UL ed
+can handle
+(several thousand lines).
+Secondly, 
+it
+can only print one file at a time,
+and sometimes several need to be printed, one after another.
+So the 
+.UC GENIX
+operating system offers several alternatives.
+A few are discussed here.
+.PP
+First is
+.UL cat .
+.UL Cat
+displays the contents of all the files
+named in a list.
+So
+.P1
+cat junk
+.P2
+prints one file, and
+.P1
+cat junk temp
+.P2
+prints two.
+The files are simply concatenated (hence the name
+.UL cat '') ``
+onto the terminal.
+.PP
+The
+.UL pr
+command produces formatted printouts of files.
+As with 
+.UL cat ,
+.UL pr
+prints all the files named in a list.
+The difference is that it produces 
+headings with date, time, page number and file name
+at the top of each page,
+and
+extra lines to skip over the fold in the paper.
+So,
+.P1
+pr junk temp
+.P2
+will print
+.UL junk
+neatly,
+then skip to the top of a new page and print
+.UL temp
+neatly.
+.PP
+Also,
+.UL pr
+can produce multi-column output:
+.P1
+pr -3 junk 
+.P2
+prints
+.UL junk
+in 3-column format.
+You can use any reasonable number in place of ``3''
+and 
+.UL pr
+will do its best.
+See
+.UL pr (1)
+to find out about its other options.
+Note that
+.UL pr
+is
+.ul
+not
+a formatting program in the sense of shuffling lines around
+and justifying margins.
+The true formatters are
+.UL nroff
+and
+.UL troff ,
+which are described in the section on document preparation.
+.PP
+On a display terminal,
+.UL cat
+and
+.UL pr
+display the contants of files to rapidly to be read.  The
+.UL more
+command is like 
+.UL cat
+but it prints files a screenful at a time.  After
+.UL more
+fills the screen with the first lines in the files, it stops and
+puts a line at the bottom stating
+.P1
+--More--(15%)
+.P2
+The percentage is how much of the file
+.UL more
+has already printed.  
+Pressing the space bar prompts 
+.UL more
+to display the next batch of lines from the file.  The next lines
+are not all new; 
+.UL more
+makes the
+last line of one screenful the first line of a new batch.
+.PP
+Programs that print files
+on a high-speed printer are also available.
+Look in the manual under
+.UL lpr (1).
+.SH
+Shuffling Files 
+.PP
+Now that you have some files in the file system,
+try moving, deleting, and copying files.
+For example,
+to move a file from one place to another
+(which amounts to giving it the file a new name),
+type:
+.P1
+mv junk precious
+.P2
+This moves what used to be in a file called
+``junk'' to a file called ``precious''.
+Now, an 
+.UL ls
+command prints
+.P1
+precious	temp
+.P2
+Beware:  if you move a file to another one
+that already exists,
+the contents of the previously existing file are lost forever.
+.PP
+If you want
+to make a
+.ul
+copy
+of a file (that is, to have two files with the same contents),
+use the 
+.UL cp
+command:
+.P1
+cp precious temp1
+.P2
+This makes a duplicate copy of 
+.UL precious
+in
+.UL temp1 .
+.PP
+Finally, when you get tired of creating and moving
+files, the
+.UL rm .
+command removes files from the file system.
+.P1
+rm temp temp1
+.P2
+will remove both of the files named.
+.PP
+The
+.UC GENIX 
+operating system 
+prints a warning message if one of the named files
+does not exist.  Otherwise
+.UL rm ,
+like most
+.UC GENIX
+commands,
+does its work silently.
+This terseness is sometimes disconcerting
+to new\%comers,
+but experienced users find it desirable.
+.SH
+Filenames
+.PP
+A legal filename follows these rules.
+First, filenames are limited to 14 characters,
+which is enough to be descriptive.
+Second, although you can use almost any character
+in a filename,
+common sense says you should stick to printable characters,
+and that you should avoid characters that have
+other meanings.
+We have already seen, for example,
+that in the
+.UL ls
+command,
+.UL ls
+\ \-t
+means to list in time order.
+So if you had a file whose name
+was
+.UL \-t ,
+you would have a tough time listing it by name.
+.PP
+Other characters besides the minus sign
+have special meaning.
+To avoid pitfalls,
+use only letters, numbers and the period
+until you are familiar with the characters that have special
+meanings.
+.PP
+A large document like a book
+logically divides into many small pieces,
+such as chapters and sections.
+Physically it should be divided,
+since
+.UL ed
+cannot handle really big files (although some of the other editors can).
+So you should type a large document as a number of files.
+You might have a separate file for each chapter,
+called
+.P1
+chap1
+chap2
+.ft R
+etc...
+.P2
+Or, if each chapter were broken into several files, you might have
+.P1
+chap1.1
+chap1.2
+chap1.3
+\&...
+chap2.1
+chap2.2
+\&...
+.P2
+You can now tell at a glance where a particular file fits into the whole.
+.PP
+There are advantages to a systematic naming convention that are not obvious
+to the novice
+.UC GENIX 
+user.
+If you wanted to print the whole book
+you could say
+.P1
+pr chap1.1 chap1.2 chap1.3 ......
+.P2
+but you would get tired pretty fast, and would probably even make mistakes.
+Fortunately, there is a shortcut.
+You can say
+.P1
+more chap*
+.P2
+The
+.UL *
+means ``anything at all,''
+so this translates into ``print all files
+whose names begin with 
+.UL chap '',
+listed in alphabetical order.
+.PP
+This shorthand notation
+is not a property of the
+.UL more
+command; 
+it is a system-wide service provided by the program
+that interprets commands,
+the Bourne shell or the C shell,
+.UL sh (1)
+or
+.UL csh (1).
+You can now see how to list the names of the files in the book:
+.P1
+ls chap*
+.P2
+produces
+.P1
+chap1.1
+chap1.2
+chap1.3
+\&...
+.P2
+The
+.UL *
+is not limited to the last position in a filename \(em
+it can be anywhere
+and can occur several times.
+Thus
+.P1
+rm *junk* *temp*
+.P2
+removes all files that contain
+.UL junk
+or
+.UL temp
+as any part of their name.  The 
+.UL *
+by itself matches every filename,
+so
+.P1
+pr *
+.P2
+prints all your files, and
+.P1
+rm *
+.P2
+removes
+.I all 
+files.  (You had better be
+.I very 
+sure that is what you want.)
+.PP
+The
+.UL *
+is not 
+the only pattern-matching feature available.
+Suppose you want to print only Chapters 1 through 4 and 9.
+Then you can say
+.P1
+cat chap[12349]*
+.P2
+The
+.UL []
+means to match any of the characters inside the brackets.
+A range of consecutive letters or digits can be abbreviated,
+so you can also do this 
+with
+.P1
+cat chap[1-49]*
+.P2
+Letters can also be used within brackets:
+.UL [a\-z]
+matches any character in the range
+.UL a
+through
+.UL z .
+.PP
+The
+.UL ?
+pattern matches any single character,
+so
+.P1
+ls ?
+.P2
+lists all files which have single-character names,
+and
+.P1
+ls \ -l chap?.1
+.P2
+lists information about the first file of each chapter
+.UL chap1.1 \&, (
+.UL chap2.1 ,
+etc.).
+.PP
+Of these features,
+you should find
+.UL *
+to be the most useful.
+.PP
+If you should ever have to turn off the special meaning
+of
+.UL * ,
+.UL ? ,
+etc.,
+enclose the entire argument in single quotes,
+as in
+.P1
+ls `?'
+.P2
+.SH
+What Else is in a Filename
+.PP
+When you first made that file called
+.UL junk ,
+how did 
+the system
+know that there wasn't another
+.UL junk
+somewhere else,
+especially since the person in the next office is also
+reading this tutorial?
+The answer is that generally each user 
+has a private
+\f2directory\f1,
+which contains only the files that belong to him.
+When you log in, you are ``in'' your directory.
+Unless you take special action,
+when you create a new file,
+it is made in the directory that you are currently in.
+Most often this is your own directory.  And
+.UC GENIX
+files in one directory are unrelated to any other file of the same name
+that might exist in someone else's directory.
+.PP
+The set of all files
+is organized into a tree,
+with your files located several branches into the tree.
+You can ``walk'' around this tree
+and find any file in the system, by starting at the root
+of the tree and walking along the proper set of branches.
+Conversely, you can start where you are and walk toward the root.
+.PP
+Try the latter first.
+The basic tools are the commands
+.UL pwd
+(``print working directory''),
+which prints the name of the directory you are currently in,
+and
+.UL cd
+(``change directory'').
+.PP
+Give the
+command
+.UL pwd ,
+and 
+.UC GENIX
+will print something like
+.P1
+/u/your\(hyname
+.P2
+This says that you are currently in the directory
+.UL your-name ,
+which is in turn in the directory
+.UL /u ,
+which is in turn in the root directory
+called by convention just
+.UL / .
+(The directory above yours may not be called
+.UL /u
+in your system's implementation, but 
+you will get something analogous.
+Make the corresponding changes and read on.)
+.PP
+If you now type
+.P1
+ls /u/your\(hyname
+.P2
+you should get exactly the same list of file names
+as you get from a plain
+.UL ls
+with no options;
+.UL ls
+lists the contents of the current directory.  When it is
+given the name of a directory,
+it lists the contents of that directory.
+.PP
+Next, try
+.P1
+ls /u
+.P2
+This should print a long series of names,
+among which is your own login name
+.UL your-name .
+On many implementations, 
+.UL u
+is a directory that contains the directories
+of all the users of the system.
+.PP
+The next step is to try
+.P1
+ls  /
+.P2
+You should get a response something like this
+.sp
+.nf
+.B
+bin	etc	lost+found	tmp	usr	vmunix
+.br
+dev	lib	stand		u	vmsymbols
+.R
+.fi
+.LP
+This is a collection of the basic directories of files
+that
+the system
+knows about;
+we are at the root of the tree.
+.PP
+Now try
+.P1
+cat /u/your\(hyname/junk
+.P2
+(if
+.UL junk
+is still around in your directory).
+The name
+.P1
+/u/your\(hyname/junk
+.P2
+is called the
+.UL pathname
+of the file that
+you normally think of as ``junk''.
+``Pathname'' has an obvious meaning:
+it represents the full name of the path you have to follow from the root
+through the tree of directories to get to a particular file.
+A universal rule in
+the
+.UC GENIX
+system
+is that anywhere you can use an ordinary filename,
+you can use a pathname.
+.PP
+Here is a picture that may help:
+.\".P1 1
+.\".ft 1
+.\".if t .vs 9p
+.\".if t .tr /\(sl
+.\".if t .tr ||
+.\".ce 100
+.\"(root)
+.\"/ | \e
+.\"/  |  \e
+.\"/   |   \e
+.\"bin    etc        u      dev   tmp    usr
+.\"/ | \e   / | \e      / | \e   / | \e   / | \e   / | \e
+.\"/  |  \e
+.\"/   |   \e
+.\"adam  eve   mary
+.\"/        /   \e        \e
+.\"             /     \e       junk
+.\"junk temp
+.\".ce 0
+.\".br
+.\".tr //
+.TS
+center tab (:);
+l1 l1 l1 c1 l1 l1 l1 l1 .
+:::(root)
+.sp 2
+bin:etc::  u::dev:tmp:usr
+.sp 2
+:adam::eve::mary
+.sp 1
+::junk::temp:junk
+.TE
+.\".P2
+.LP
+Notice that Mary's
+.UL junk
+is unrelated to Eve's.
+.PP
+This isn't too exciting if all the files of interest are in your own
+directory, but if you work with someone else
+or on several projects concurrently,
+it becomes handy indeed.
+For example, your friends can print your book by saying
+.P1
+pr /u/your\(hyname/chap*
+.P2
+Similarly, you can find out what files your neighbor has
+by saying
+.P1
+ls /u/neighbor\(hyname
+.P2
+or make your own copy of one of his files by
+.P1
+cp /u/your\(hyneighbor/his\(hyfile yourfile
+.P2
+.PP
+If your neighbor doesn't want you poking around in his files,
+or vice versa,
+privacy can be arranged.
+Each file and directory has read-write-execute permissions for the owner,
+a group, and everyone else,
+which can be set
+to control access.
+See
+.UL ls (1)
+and
+.UL chmod (1)
+for details.
+As a matter of observed fact,
+most users most of the time find openness of more
+benefit than privacy.
+.PP
+As a final experiment with pathnames, try
+.P1
+ls /bin /u/bin
+.P2
+Do some of the names look familiar?
+When you run a program, by typing its name after the prompt character,
+the system looks for a file of that name.
+It looks first in your directory
+(where the command typically is not found),
+then in
+.UL /bin
+and finally in
+.UL /usr/bin .
+There is nothing magic about commands like
+.UL cat
+or
+.UL ls ,
+except that they have been placed in a standard directory
+where they are easy to find and administer.
+.PP
+What if you work regularly with someone else on common information
+in his directory?
+You could just log in as your friend each time you want to,
+but you can also say
+``I want to work on his files instead of my own''.
+This is done by changing the directory that you are
+currently in:
+.P1
+cd /u/your\(hyfriend
+.P2
+Now when you use a filename in something like
+.UL cat
+or
+.UL pr ,
+it refers to the file in your friend's directory,
+which is now yuour current working directory.
+Changing directories doesn't affect any permissions associated
+with a file \(em
+if you couldn't access a file from your own directory,
+changing to another directory won't alter that fact.
+Of course,
+if you forget what directory you're in, type
+.P1
+pwd
+.P2
+to find out.
+.PP
+It is usually convenient to arrange your own files
+so that all the files related to one thing are in a 
+separate directory separate
+from other projects.
+For example, when you write your book, you might want to keep all the text
+in a directory called
+.UL book .
+So make one with the command
+.P1
+mkdir book
+.P2
+then change to it with
+.P1
+cd book
+.P2
+then start typing chapters.
+The pathname for 
+.UL book
+is now in
+.P1
+/u/your\(hyname/book
+.P2
+To remove the directory
+.UL book ,
+type
+.P1
+rm book/*
+rmdir book
+.P2
+The first command removes all files from the directory;
+the second
+removes the empty directory.
+.PP
+To go up one level in the tree of directories 
+type
+.P1
+cd ..
+.P2
+.UL .. '' ``
+is the name of the directory above whatever directory you are currently in.
+Also, 
+.UL . '' ``
+is an alternate name
+for the directory you are in.
+.SH
+Using Files Instead of the Terminal
+.PP
+Most of the commands we have seen produce output
+on the terminal;
+some, like the editor, also take their input from the terminal.
+In
+.UC GENIX
+systems
+the terminal can be replaced by a file
+for either or both of the input and output.
+For example,
+.P1
+ls
+.P2
+makes a list of files on your terminal.
+But typing
+.P1
+ls >filelist
+.P2
+puts the list of your files in the file
+.UL filelist.
+.UC GENIX 
+creates 
+.UL filelist
+if it does not already exist,
+or if it does exists,
+.UC GENIX
+overwrites it.
+.PP
+The symbol
+.UL >
+means ``send the output to the following file,
+rather than on the terminal.''
+Nothing is produced on the terminal.
+As another example, you could combine
+several files into one by capturing the output of
+.UL cat
+in a file:
+.P1
+cat f1 f2 f3 >temp
+.P2
+.PP
+The symbol
+.UL >>
+operates very much like
+.UL >
+does,
+except that it means
+``add to the end of.''
+That is,
+.P1
+cat f1 f2 f3 >>temp
+.P2
+means to concatenate
+.UL f1 ,
+.UL f2 
+and
+.UL f3
+to the end of whatever is already in
+.UL temp ,
+instead of overwriting the existing contents.
+As with
+.UL > ,
+if 
+.UL temp
+doesn't exist, it will be created for you.
+.PP
+In a similar way, the symbol
+.UL <
+means to take the input
+for a program from the following file,
+instead of from the terminal.
+A script of commonly used editing commands
+can be put into a file called
+.UL script .
+Then you can run the script on a file by saying
+.P1
+ed file <script
+.P2
+As another example, you can use
+.UL ed
+to prepare a letter in file
+.UL let ,
+then send it to several people with
+.P1
+mail adam eve mary joe <let
+.P2
+.SH
+Pipes
+.PP
+One of the features of the
+.UC GENIX
+system
+is the idea of a
+.ul
+pipe.
+A pipe connects the output of one program
+to the input of another program,
+so the two programs run as a sequence of processes \(em
+a pipeline.
+.PP
+For example,
+.P1
+pr f g h
+.P2
+will print the files
+.UL f ,
+.UL g ,
+and
+.UL h ,
+beginning each on a new page.
+To run the files together then print them, 
+you could say
+.P1
+cat f g h >temp
+pr temp
+rm temp
+.P2
+but this is more work than necessary.
+To take the output of
+.UL cat
+and
+connect it to the input of
+.UL pr ,
+use a pipe:
+.P1
+cat f g h | pr
+.P2
+The vertical bar \f3|\f1
+means to
+take the output from
+.UL cat ,
+which would normally have gone to the terminal,
+and put it into
+.UL pr
+to be neatly formatted.
+.PP
+There are many other examples of pipes.
+For example,
+.P1
+ls | pr -3
+.P2
+prints a list of your files in three columns.
+The program
+.UL wc
+counts the number of lines, words and characters in
+its input.  The 
+.UL ls
+command
+lists the files in your current directory.  So, 
+.P1
+ls | wc
+.P2
+tells how many files are in that directory.
+The
+.UL wc
+command reports three numbers:  
+the first number is the number of lines, the 
+second number is the number of
+words, and
+the third number is the number of characters.  
+In this case the number of words is the same as the
+number of lines.
+.PP
+Any program
+that reads from the terminal
+can read from a pipe instead;
+any program that writes on the terminal can 
+write to a pipe.
+You can have as many elements in a pipeline as you wish.
+Most 
+.UC GENIX
+programs can read from a file, a terminal, or a pipe.
+.UL pr
+is one example:
+.P1
+pr -3 a b c
+.P2
+prints files
+.UL a ,
+.UL b
+and
+.UL c
+in order in three columns.
+But in
+.P1
+cat a b c | pr -3
+.P2
+.UL pr
+prints the information coming down the pipeline,
+still in
+three columns.
+.SH
+The C Shell and the Shell
+.PP
+Both the C shell and Bourne shell are available under
+the
+.UC GENIX
+operating system.  The C shell
+is 
+.UL csh (1),
+and the Bourne shell is
+.UL sh (1).
+A shell is a program that interprets what you type as
+commands and arguments.
+It also translates
+.UL * ,
+etc.,
+into lists of filenames,
+and
+.UL < ,
+.UL > ,
+and \f3|\f1
+into changes of input and output streams.
+.PP
+The shell has other capabilities too.
+For example, one command line can invoke two commands
+by separating the commands with a semicolon;
+the shell recognizes the semicolon and
+breaks the line into two commands.  So
+.P1
+date; who
+.P2
+does both commands before returning with a prompt character.
+.PP
+The shell also allow programs to run
+.I simultaneously .
+For example, if you are doing something time-consuming,
+like the editor script
+of an earlier section,
+and you don't want to wait around for the results before 
+starting something else,
+type
+.P1
+ed file < script &
+.P2
+The ampersand at the end of a command line
+says ``start this command running,
+then take further commands from the terminal immediately.''
+This is usually referred to as a background process.
+The \s-2GENIX\s0 operating system
+does not wait for that command to complete.
+It begins the script,
+but returns a prompt so that you can do something else at the same time.
+To keep the output of the editor script from interfering
+with what you are doing on the terminal,
+redirect the output of the script to a file using
+.P1
+ed file < script > script.out &
+.P2
+which saves the output lines in a file
+called
+.UL script.out .
+.PP
+When you initiate a command with
+.UL & ,
+the system
+replies with a number
+called the process number.
+(In the C shell, two numbers are printed;
+the second is the process number.)
+The process number identifies the command in case you later want
+to stop it.
+If you do, you can say
+.P1
+kill process\(hynumber
+.P2
+Process numbers are also available using the 
+.UL ps
+command.
+.UL ps
+tells process numbers, command names, and how long commands have
+been executing.
+(If you are desperate,
+.UL kill\ -9
+will kill all your processes.)
+.UL ps\ a
+will tell you about
+.ul
+all
+programs currently running on the
+.UC GENIX
+system, not just your own.
+.PP
+You can say
+.P1 1
+(command\(hy1; command\(hy2; command\(hy3) &
+.P2
+to start three commands in the background,
+or you can start a background pipeline with
+.P1
+command\(hy1 | command\(hy2 &
+.P2
+.PP
+Just as you can tell the editor
+or some similar program to take its input
+from a file instead of from the terminal,
+you can tell the shell to read a file
+to get commands.
+For instance, to set tabs on
+a terminal and find out the date
+and who's on the system every time you log in,
+put the three necessary commands
+.UL tabs , (
+.UL date ,
+.UL who )
+into a file.  Call the file
+.UL startup ,
+and execute it by typing
+.P1
+csh startup
+.P2
+This says to run the shell with the file
+.UL startup
+as input.
+The effect is the same as typing 
+the contents of
+.UL startup
+on the terminal.
+.PP
+If this is to be a regular thing,
+you can eliminate the 
+need to type
+.UL csh :
+type, once only, the command
+.P1
+chmod +x startup
+.P2
+and thereafter you need only say
+.P1
+startup
+.P2
+to run the sequence of commands.
+The
+.UL chmod (1)
+command marks the file executable;
+the shell recognizes this and runs it as a sequence of commands.
+.PP
+If you want 
+.UL startup
+to run automatically every time you log in,
+create a file in your login directory called
+.UL .login
+for the C shell or
+.UL .profile 
+for the Bourne shell.
+Place in one of those files the line
+.UL startup .
+When the shell first gains control when you log in,
+it looks for a 
+.UL .profile
+or 
+.UL .login
+file and executes whatever commands it finds in it.
+.PP
+To check which shell you are using type
+.P1
+f login-name
+.P2
+substituting your actual login name for
+.ul
+login-name.
+In response the 
+.UC GENIX
+operating system
+displays four lines of information about your system environment.
+On the second line is
+.P1
+Shell:  /bin/csh
+.P2
+or
+.P1 
+Shell:  /bin/sh
+.P2
+The
+.UL chsh
+command changes shells; see
+.UL chsh (1).
+.PP
+The section on programming gives more information on the shells.
+.PP
+G\s-2ENIX\s0 offers the Source Code Control System
+.UL sccs
+that keeps track of changes to text files.  All versions of a file
+are available for editing or viewing.  See
+.UL sccs (1)
+and 
+.ul
+Source Code Control System User's Guide.

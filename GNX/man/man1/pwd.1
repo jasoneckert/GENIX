@@ -1,0 +1,23 @@
+.ig
+	@(#)pwd.1	1.2	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PWD 1
+.UC 4
+.SH NAME
+pwd \- working directory name
+.SH SYNOPSIS
+.B pwd
+.SH DESCRIPTION
+.I Pwd
+prints the pathname of the working (current) directory.
+.SH "SEE ALSO"
+cd(1), csh(1)
+.SH BUGS
+In
+.IR csh (1)
+the command
+.I dirs
+is always faster (although it can give a different answer in the rare case
+that the current directory or a containing directory was moved after
+the shell descended into it).

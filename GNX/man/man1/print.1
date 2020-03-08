@@ -1,0 +1,21 @@
+.ig
+	@(#)print.1	1.2	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PRINT 1
+.UC
+.SH NAME
+print \- pr to the line printer
+.SH SYNOPSIS
+.B print
+file ...
+.SH DESCRIPTION
+.I Print
+.I pr's
+a copy of each named file on the line printer.
+It is a one line shell script:
+.PP
+.DT
+	pr $* | lpr
+.SH SEE\ ALSO
+lpr(1), pr(1)

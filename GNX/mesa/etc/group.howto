@@ -1,0 +1,31 @@
+@(#)group.howto	1.2	9/26/83
+@(#)Copyright (C) 1983 by National Semiconductor Corp.
+
+
+This file contains guidelines we have found useful on our own systems
+for maintaining the group file.
+
+
+1)	Place logically coherent sets of users in a single group.
+
+2)	Do not reuse old group numbers.  Each new group should
+	be given a fresh, previously unused group-id.  This means there
+	may be holes in the group-id sequence.
+
+3)	Unless there is reason to reuse an old group name, do not
+	remove old groups.  Instead, change old entries to forbid
+	newgrps by clearing the allowed user list.  This policy prevents
+	the existence of files belonging to no group; instead, all files
+	will have an identifiable group, making it easier to determine
+	what to do with questionable files.
+
+
+	group-id	type (recommended=value)
+	--------	------------------------
+	  0- 99		system administrative users (sys=0, daemon=1, etc.)
+	100-199		subsystem logins (uucp=100, netnews=101, etc.)
+	200-299		uucp dialin users (uulogins=200, etc.)
+	300-399		special user users (loggedout=300, etc.)
+	400-499		restricted logins (guest=400, games=401, etc.)
+	500-699		normal user users
+	700-999		project groups

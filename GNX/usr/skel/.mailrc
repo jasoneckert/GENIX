@@ -1,0 +1,5 @@
+set ask quiet
+set EDITOR=/usr/ucb/vi
+set SHELL=/bin/cshed
+set VISUAL=/usr/ucb/vi
+alias CHONGO menlo70!proper!chongo

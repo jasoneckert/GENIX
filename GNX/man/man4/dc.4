@@ -1,0 +1,75 @@
+.ig
+	@(#)dc.4	1.6	10/24/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH DC 4
+.SH NAME
+dc \- SYS16 disk driver for ANSI interface disks
+.SH DESCRIPTION
+Files with minor device numbers 0 through 7 refer to various portions
+of drive 0;
+minor devices 8 through 15 refer to drive 1, etc.
+The standard device names begin with \*(lqdc\*(rq followed by
+the drive number and then a letter a-h for partitions 0-7 respectively.
+The character `?' stands here for a drive number in the range 0-7.
+.PP
+It is unwise for all of these files to be present in one installation,
+because there is overlap in addresses and protection becomes
+a sticky matter.
+The dc?a partition is normally used for the root file system,
+the dc?b partition as a paging area, 
+the dc?c partition for pack-pack copying (it maps the entire disk).
+On large disks, the dc?h partition is inserted prior to the dc?d or
+dc?g partition; the dc?g partition then maps the remainder of the pack.
+.PP
+The block files access the disk via the system's normal
+buffering mechanism and may be read and written without regard to
+physical disk records.
+A `raw' interface,
+which provides for direct transmission between the disk
+and the user's read or write buffer, is also available.
+A single read or write call results in exactly one I/O operation
+and therefore raw I/O is considerably more efficient when
+many words are transmitted.
+The names of the raw files
+conventionally begin with an extra `r.'
+.PP
+In raw I/O counts must be a multiple of 512 bytes (one page), and the
+buffer address must be a multiple on 512 (i.e., be page-aligned).
+This is a restriction imposed by the disk controller.
+Attempts to perform I/O
+without following these restrictions results in an EIO error.
+Likewise
+.IR lseek (2)
+calls should specify a multiple of 512 bytes.
+.SH "DISK SUPPORT"
+This driver supports any ANSI interface drive that contains a valid header
+(as described by
+.IR disk (5))
+on physical sector 0.
+The drive header is read off each pack and used to
+initialize the driver with the disk configuration information,
+and the origin and size (in sectors) of the psuedo-disks.
+The origin and size of the psuedo-disks may be changed with
+.IR mkpt (8).
+.SH FILES
+.nf
+.ta \w'/usr/include/sys/disk.h'u+(4n)
+/dev/dc[0-7][a-h]	block files
+/dev/rdc[0-7][a-h]	raw files
+/usr/include/sys/disk.h	disk header layout
+.fi
+.SH DIAGNOSTICS
+.BR "%s disk %s error: unit %d sector %d status %x retries %d" .
+This message appears on the console when a disk error occurs.
+The status indicates the reason for the error.
+The
+.IR dcerr (8)
+program can be used to decode the status.
+.SH "SEE ALSO"
+disk(5),
+mkpt(8)
+.SH BUGS
+The page-alignment restriction for raw I/O should not exist.
+.PP
+Bad block forwarding is not yet supported.

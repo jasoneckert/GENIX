@@ -1,0 +1,43 @@
+.ig
+	vhel6: version 1.2 of 11/8/83
+	
+
+	@(#)vhel6	1.2	(NSC)	11/8/83
+..
+.NH
+GAMES
+.LP
+.sh ADVENTURE
+Role playing game which involves cave exploration.  Choices of paths
+and treasures taken affect the score.
+.sh BACKGAMMON
+.br
+A player of modest accomplishment.
+.sh BANNER
+Take a string and enlarge each character to a full page.
+.sh BCD
+Converts ascii to card-image form.
+.sh FISH
+Children's card-guessing game.
+.sh FORTUNE
+Presents a random fortune cookie on each invocation.
+Limited jar of cookies included.
+.sh HANGMAN
+Word-guessing game.
+Uses a dictionary supplied with SPELL.
+.sh MILLE
+Two-handed game reminiscent of Parker Brother's Mille Bournes.
+.sh NUMBER
+Convert digits to English words.
+.sh QUIZ
+Test your knowledge of Shakespeare, Presidents, capitals, etc.
+.sh RAIN
+Display a pattern which resembles raindrops on a CRT terminal.
+.sh ROGUE
+CRT-oriented game, exploring the Dungeons of Doom.
+.sh WORM
+Grow a worm.
+.sh WORMS
+Animate worms on a display terminal.
+.sh WUMP
+Hunt the wumpus, thrilling search in a dangerous cave.

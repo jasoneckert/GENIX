@@ -1,0 +1,72 @@
+.ig
+	@(#)setroot.8	1.5	10/28/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH SETROOT 8
+.SH NAME
+setroot \- fix file system ownership and protection
+.SH SYNOPSIS
+.BR /etc/setroot " [" \-v "] [" \-S ]
+.SH DESCRIPTION
+.I Setroot
+traverses the file system,
+forcing correct ownership and protection for directories and files
+as it does so.
+.I Setroot
+may be run at any time so long as the
+.B \-S
+flag is not given.
+Flags recognized are as follows:
+.TP
+.B \-v
+Verbose mode causes
+.I setroot
+to announce its actions.
+.TP
+.B \-S
+This flag enables
+.I setroot
+to make changes,
+such as fixing
+.IR /dev ,
+that should be done only
+when the system is running single user.
+.PP
+.I Setroot
+will fail if not run by root.
+.SH "SEE ALSO"
+chmod(1), chgrp(8), chown(8)
+.SH DIAGNOSTICS
+Fatal errors include not being able to execute
+.IR chmod (1),
+.IR ls (1),
+.IR wc (1),
+.IR grep (1),
+.IR chgrp (8),
+and
+.IR chown (8)
+and the non-existence of certain special users and groups.
+.PP
+Non-fatal errors include:
+file not found,
+not a directory
+(directory does not exist or is a non-directory file type),
+is empty
+(a directory does not contain any files),
+unable to set
+(cannot access a directory to set its contained files).
+.PP
+.I Setroot
+exits with status 0 if all sets were successful,
+and 1 if an error was detected.
+.SH BUGS
+.I Setroot
+error messages are sent to standard output and not standard error.
+.PP
+.I Setroot
+has too much information hard-wired into it.
+Instead,
+it should be driven from an auxiliary table of files,
+modes,
+and permissions.
+It will be modified or replaced in a later \s-2GENIX\s0 release.

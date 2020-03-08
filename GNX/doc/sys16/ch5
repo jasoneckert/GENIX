@@ -1,0 +1,1446 @@
+.ig
+	@(#)ch5	1.1	11/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.nr sf 3
+.de $0
+.(x
+\\$2	\\$1
+.)x
+..
+.sp 1i
+.sz 12
+.(l C
+\f3Chapter 5
+.sp
+G\s-2ENIX\s0\s4\uTM\d\s0 INSTALLATION AND CONFIGURATION\f1
+.sp 0.5i
+.)l
+.sz 8
+.de UX
+\s-2UNIX\s0\\$1
+..
+.sh 2 "INTRODUCTION" 5.1
+.lp
+This chapter describes the procedures required to install the
+\s-2GENIX\s0 operating system on a SYS16 system.
+It also explains how to configure the kernel for the available devices
+and user load, lay out file systems on the available disks,
+set up terminal lines and user accounts, and do system specific tailoring.
+In addition,
+it describes system operations procedures: shutdown and startup,
+hardware error reporting and diagnosis, file system backup procedures,
+resource control, performance monitoring, and procedures for 
+reinstalling system software.
+.lp
+The basic bootstrap material is present in four
+short files at the beginning of the bootstrap tape.
+The first four files on the tape contain preliminary bootstrapping programs.
+This is followed by a dump of the ``root'' file system (see
+\f2dump\f1\|(8)*).
+.(f
+* References of the form X(Y) mean the subsection named
+X in section Y of 
+.ul
+The \s-2GENIX\s0 Programmer's Manual.
+.)f
+.lp
+Most of the information contained in this chapter
+is intended for users who are running the \s-2GENIX\s0 operating
+system
+on a SYS16.  However, the \s-2GENIX\s0 setup procedures are of value
+to users who were supplied with \s-2GENIX\s0 source only.  Moreover,
+the material specific to the SYS16 may also serve as a guide for those
+users who are installing the \s-2GENIX\s0 operating system 
+on their targeted hardware.
+.sh 3 "\f3G\s-2ENIX\s0 Devices and Device Naming\f1"
+.lp
+The names of physical devices recognized by the \s-2GENIX\s0 operating
+system are Winchester disk (dc) and streamer tape (tc).
+.lp
+The stand-alone system, used to bootstrap the full \s-2GENIX\s0
+system, uses device names
+xx(y,z).
+.lp
+xx is either \f3dc\f1 or \f3tc\f1.  The value y specifies the unit
+to use.  The z value is interpreted differently for tapes and 
+disks.  For disks, it is a disk partition (in the range from 0
+through 7), and for tapes, it is a file number on the tape.
+.lp
+Each \s-2GENIX\s0 physical disk is divided into eight logical partitions,
+each of which may occupy any consecutive cylinder range on the physical
+device.  Each partition may be used for either a raw data
+area such as a paging area or as storage for a \s-2GENIX\s0
+file system.  It is conventional for the first partition
+on a disk to be used to store a root file system, from 
+which the \s-2GENIX\s0 operating system may be bootstrapped.
+The second partition is 
+traditionally used as a paging area, and the
+rest of the disk is divided into spaces for additional
+mounted file systems by use of one or more additional partitions.
+.lp
+The third logical partition of each physical disk also has a conventional
+usage: it allows access to the entire physical device.
+It is
+occasionally used to store a single large file system or to access
+the entire pack when making a copy of it on another.
+.lp
+The disk partitions have names in the stand-alone system of the form
+``dc(x,y)'' with varying \f2y\f1 as described above.  Thus partition
+1 of a disk on unit 1 is ``dc(1,1)''.  When not running
+stand-alone, this partition is normally available as ``/dev/dc1b''.
+Here the prefix ``/dev'' is the name of the directory where all
+``special files'' normally live; ``dc'' serves an obvious purpose,
+the ``1'' identifies this as a partition of dc unit number 1
+and the ``b'' identifies this as the first partition (where we number
+from 0, the 0 partition being ``dc1a''.)
+.lp
+In all simple cases, a drive with unit number 1
+will be called unit 1 in its \s-2GENIX\s0
+file name.  This is not, however, strictly necessary, since the system
+is flexible in this regard.
+.lp
+With a tape that is on unit 0, the
+files on the tape have stand-alone names ``tc(0,0)'', ``tc(0,1)'', etc.
+Here ``file'' means a tape file containing a single data stream.
+The distribution tapes have data structures in the tape
+files and though the tapes contain only 5 tape files, they contain
+several thousand \s-2GENIX\s0 files.
+.lp
+The \s-2GENIX\s0 operating system 
+makes a distinction between ``block'' and ``raw'' (character)
+devices.  Each disk has a block device interface where
+the system makes the device byte addressable and 
+a single byte may be written in the middle of the disk.  The system will read
+out the data from the disk sector, insert the byte it received and then
+put the modified data back.  The disks with the names such as
+``/dev/xx0a'', etc are block devices.  There are also raw devices available.
+These have names such as ``/dev/rxx0a'', the
+``r'' here standing for ``raw''.  The build and rebuild procedures 
+will suggest using the raw devices, since these tend
+to work faster in some instances.  In general, however, the block
+devices are used, and are found where file systems are mounted.
+.lp
+In some cases, it is important to know when to use
+the character device.  Changing instructions by specifying the wrong
+type of device is not advisable.
+.sh 3 "Resetting The SYS16"
+.lp
+A number of procedures in this document require the resetting of the SYS16
+and the initiation of the firmware monitor.  Although this information is extensively presented in Chapter 4 of this manual, the user should be reminded of several important details.
+.lp
+.in 2
+Once the hardware reset switch on the processor module is thrown, the prompt
+shown below is displayed on the console.
+.ip
+menu mode y/n?
+.lp
+The firmware monitor is invoked from the menu mode of the Level 2 tests,
+so a "y" response must be entered.  If no response is
+received after 10 seconds, a time-out occurs and the 
+level 2 tests of the power-on diagnostics 
+are run in AUTO-RESET mode.
+.lp
+Once the "y" selection is entered, the menu mode menu is displayed
+along with a select line.
+.lp 
+To initiate the firmware monitor, select the letter "m" for monitor.
+.lp
+The following banner is displayed on the console each instance the "m"
+is selected in this manner.
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+.lp
+The asterisk is a prompt indicating that the monitor is prepared
+to accept a command.  Entering the letter "h" for help, displays 
+a list of executable commands.
+.lp
+Procedures requiring the use of the 
+monitor, will only specify the resetting of the SYS16
+and will show the banner.  The procedures, as outlined in this section,
+are left to the user.
+.sh 3 "Loading The Boot Program"
+.lp
+The stand-alone boot program is used to load other stand-alone programs
+from the master \s-2GENIX\s0 tape into the firmware monitor for execution.
+.lp
+To load the boot program, reset the SYS16 and follow 
+the procedures shown below.
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+b
+Boot:
+.lp
+Once the boot program is loaded, the boot prompt indicates that
+the boot program is prepared to accept input.
+.lp
+The procedures in the rest of this Chapter will reference this sequence
+to load programs from the master \s-2GENIX\s0 tape.
+.sh 2 "\f3Building the SYS16 Disk\f1"
+.lp
+This section explains the procedures that may be used to 
+rebuild the \s-2GENIX\s0 kernel on the 20 Mbyte hard disk drive, or build the 
+\s-2GENIX\s0 kernel on a new hard disk drive.
+.lp
+The build or rebuild procedure consists of four steps:  1) Formatting
+a disk pack, 2) Loading the boot program, 3) Initializing a \s-2GENIX\s0
+"root" file system on the disk, and 4) Booting the \s-2GENIX\s0
+operating system.
+.lp
+The procedures that require the initiation and use of dcutest will show only
+the DCUTEST (stopped) > prompt, and the information to be entered.  
+Consult Chapter 4 for complete information concerning the initiation
+and use of dcutest.
+.lp
+In the procedures shown below, text in Roman face is typed by the system,
+text in \f3bold face\f1 should be entered, and text in parentheses
+are comments.
+.sh 3 "\f3Formatting the Disk\f1"
+.lp
+If the disk has already been formatted,
+the prodecures in this section may be omitted.
+.lp
+Booting from the disk will require good sectors in the file
+"/vmunix" (the system image).  The file system indices that
+lead to this file, and sector 0 must also remain error-free.
+As a rule of thumb, the first 4000 sectors of a disk must
+be error-free to proceed safely.  Otherwise, this procedure is 
+conducted at a certain amount of risk.
+.lp
+Reset the SYS16 and when the monitor is invoked, 
+insert the master \s-2GENIX\s0 tape in the tape input
+slot of the disk/tape module and follow the procedures shown below.
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3b\f1	(Run the boot stand-alone program)
+Boot: \f3tc(0,0)\f1	(Boot the disk diagnostic from the tape)
+xxx+yyy+zzz
+DCUTEST (stopped) > \f3x\f1	(Format the disk)
+WARNING: ... type 'y': \f3y\f1	(We want to clobber the disk)
+.sp
+.lp
+After some time and several messages, dcutest will reprompt.
+.sh 3 "\f3Installing the Disk Header\f1"
+.lp
+If the disk header has been installed on the disk pack, the 
+procedures in this section may be omitted.
+.lp
+The first physical sector (0) of each disk pack
+should contain a header which contains the disk parameters and 
+the default disk partition information of a disk.  This information is 
+read from the header by the \s-2GENIX\s0 disk driver 
+which uses the information to configure itself to each
+drive connected to the system.
+.lp
+Dcutest may be used to install a header on a disk pack.
+It also contains a table of parameters and partitioning information
+for a number of disk types.  New drive types may be added as needed
+to the table.
+.lp
+The following procedure installs the disk parameters and the default
+disk partitions for a known disk type.  To change the default
+partitioning, refer to Section 5.2.3.  To manually set the disk        
+partitioning  and
+parameters of a disk header for an unknown disk type, refer to Section  
+4.4.1 which describes dcutest.
+.lp
+To begin the installation of the disk parameters and the default disk
+partitions, reset the system, with the master \s-2GENIX\s0
+tape still in the tape input slot, and follow the procedures shown below.
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3b\f1	(Run the boot stand-alone program)
+Boot: \f3tc(0,0)\f1	(Boot the disk diagnostic from the tape)
+xxx+yyy+zzz
+DCUTEST (stopped) > \f3xh\f1	(Install disk header)
+WARNING: ... type 'y': \f3y\f1	(We want to clobber the disk)
+.sp
+.sh 3 "\f3Changing Default Partition Sizes and Placement\f1"
+.lp
+If the partition layout as distributed with
+the system is satisfactory, the procedures listed in this
+section may be omitted.
+.lp
+The distributed system contains three partitions by default.
+The \f2stand-alone\f1 names for these partitions are used throughout
+this section. The root partition (partition 0), contains 
+approximately 15 megabytes,
+the paging partition(partition 1), contains 
+approximately 5 megabytes,
+and the entire disk (partition 2) contains all the sectors available
+on the disk.  To change the locations (perhaps due to the location
+of bad blocks on the disk), or sizes (perhaps to increase the amount of paging
+area), the stand-alone version of the
+\f2mkpt\f1(8) program must be run:  
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+Boot: \f3tc(0,1)\f1	(Boot stand-alone \f2mkpt\f1(8) from tape)
+xxx+yyy+zzz
+Disk? \f3dc(x,y)\f1	(the unit and partition to change)
+Current offset xxx, size yyy	(the current values)
+Cylinder offset(0-max)?	(type the new offset you desire)
+Size(0-max)?	(type the new size in sectors)
+Disk?	(type <return> to terminate)
+.sp
+.lp
+Typing <return> to the offset or size query will zero the corresponding
+field.  Invalid inputs will terminate an iteration without changing anything.
+The maximum size of a partition is a function of the cylinder offset, and
+decreases with increasing cylinder offsets. The size is specified in
+units of \f2sectors\f1.
+A sector is 
+equal to 512 bytes.
+.sh 3 "\f3Creating and Initializing a \s-2GENIX\s0 Root File System\f1"
+.lp
+To create and initialize a \s-2GENIX\s0 root file system, the
+\f2mkfs\f1(8) program must be run.  
+With the master \s-2GENIX\s0 tape inserted in the tape
+input slot, proceed as follows:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+Boot: \f3tc(0,2)\f1	(Boot stand-alone mkfs from tape)
+xxx+yyy+zzz	(Short delay here)
+file system: \f3dc(1,0)\f1	(Root is first filesystem on drive 1)
+file sys size (enter <cr>...): \f3Press return\f1	(Use default values)
+Boot:	(Prompt reappears after a short delay)
+.sp
+.lp
+An empty \s-2GENIX\s0 root file system now exists on the disk.
+To restore the data that is needed to boot the system, 
+proceed as follows:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+Boot: \f3tc(0,3)\f1	(Boot stand-alone \f2restor\f1(8) from tape)
+xxx+yyy+zzz
+Tape? \f3tc(0,4)\f1	(Unit 0, fourth tape file)
+Disk? \f3dc(1,0)\f1	(into root file system)
+Last chance before scribbling on disk.	(just hit return)
+restor: done	(after about 12 minutes)
+.sp
+.lp
+Once the restore is completed, the \s-2GENIX\s0 operating system
+may be booted up from the disk.
+Reset the system and run the boot stand-alone program.
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3k\f1	(Run /vmunix)
+.sp
+.lp
+The stand-alone boot program should then read the system from
+the root file system created and
+display the system boot header:
+.sp
+.in 0.5i
+.nf
+xxx+yyy+zzz
+NSC 16032 \s-2GENIX\s0 (Rev. n.nn) date time
+#
+.lp
+The first three numbers printed out by the boot
+program are the sizes of different
+parts of the system (text, initialized and uninitialized data).  The
+system also allocates several system data structures after it starts
+running.  The sizes of these structures are based on the amount of available
+memory and the maximum count of active users expected, as declared in a system
+configuration description.  The system is discussed in the system setup
+section.
+.lp
+G\s-2ENIX\s0 prints a banner identifying the version of the
+system that is in use and the date it was
+compiled.  Note that this version is different from the system
+release number,
+and applies only to the operating system kernel.
+.lp
+G\s-2ENIX\s0 is now running,
+and the 
+.ul
+The G\s-2ENIX\s0 Programmer's Manual 
+applies.
+The `#' is the prompt from the shell,
+that identifies the super-user, whose login name is ``root''.
+.lp
+Check the integrity of the root file system by giving the command:
+.sp
+.in 0.5i
+.nf
+# \f3/etc/fsck /dev/dc1a\f1
+.lp
+The output from
+.i fsck
+should be:
+.ip
+.nf
+/dev/dc1a
+File System:  Volume: 
+.sp
+** Checking /dev/dc1a
+** Phase 1 - Check Blocks and Sizes
+** Phase 2 - Check Pathnames
+** Phase 3 - Check Connectivity
+** Phase 4 - Check Reference Counts
+** Phase 5 - Check Free List 
+xxx files yyy blocks zzz free
+.sp
+.lp
+If there are inconsistencies in the file system,
+consult the Programmer's Manual for more information on \f2fsck\f1.
+.lp
+Execute the following commands:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+#\f3 date yymmddhhmm\f1	(set date, see \f2date\f1\|(1))
+#\f3 passwd root\f1	(set password for super-user)
+New password:	(password will not echo)
+Retype new password:
+#\f3 rmdir lost+found\f1
+#\f3 /etc/mklost+found\f1	(a directory for \f2fsck\f1)
+#\f3 sync\f1
+#\f3 /etc/reboot\f1	(reboot the system)
+.sp
+.lp
+/etc/reboot brings the system up in multi-user mode.  
+.sh 2 "\f3System Setup\f1"
+.lp
+This section describes procedures used to set up a \s-2GENIX\s0 system.
+Procedures described here are used when a system is first installed
+or when the system configuration changes.  
+.sh 3 "\f3Making a \s-2GENIX\s0 Boot Tape\f1"
+.lp
+This procedure creates a boot tape consisting of the following files:
+.in 5
+.ip o 2
+The standalone disk diagnostic, dcutest
+.ip o 2
+A standalone version of the mkpt program
+.ip o 2
+A standalone version of the mkfs program
+.ip o 2
+A standalone version of the restor program
+.ip o 2
+A dump of the root file system
+.in 0
+.lp
+In the following procedures, text in Roman face is typed by the system,
+text in \f3bold face\f1 should be entered, and text in parentheses
+are comments.
+.lp
+Place a blank 3M 20 Mbyte tape cartridge in the tape transport
+of the disk/tape module.
+Reset the system, and boot the \s-2GENIX\s0 operating system
+in the single-user mode:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3k\f1	(boot from disk)
+NSC 16032 \s-2GENIX\s0 (Rev. n.nn) date time
+# \f3/etc/fsck\f1	(Check file system consistency)
+.sp
+.lp
+Bring the \s-2GENIX\s0 operating system
+up in multiuser mode by entering a control-D
+and proceed accordingly.
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+# \f3^D\f1	(The control-D will not echo)
+login: \f3root\f1	(login as root)
+Password:	(enter the correct password)
+.sp
+# \f3mt erase\f1	(Erase the tape)
+# \f3cp /stand/dcutest /dev/ntc0\f1	(Copy dcutest to the tape)
+# \f3cp /stand/mkpt /dev/ntc0\f1	(Copy stand-alone mkpt to the tape)
+# \f3cp /stand/mkfs /dev/ntc0\f1	(Copy stand-alone mkfs to the tape)
+# \f3cp /stand/restor /dev/ntc0\f1	(Copy stand-alone restor to the tape)
+# \f3/etc/dump 0f /dev/rtc0 /dev/dc1a\f1	(Dump the root file system)
+.sp
+(This step will take about 70 minutes to complete.)
+.lp
+When the dump is completed, remove the tape from the tape drive.
+.sh 3 "\f3Disk Configuration\f1"
+.lp
+Each physical disk drive can be divided into eight partitions;
+the \s-2GENIX\s0 operating system typically
+uses only three partitions.  For instance, 
+the first partition,
+.b dc1a
+is used for a root file system, or a backup thereof;
+the second partition,
+.b dc1b ,
+is used for paging and swapping; and
+the third partition
+.b dc1c
+maps the entire disk and may be used for pack copying.
+Of these eight partitions, only 
+.b a , 
+.b g , 
+and 
+.b h 
+are used as 
+``mounted'' file systems.
+.sh 3 "\f3Space Available\f1"
+.lp
+On the SYS16, which has a single 20 Mbyte disk,
+the root file system in \f3dc1a\f1 is approximately 15 Megabytes,
+and the paging area in \f3dc1b\f1 is approximately five Megabytes.
+.lp
+The distributed system binaries and sources occupy about ten Megabytes
+each, filling most of the \f3a\f1 partition on the disk.
+.lp
+Be aware that the disks have their sizes
+measured in ``sectors'' of 512 bytes each, while the \s-2GENIX\s0 file
+system blocks are 1024 bytes each.  Therefore, if a disk partition has
+10000 sectors (disk blocks), it will have only 5000 \s-2GENIX\s0 file system
+blocks, and you \f3must\f1 divide by 2 to use 5000 when
+specifying the size to the \f2mkfs\f1 command.
+.sh 3 "\f3LayOut Considerations\f1"
+.lp
+There are several considerations in deciding how to adjust the arrangement
+of information on disks,
+the most important of which is making sure there is adequate space
+for all that is required.
+Secondly, throughput should be maximized.
+Paging space is also an important parameter 
+since the system,
+as distributed, has 5 Megabytes of space in which to page.
+.lp
+Many common system programs (C, the editor, the assembler etc.)
+create intermediate files in the /tmp directory,
+so the file system where /tmp directory is stored should also be made
+large enough to accommodate
+most high-water marks.  If the system has several disks, it is
+logical to mount the /tmp directory in a ``root'' (i.e. first partition)
+file system on another disk.
+If the system source is moved out of /sys and put in /usr/src/sys
+(where it was kept in previous releases of the systems),
+there should be adequate space in the root file system for /tmp.
+All the programs that create files in /tmp 
+should be examined periodically and the old
+files deleted.
+.lp
+The efficiency with which the \s-2GENIX\s0 operating system
+is able to use the CPU
+is often strongly affected by the configuration of disk controllers.
+For general time-sharing applications,
+the best strategy is to try to split the root file system (/), system binaries
+(/usr), the temporary files (/tmp),
+and the user files, among several disk arms,
+to balance disk loading.
+.lp
+It is critical for good performance to balance disk load.
+There are at least five components of the disk load that can
+be divided among the available disks:
+.sp
+.nf
+.in 0.5i
+1. The root file system.
+2. The /tmp file system.
+3. The /usr file system.
+4. The user files.
+5. The paging activity.
+.lp
+Total disk load is balanced by decoupling the file system (on separate arms)
+where heavy copying occurs.
+Note that a long term average balanced load is not important.  It is
+more important to have instantaneously balanced
+load for when the system is busy.
+.lp
+Intelligent experimentation with a few file system arrangements can
+result in improved system performance.  It is particularly easy to
+move the root, the
+/tmp
+file system and the paging areas.  Place the
+user files and the
+/usr
+directory as space needs dictate and experiment
+with the other, more easily moved, file systems.
+.sh 3 "\f3Implementing a LayOut\f1"
+.lp
+To put a chosen disk layout into effect, the
+\f2mkfs\f1(8) and \f2mklost+found\f1(8)
+commands may be used to create each new file system.
+Each file system must also be added to the file
+/etc/fstab
+so that it will be checked and mounted when the system is bootstrapped.
+.lp
+As an example, consider a system with a single disk. The 20 Megabyte disk
+is too small to implement this particular layout scheme, but the 
+example procedure should be used as a guide for laying out
+filesystems on larger capacity disks.
+.lp
+The root file system is placed in \f3dc1a\f1, and the /usr file
+system is placed in \f3dc1g\f1, which has more than enough space to hold it.
+The /tmp directory would be part of the root file system,
+as no file system would be mounted on /tmp.
+User files are placed 
+in the \f3dc1g\f1 partition with the system source and binaries.
+.lp
+If a second disk were present, a file system could be created in \f3dc2g\f1
+and user files placed there, calling the file system /mnt.
+To actually do this, add the lines
+.sp
+.nf
+.in 0.5i
+/dev/dc2g:/mnt:rw:1:2
+.sp
+.in 0
+to the /etc/fstab file.  A backup copy of the root
+file system could be kept in the \f3dc2a\f1 disk partition.
+.lp
+To make the /mnt file system proceed as follows:
+.sp
+.nf
+.in 0.5i
+#\f3 cd /dev\f1
+#\f3 /etc/mknod /dev/dc2g b 0 8\f1
+#\f3 /etc/mkfs /dev/rdc2g nnnn\f1
+#\f3 mkdir /mnt\f1
+#\f3 mount /dev/dc2g /mnt\f1
+#\f3 cd /mnt\f1
+#\f3 /etc/mklost+found\f1
+.lp
+.sh 2 "\f3Changing the System Configuration\f1"
+.lp
+As distributed, the kernel is kept in the subdirectories of /sys.
+The directory /sys/sys contains the file param.c.
+The directory /sys/dev contains the file conf.c.
+The directory /sys/h contains the header files,
+defining structures and system constants.
+The system header files in /usr/include/sys are copies
+of the files in /sys/h.
+The directory /sys/SYS16 contains kernel object files and a makefile.
+.lp
+The file /sys/sys/param.c is used to define the system configuration.  
+Many of the parameters declare the sizes of various kernel tables,
+and have been set for a typical system load.
+The MAXUSERS macro is used to define some of these table sizes, based
+on the expected number of users of the system.
+MAXUSERS may be changed to reflect the expected maximum
+number of users (the default value of MAXUSERS is eight).
+Otherwise, most of these parameters do not need to be changed unless you
+frequently run out of table space.
+.lp
+Several of the parameters in /sys/sys/param.c are not related to kernel
+table sizes, and instead define the environment of the system.  You
+may need to change these.  The TIMEZONE macro specifies your time zone.
+This quantity is defined as the number of minutes west of Greenwich.
+The default value of TIMEZONE is 480, which corresponds to Pacific Standard
+Time (being eight hours west of Greenwich).  The DST macro is nonzero
+if daylight savings time is applicable to your area.  The default value of
+DST is one.  The Hz macro is the power line frequency in hertz, and is one of
+50 or 60.  The default value of Hz is 60.
+.lp
+The file /sys/dev/conf.c defines the device configuration of the system.
+Among the data defined is the root device, the swap device, and the dump
+device.  These need changing if you wish to move these devices to other
+disk units.  The root device is defaulted to unit 1, partition 0 (/dev/dc1a).
+The swap and dump devices are defaulted to unit 1, partition 1 (/dev/dc1b).
+.lp
+The standard swap space area contains 2500K of space, which may be inadequate
+for your system.  Increasing the amount of swap space on your
+system, requires two things.  First, you need a larger disk partition to
+hold the space.  You can either run mkpt to declare a larger /dev/dc1b partition
+(at the expense of some other partition on the disk),
+or you can redefine swapdev and dumpdev in /sys/dev/conf.c to reference
+a different disk partition (possibly on another disk drive).
+Second, you need to change the NSWAP macro in /sys/sys/param.c to indicate
+the new amount of swap space which is available.  The maximum value of NSWAP
+is the number of sectors in the swapping partition.
+.lp
+When you are done editing /sys/sys/param.c and /sys/dev/conf.c, create
+a new system with 
+.ip
+#\f3 cd /sys/SYS16\fP
+.br
+#\f3 make\fP
+.lp
+The final object file ``vmunix'' should be
+copied to the root, and then booted to try it out.
+It is best to name it /newvmunix so as not to destroy
+the working system until you're sure it does work:
+.ip
+#\f3 cp vmunix /newvmunix\fP
+.br
+#\f3 sync\fP
+.lp
+It is also a good idea to keep the old system around under some other
+name.  In particular, we recommend that you save the generic distribution
+version of the system permanently as /genvmunix for use in emergencies.
+.lp
+To boot the new version of the system follow the
+bootstrap procedures outlined in Section 5.1.3.
+A systematic scheme for numbering and saving old versions
+of the system is best.
+.lp
+When the /newvmunix is installed as /vmunix,  you should run
+/etc/newsym to create corresponding /vmsymbols.
+.lp
+You can repeat these steps whenever it is necessary to change
+the system configuration.
+.lp
+Simple changes to the sizes of the tables allocated in /sys/sys/param.c
+can be performed without rebuilding the kernel, by using \f2ddt\fP(1).
+For example, to change the number of processes:
+.ip
+# \f3cd /\fP
+.br
+# \f3cp vmunix newvmunix\fP
+.br
+# \f3ddt -i -w newvmunix\fP
+.br
+reading a.out symbols..................found 715
+.br
+\f3nproc/\fP  3e      \f340\fP
+.br
+\f3^[q\fP
+.br
+#
+.lp
+Since the sizes of several kernel tables are interrelated,
+these changes should be relatively small.
+You should edit param.c and rebuild the kernel
+as soon as it's convenient,
+since if you subsequently need to rebuild the kernel for some other reason,
+your \f2ddt\fP changes will be lost.
+.lp
+It is recommended that a new boot tape be made, as described in Section 5.3.1,
+when the configuration is changed.
+.sh 2 "\f3Configuring Terminals\f1"
+.lp
+If the \s-2GENIX\s0 operating system is to support simultaneous
+access from more than just the console terminal,
+the file /etc/ttys (\f2ttys\f1\|(5)) must be edited.
+.lp
+Terminals connected to the serial I/O board are named \f3ttyDD\f1
+where DD is a decimal number, the ``minor device'' number.
+Namely, the lines are named /dev/tty00, /dev/tty01, ... /dev/tty07.
+.lp
+To add a new terminal be sure the device is configured into the system,
+and that the special file for the device has been made by \f2mknod\f1(8).
+Then set
+the first character of the appropriate line of /etc/ttys to 1
+(or add a new line).
+.lp
+The second character of each line in the /etc/ttys file lists
+the speed and initial parameter settings for the terminal.
+The common choices are:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+0	300-1200-150-110
+2	9600
+3	1200-300
+5	300-1200
+.sp
+.lp
+Here the first speed is the speed a terminal starts at, and
+``break'' switches speeds.
+Therefore a newly added terminal /dev/tty00 could be added as
+.sp
+.nf
+.in 0.5i
+12tty00
+.in 0
+.sp
+if it is set up to run at 9600 baud.
+.lp
+Dial-up terminals should be wired so that carrier is asserted only when the
+phone line is dialed up.
+.lp
+You should also edit the file
+/etc/ttytype
+placing the type of each new terminal there (see \f2ttytype\f1\|(5)).
+.lp
+When the system is bootstrapped, all terminals that are listed
+in /etc/ttys having a 1 as the first character of
+their line are enabled.  If, during normal operations, 
+a terminal line is to be disabled, the file
+/etc/ttys may be edited to
+change the first character of the corresponding line to be a 0 and
+then send a hangup signal to the \f2init\f1 process, by doing
+.sp
+.nf
+.in 0.5i
+\f3#\f1 kill \-1 1
+.lp
+Terminals can similarly be enabled by changing the first character of a line
+from a 0 to a 1 and sending a hangup to \f2init\f1.
+.lp
+Note that if a special file is inaccessible when \f2init\f1 tries
+to create a process for it, init will print a message on the console
+and try to reopen the terminal every minute, reprinting the warning
+message every 10 minutes.
+.lp
+Finally, note that you should change the names of any dial-up
+terminals to ttyd?
+where ? is in [0-9a-f] as some programs use this property of the
+names to determine if a terminal is a dial-up.
+.lp
+While it is possible to use truly arbitrary strings for terminal names,
+the accounting and noticeably the
+\f2ps\f1\|(1)
+command make good use of the convention that tty names
+(by default, and also after dial-ups are named as suggested above)
+are distinct in the last two characters.  Change this and 
+\f2ps\f1\|(1)
+uses based on these conventions will then break down and ps will
+run much slower.
+.sh 2 "\f3Adding a Serial Printer\f1"
+.lp
+To add a serial printer to a system, connect the printer to one of
+the serial ports at the back of the machine. Make a link to the appropriate
+tty file in the /dev directory:
+.sp
+.nf
+.in 0.5i
+#\f3 cd /dev\f1
+#\f3 ln ttyDD siolp 
+.sp
+.lp
+where DD is the minor number of the tty that corresponds to the chosen serial
+port.  If there is no such file in /dev, you'll have to create one
+[see \f2ttytype\f1\|(5)].
+.lp
+Finally, make sure the appropriate
+line in /etc/ttys has a zero in its first character position
+to prevent having login banners sent to the printer.
+.sh 2 "\f3Adding Users\f1"
+.lp
+New users can be added to the system by adding a line to the
+password file
+/etc/passwd.
+This procedure is described in
+\f2adduser\f1(8).
+.lp
+We recommend that you place your users under the directory /u, mounted
+on a disk other than the system disk if the system has more than one.
+.lp
+The /etc/passwd file shipped with your system came with a user named
+\f3guest\f1
+Since no files are shipped under /u, you need to run the utility
+\f3/etc/mkguest\f1 which will build guest's account and copy guest's
+initial files from /usr/skel.
+.lp
+You should add accounts for the initial user community, giving
+each a directory and a password, and putting users who will wish
+to share software in the same group.
+.lp
+The following guidelines may be useful 
+for maintaining the password file.
+.in 2
+.np
+Unless there is reason to reuse an old login name, do not
+remove old accounts.  Instead, change old entries to forbid
+logins (asterisk in the password field).  This policy prevents
+the existence of files belonging to no one; instead, all files
+will have an identifiable owner, making it easier to determine
+what to do with questionable files.
+.np
+Each new account should be given a fresh, previously unused uid.
+.np
+The uid space should be partitioned into logically coherent
+subspaces.
+.sp
+.nf
+.in 0.5i
+.ta 1.5i
+user-id	type (suggested users)
+---------	-----------------------------
+0	root
+1-99	system administrative logins (bin, uucp, etc.)
+100-199	subsystem logins (netnews, etc.)
+	(The distinction between these and system
+	administrative logins can be fuzzy)
+200-299	uucp dialin accounts
+800-899	special user accounts (guest, customer, etc.)
+900-999	restricted logins (games, date, etc.)
+1000-2999	normal user accounts
+.sp
+.lp
+.in 0
+The following guidelines may be useful for maintaining
+the group file:
+.in 2
+.np
+Place logically coherent sets of users in a single group.
+.np
+Do not reuse old group numbers.  Each new group should
+be given a fresh, previously unused group-id.  This means there
+may be holes in the group-id sequence.
+.np
+Unless there is reason to reuse an old group name, do not
+remove old groups.  Instead, change old entries to forbid
+\f2newgrp\f1s by clearing the allowed user list.  This policy prevents
+the existence of files belonging to no group; instead, all files
+will have an identifiable group, making it easier to determine
+what to do with questionable files.
+.sp
+.nf
+.in 0.5i
+.ta 1.5i
+group-id	type (recommended=value)
+-----------	------------------------------------
+  0- 99		system administrative users (sys=0, daemon=1, etc.)
+100-199		subsystem logins (uucp=100, netnews=101, etc.)
+200-299		uucp dialin users (uulogins=200, etc.)
+300-399		special user users (loggedout=300, etc.)
+400-499		restricted logins (guest=400, games=401, etc.)
+500-699		normal user users
+700-999		project groups
+.lp
+.sh 2 "\f3Setting the System Name\f1"
+.lp
+A few of the commands on the system (mail, who, uucp)
+have local network topology
+and use the system name.  To set the name for these programs for your
+system, you should edit the file /etc/rc and add (or edit) the line
+.in .5i
+hostname anon
+.lp
+The site name (in this example, ``anon'') should uniquely identify you
+in the world, so avoid names like ``a'' or ``csl''.
+Uucp only looks at the first seven letters, but mail
+will look at the entire name, so the first seven characters should make it unique.
+.sh 2 "\f3Setting Up the Mail System\f1"
+.lp
+The mail system consists of the following commands:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+/usr/ucb/mail	UCB mail program, described in mail(1)
+/etc/delivermail	mail routing program
+/usr/spool/mail	mail spooling directory
+/usr/spool/secretmail	secure mail directory
+/usr/bin/xsend	secure mail sender
+/usr/bin/xget	secure mail receiver
+/usr/lib/aliases	mail forwarding information
+/usr/ucb/newaliases	command to rebuild binary forwarding database
+.sp
+.lp
+Mail is normally sent and received using the
+.i mail (1)
+command, which provides a front-end to edit the messages sent
+and received, and passes the messages to
+.i delivermail (8)
+for routing.
+The routing algorithm uses knowledge of network name syntax built
+into its tables and aliasing and forwarding information built into
+the file /usr/lib/aliases to process each piece of mail.
+.lp
+Mail is normally accessible in the directory /usr/spool/mail and is readable
+by all users.*
+.(f
+* Changing the mode
+of the file /usr/spool/mail/\f2yourname\f1 to 600 will make your mail  
+not readable by others.
+.)f
+To send mail which is secure against any possible
+perusal (except by a code-breaker) you should
+use the secret mail facility, which encrypts the mail.
+.lp
+To setup the mail facility you should read the instructions in the
+file READ ME in the directory /usr/src/cmd/delivermail and then adjust
+and recompile the delivermail program, reinstalling it in /etc/delivermail.
+You should also set up the file /usr/lib/aliases for your installation,
+creating mail groups as appropriate.
+.sh 3 "\f3Setting Up a Uucp Connection\f1"
+.lp
+To connect two \s-2GENIX\s0 systems with a \f2uucp\f1 network
+link using modems,
+one site must have a automatic call unit and the other must have a
+dial-up port.  It is better if both sites have both.
+.lp
+First read the paper in Volume 2B of 
+.ul
+The \s-2GENIX\s0 Programmers Manual:
+``Uucp Implementation.''  It describes in detail the file
+formats and conventions. 
+.lp
+You should ensure that the directories
+/usr/spool/uucp and /usr/spool/uucppublic exist.
+The former should be owned by uucp, mode 755 (777 is OK) and the
+latter should be mode 777 (and the home directory for login uucp).
+.lp
+Periodically you should clean out /usr/spool/uucp and /usr/spool/uucppublic,
+as they can accumulate junk, especially if you don't have a dialer.
+Run ``uulog'' once a day, and ``/usr/lib/uucp/uuclean'' periodically with
+appropriate options to get rid of old files.**
+.(f
+** The
+\f2cron\f1\|(8)
+program will arrange to execute these commands periodically.
+.)f
+Some of the files in /usr/spool/uucp may be removed,
+but if this is done without caution,
+error messages will be generated when uucp tries to access
+a file another file claims is there.  (For instance, each mail transaction
+creates three files.)
+The /usr/spool/uucppublic directory
+is a means for people at other sites to send 
+files to users on your machine.  You should clean it out by hand when
+it gets excessive.
+.lp
+If both sites have both a dialer and dialup,
+follow the directions in the volume 2B paper \- this is the intended
+mode of operation and the directions fit well.  You
+have to configure the following files in /usr/lib/uucp:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+L.sys	set up all fields \- this lists the other sites
+L-devices	your dialer
+USER.FILE	permissions \- this can be left alone
+.sp
+.lp
+You must also establish a login ``uucp'' in /etc/passwd with shell
+/usr/lib/uucp/uucico.  Each site must know the other site's phone
+number, login, and password.
+.lp
+If you have only a dial-up
+you will be a second-class citizen on the uucp net.  You must find
+another site that has a dialer, and have them poll you regularly.
+(Once a day is about the minimum that is reasonable.)  When you send
+mail to another site, you must wait for them to call you.
+You must set up /usr/lib/uucp/USER.FILE and /usr/lib/uucp/L.sys.
+Only the first four fields of L.sys
+are necessary, and in practice only the first field (site name) is
+looked at.  A typical L.sys for a passive node might be:
+.sp
+.in 0.5i
+.ta 1i
+ucbvax	Any ACU 300
+.br
+research	Any ACU 300
+.in 0
+.sp
+where the first field on each line is a site that will poll you.
+You need to put a password on the uucp login and let the other site know
+your phone number, uucp login name (which is usually uucp), and password.
+It doesn't matter if they call you at 300 or 1200 baud.
+.lp
+Normally, uucp will call the other site when it has anything to send it,
+and while it's at it will check to see if anything should come back.
+The command
+.sp
+.nf
+.in 0.5i
+/usr/lib/uucp/uucico \-r1 \-sucbvax
+.lp
+will force \f2uucp\f1 to poll ucbvax, even if there is nothing waiting.
+This command can be conveniently put in /usr/lib/crontab to run
+at 3 AM each morning.  Note that it is not good for \f2uucp\f1 to be
+run as root, since the suid bit will not be honored.  A better procedure
+is to put a shell script in /usr/lib/uucp/poll, and the line
+.sp
+.nf
+.in 0.5i
+su daemon < /usr/lib/uucp/poll
+.lp
+in /usr/lib/crontab;
+see \f2cron\f1\|(8).
+This conveniently groups all polls into one place,
+and ensures that the suid bit will be honored.  If \f2uucp\f1 is run as
+root, files created are owned by root, and later invocations of \f2uucp\f1
+as \f2uucp\f1 will not be able to write on them.
+If you are having trouble with the connection, invoke uucico by hand:
+.sp
+.nf
+.in 0.5i
+/usr/lib/uucp/uucico \-r1 \-sucbvax \-x7
+.lp
+where the \f3-x\f1 option turns on debugging output.  The higher the number,
+the more debugging output you get; 1, 4, and 7 are reasonable choices.
+.sh 2 "\f3System Operation\f1"
+.lp
+This section describes procedures used to operate a \s-2GENIX\s0 system.
+Procedures described here are used to reboot the system,
+analyze error messages from devices, do disk backups, and monitor
+system performance.
+.sh 3 "\f3Bootstrap and Shutdown Procedures\f1"
+.lp
+In a normal reboot, the system checks the disks and comes up multi-user
+without intervention at the console.
+Such a reboot
+can be stopped (after it prints the date) with a ^C (interrupt).
+This will leave the system in single-user mode, with only the console
+terminal active.
+.lp
+If booting from the console command level is needed, then the procedure
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3o\f1	(Boot a multi-user system)
+.sp
+.lp
+will boot from the default kernel.
+.lp
+You can boot a system up in single user mode by:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3k\f1	(Boot a single-user kernel)
+.sp
+.lp
+A third possibility is:
+.sp
+.nf
+.in 0.5i
+.ta 2.5i
+National 16032 ROM Monitor (Rev n.n) (kernel) Date
+E SVC
+*
+\f3b\f1	(Run the boot stand-alone program)
+Boot:
+.sp
+.lp
+This command boots and asks for the name of the system to be booted.
+This can be used after building a new test system to give the
+boot program the name of the test version of the system.
+.lp
+To bring the system up to a multi-user configuration from the single-user
+status,
+enter a ^D on the console.  The system
+will then execute /etc/rc,
+a multi-user restart script, and come up on the terminals listed as
+active in the file /etc/ttys.
+See
+\f2init\f1\|(8)
+and
+\f2ttys\f1\|(5).
+Note, however, that this does not cause a file system check.
+Unless the system was taken down cleanly, you should run
+``fsck \-p'' or force a reboot with
+\f2reboot\f1\|(8)
+to have the disks checked.
+.lp
+To take the system down to a single user state you can use
+.sp
+.in 0.5i
+#\f3 kill 1\f1
+.lp
+or use the
+\f2shutdown\f1\|(8)
+command when you are up multi-user.
+(The \f2shutdown\f1 command is much more polite, if there are other users
+logged in.)
+Either command will kill all processes and give you a shell on the console,
+as if you had just booted.  File systems remain mounted after the
+system is taken down to the single-user mode.  If you wish to come up multi-user again, you
+should do this by:
+.sp
+.nf
+.in 0.5i
+#\f3 cd /\f1
+#\f3 /etc/umount -a\f1
+#\f3 ^D\f1
+.lp
+Each system shutdown, crash, processor halt and reboot
+is recorded in the file /usr/adm/shutdownlog
+with the cause.
+.sh 3 "\f3Device Errors and Diagnostics\f1"
+.lp
+When errors occur on peripherals or in the system, the system
+prints a warning diagnostic on the console.
+Error messages printed by the devices in the system are described with the
+drivers for the devices in section 4 of the Programmer's Manual.
+If errors occur indicating hardware problems, consult Chapter 4 for
+information on system diagnostics.
+.sh 3 "\f3File System Checks, Backups and Disaster Recovery\f1"
+.lp
+Periodically (every week or so in the absence of any problems)
+and always (usually automatically) after a crash,
+all the file systems should be checked for consistency
+by
+\f2fsck\f1\|(8).
+The procedures of
+\f2reboot\f1\|(8)
+should be used to get the system to a state where a file system
+check can be performed manually or automatically.
+.lp
+Dumping of the file systems should be done regularly,
+since once the system is going it is easy to
+neglect this safety precaution.
+Complete and incremental dumps are easily done with
+\f2dump\f1\|(8).
+You should arrange to do a towers-of-Hanoi dump sequence;
+tune the system 
+so that almost all files are dumped on two tapes and kept for at
+least a week in most every case.
+Operators can execute ``dump w'' at login which will tell them what needs
+to be dumped
+(based on the /etc/fstab
+information).
+Be sure to create a group
+.b operator
+in the file /etc/group
+so that dump can notify logged-in operators when it needs help.
+.lp
+For example, we have three sets of dump tapes: Ten daily tapes,
+five weekly sets of two tapes, and fresh sets of three tapes monthly.
+We do daily dumps circularly on the daily tapes with sequence
+`3 2 5 4 7 6 9 8 9 9 9 ...'.
+Each weekly is a level 1 and the daily dump sequence level
+restarts after each weekly dump.
+Full dumps are level 0 and the daily sequence restarts after each full dump
+also.
+.lp
+Thus a typical dump sequence would be:
+.(b
+.TS
+center;
+c c c c c
+n n n l l .
+tape name	level number	date	opr	size
+_
+FULL	0	Nov 24, 1982	pjs	137K
+D1	3	Nov 28, 1982	ces	29K
+D2	2	Nov 29, 1982	dew	34K
+D3	5	Nov 30, 1982	hhw	19K
+D4	4	Dec 1, 1982	rrp	22K
+W1	1	Dec 2, 1982	kes	40K
+D5	3	Dec 4, 1982	hrh	15K
+D6	2	Dec 5, 1982	ddo	25K
+D7	5	Dec 6, 1982	dmr	15K
+D8	4	Dec 7, 1982	wnj	19K
+W2	1	Dec 9, 1982	nth	118K
+D9	3	Dec 11, 1982	rrh	15K
+D10	2	Dec 12, 1982	rrh	26K
+D1	5	Dec 15, 1982	rrh	14K
+W3	1	Dec 17, 1982	msp	71K
+D2	3	Dec 18, 1982	dib	13K
+FULL	0	Dec 22, 1982	pws	135K
+.TE
+.)b
+.sp
+.lp
+We do weekly dumps often enough that daily's always fit on one tape and
+never get to the sequence of 9's in the daily level numbers.
+.lp
+Dumping of files by name is best done by
+\f2tar\f1\|(1)
+but the amount of data that can be moved in this way is limited
+to a single tape.
+.lp
+It is desirable that full dumps of the root file system are made regularly.
+This is especially true when only one disk is available.
+Then, if the
+root file system is damaged by a hardware or software failure, you
+can rebuild a workable disk using a stand-alone restore in the
+same way that \f2restor\f1 was used to build the initial root file
+system.
+.lp
+Exhaustion of user-file space is certain to occur
+now and then;
+the only mechanisms for controlling this phenomenon
+are occasional use of
+\f2du\f1\|(1),
+\f2df\f1\|(1),
+\f2quot\f1\|(8),
+threatening
+messages of the day, and personal letters.
+.sh 3 "\f3Moving File System Data\f1"
+.lp
+If you have the equipment,
+the best way to move a file system
+is to dump it to magtape using
+\f2dump\f1\|(8),
+to use
+\f2mkfs\f1\|(8)
+and
+\f2mklost+found\f1\|(8)
+to create the new file system,
+and restore, using \f2restor\f1\|(8).
+If for some reason you don't want to use magtapes,
+and if you have more than one disk,
+dump accepts an argument telling where to put the dump;
+you might use another disk.
+.lp
+If you have to merge a file system into another, existing one,
+the best bet is to
+use
+\f2tar\f1\|(1).
+If you must shrink a file system, the best bet is to dump
+the original and restor it onto the new file system.
+However, this will not work if the i-list on the smaller file system
+is smaller than the maximum allocated inode on the larger.
+If this is the case, reconstruct the file system from scratch
+on another file system (perhaps using \f2tar\f1(1)) and then dump it.
+.lp
+If you want to change the disk partitions,
+the best thing to do is to build the new system and then do a full bootstrap.
+First make a boot tape of the current system,
+so you can recover in case of disaster.
+Then bring the system down to stand-alone mode by running the
+\f2shutdown (8)\f1 program.
+Next, boot the \f2mkpt (8)\f1 program from the stand-alone directory and
+give the appropriate responses
+to its queries to reflect the new partition sizes or placement.
+Next, boot the \f2mkfs\f1 program from the stand-alone directory (or your
+previously created boot tape if you are rebuilding the root filesystem)
+as described in
+Section 2, changing your responses to \f2mkfs\f1 where needed to reflect
+the new partition sizes.
+Next, boot the restor program, and restore your filesystems from your
+previously created tape.
+Finally, reboot your system as described in Section 2.
+.lp
+Note that you may change the disk partition tables or add new disks of
+differing capacities without having to make any changes at all to your
+kernel or stand-alone utilities by updating the disk header with
+dcutest and mkpt.
+.sh 3 "\f3Monitoring System Performance\f1"
+.lp
+The
+\f2vmstat\f1(1)
+program provided with the system is designed to be an aid to monitoring
+systemwide activity.  Together with the
+\f2ps\f1\|(1)
+command (as in ``ps av''), it can be used to investigate systemwide
+virtual activity.
+By running
+.i vmstat
+when the system is active you can judge the system activity in several
+dimensions: job distribution, virtual memory load, paging
+activity, disk and CPU utilization.
+Ideally, there should be few blocked (b) jobs,
+there should be little paging activity, there should
+be available bandwidth on the disk devices (most single arms peak
+out at 75-80 tps in practice), and the user CPU utilization (us) should
+be high (above 60%).
+.lp
+If the system is busy, then the count of active jobs may be large,
+and several of these jobs may often be blocked (b).
+If the virtual memory load is high, then paging will be going on (po
+will be non-zero) and free memory (fre) will be low (less than 50
+pages).
+.lp
+If you run
+.i vmstat
+when the system is busy (a ``vmstat 1'' gives all the numbers computed
+by the system), you can find imbalances by noting abnormal job
+distributions.
+If many processes are blocked (b), then the disk subsystem is
+overloaded or imbalanced.
+If you have several non-dma devices or open teletype lines that are
+``ringing,''
+or user programs that are doing high-speed non-buffered input/output,
+then the system time may go high (60 \(em 70 percent or higher).
+It is often possible to pin down the cause of high system time by
+looking to see if there is excessive context switching (cs), interrupt
+activity (in) or system call activity (sy).
+Cumulatively, on one of our large machines we average about 5 context
+switches, 700 interrupts, and 40 system calls per second.
+.lp
+If the system is heavily loaded, or if you have little memory for your
+load (less than 1.25 Mbytes), then the system may be forced to swap.
+This will probably be accompanied by a noticeable reduction in system
+performance and pauses when interactive jobs such as editors
+swap out.
+If you expect to be in a memory-poor environment for an extended
+period you might consider administratively limiting system load.
+.sh 3 "\f3Accounting\f1"
+.lp
+The \s-2GENIX\s0 operating system optionally 
+records two kinds of accounting information:
+connect time accounting and process resource accounting.  The connect
+time accounting information is stored in the file /usr/adm/wtmp, which
+is summarized by the program
+.i ac (8).
+The process time accounting information is stored in the file /usr/adm/acct,
+and analyzed and summarized by the program
+.i sa (8).
+.lp
+If you need to implement recharge for computing time, you can implement
+procedures based on the information provided by these commands.
+A convenient way to do this is to give commands to the clock daemon
+/etc/cron
+to be executed every day at a specified time.  This is done by adding
+lines to /usr/adm/crontab; see
+.i cron (8)
+for details.
+.sh 3 "\f3Resource Control\f1"
+.lp
+Resource control in the current version of the \s-2GENIX\s0 operating
+system is primitive.
+The resources consumed by any single process can be voluntarily limited
+by the mechanisms of
+.i vlimit (2).
+Disk space usage can be monitored by
+.i quot (8)
+or
+.i du (1)
+as was discussed previously.
+No system-enforced procedure for controlling a user's disk space usage
+is implemented under the current system, although
+some control can be obtained by dividing user groups between
+different disk partitions.
+.sh 3 "\f3Files Which Need Periodic Attention\f1"
+.lp
+The following files require periodic attention or are system specific:
+.(b
+.TS
+center;
+l l .
+/etc/fstab	how disk partitions are used
+/etc/group	group memberships
+/etc/motd	message of the day
+/etc/passwd	password file; each account has a line
+/etc/rc	system restart script; runs reboot; starts daemons
+/etc/ttys	enables/disables ports
+/etc/ttytype	terminal types connected to ports
+/usr/lib/crontab	commands that are run periodically
+/usr/lib/aliases	mail forwarding and distribution groups
+/usr/adm/acct	raw process account data
+/usr/adm/shutdownlog	log of system reboots
+/usr/adm/wtmp	login session accounting
+/usr/adm/messages	log of error messages
+.TE
+.)b

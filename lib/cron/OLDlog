@@ -1,0 +1,10 @@
+! *** cron started ***   pid = 169 Mon Apr 15 13:32:04 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 484 c Mon Apr 15 13:56:00 1985
+<  uucp 484 c Mon Apr 15 13:56:12 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 491 c Mon Apr 15 14:00:00 1985
+>  CMD: /usr/lib/sa/sa1 1200 3 &
+>  sys 492 c Mon Apr 15 14:00:00 1985
+<  sys 492 c Mon Apr 15 14:00:01 1985
+<  adm 491 c Mon Apr 15 14:00:13 1985

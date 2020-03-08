@@ -1,0 +1,62 @@
+.ig
+	@(#)vmap.2v	1.5	10/31/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH VMAP 2V
+.SH NAME
+vmap \- perform various mapping operations
+.SH SYNOPSIS
+.nf
+.B vmap(function, addr1, addr2, pid)
+.B char *addr1;
+.B char *addr2;
+.fi
+.SH DESCRIPTION
+.I Vmap
+performs various memory mapping functions, depending on the value of
+.IR function .
+The arguments
+.I addr1
+and
+.I addr2
+are page addresses, so that the lower 10 bits of the addresses are ignored
+(pages are 1024 bytes in size).
+.PP
+When the value of 
+.I function 
+is 0, the memory page located at the address
+specified by 
+.I addr1
+.RI ( addr2
+and
+.I pid
+are unused) is removed.
+The memory page can be a text, data, or stack page.
+Any further reference to the page will create a page of zeroes, if
+the address is legal (within the text, data, or stack segments).
+.PP
+When the value of
+.I function is 1,
+a page of the process specified by
+.I pid
+is copied into the current process.
+The address of the page being copied is specified by
+.IR addr2 .
+The page is copied into the current process at the address specified by
+.IR addr1 .
+If the specified source page is illegal or nonexistent, a page of zeroes
+is returned.
+This function is restricted to the super-user.
+.I Ps
+and
+.I w
+use this function to obtain the command arguments for other processes.
+.SH "SEE ALSO"
+vspy(2V), vlock(2V)
+.SH DIAGNOSTICS
+Zero is returned if the call was successful. -1 is returned if any of the
+arguments are illegal or if the user is not privileged.
+.SH BUGS
+Many desired functions are missing.
+This call is temporary and will be changed or superceded in the future.
+This call is only implemented in GENIX.

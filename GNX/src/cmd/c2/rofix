@@ -1,0 +1,15 @@
+
+#! /bin/sh
+
+# rofix: version 1.1 of 10/24/83
+# 
+#
+# @(#)rofix	1.1 (NSC) 10/24/83
+
+# This modifies the assembly file specified as an argument (typically
+#  rodata.s) so everything is in sharable program space, not data space.  
+ed $1 <<!
+g/^[ 	]*\.static/s//.program/
+w
+q
+!

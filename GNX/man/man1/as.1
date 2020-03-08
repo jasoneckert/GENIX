@@ -1,0 +1,131 @@
+.ig
+	@(#)as.1	1.7	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH AS 1 
+.SH NAME
+as \- NS16000 assembler (nasm when cross-support)
+.SH SYNOPSIS
+.B as
+[
+.B \-l
+] [
+.B \-y
+] [
+.SM
+.B \-L
+] [
+.B \-q
+] [
+.B \-i
+] [
+.B \-v
+] [
+.B \-o
+.IR objfile ]
+.I sourcefile
+.sp 1
+.B nasm
+[
+.B \-l
+] [
+.B \-y
+] [
+.B \-L
+] [
+.B \-q
+] [
+.B \-i
+] [
+.B \-v
+] [
+.B \-o
+.IR objfile ]
+.I sourcefile
+.SH DESCRIPTION
+.I As
+assembles the named source file, producing a standard object file.
+.PP
+See \f2G\s-2ENIX\s0 Assembler Reference Manual\fP
+for a detailed description of assembler features.
+.PP
+The available flags are:
+.TP
+.B \-l
+Produce a listing on standard output, which shows the object code
+emitted for each source line.  If any syntax errors are encountered,
+then the listing is suppressed and the errors are displayed.
+.TP
+.B \-y
+Produce a dump of the symbol table to standard output.  The symbols are
+presented in alphabetical order, with the following information for each
+symbol:
+its name; 
+line number defined on; 
+addressing mode (plus zero, one, or two offsets as needed); 
+and a cross-reference listing
+of line numbers on which the symbol is referenced.
+If the symbol is undefined, the message ``**** undefined ****'' is
+output next to the symbol name in place of other information. 
+.TP
+.B \-L
+Output defined symbols which begin with an ``L'' to the object file for the
+debugger.
+These symbols are usually discarded to save space in the resultant
+symbol table.
+.TP
+.B \-q
+Put link table relative to the SB register.  This speeds up execution
+time of external calls because link table entries can be referenced as
+offsets from the SB register, saving a memory 
+reference to a Module Table entry.
+.TP
+.B \-i
+Ignore differences in case in user-defined
+labels or symbols.
+Either upper or lower case letters
+may always be used for directives,
+reserved words, and opcodes.
+Normally, the assembler distinguishes
+user-defined labels or symbols that vary only in case.
+.TP
+.B \-v
+Use virtual memory for intermediate storage rather than a temporary file.
+.TP
+\f3\-o\f2 objfile\fP
+Leave the output of the assembler on the file
+.IR objfile .
+If this option is omitted,
+.I a.out
+is used.
+.SH FILES
+.nr aa \w'/usr/tmp/asm[12]*'
+.ta \n(aau+(3n) 
+a.out	default resultant object file
+.br
+stab.h	symbol table format
+.br
+/tmp/lst[123]\(**	temporary files for listing
+.br
+/tmp/asm[12]\(**	temporary files
+.SH "SEE ALSO"
+a.out(5), ld(1), nm(1), stab(5)
+.SH "CROSS-SUPPORT"
+In a cross-support environment, the NS16000 assembler is called
+.I nasm,
+and the default object file is 
+.I a16.out.
+Also,
+.I nasm
+uses /tmp for temporaries,
+instead of /usr/tmp.
+.SH BUGS
+Expressions involving floating constants are not allowed.
+.PP
+If a span dependent expression is used as a repeat count, the assembler may
+give an ``attempt to overwrite'' error.
+.PP
+The assembler gets into infinite loops when 
+branch instructions have expressions that contain minus signs.
+Insert ``nop'' instructions between the symbols whose
+difference is being compiled.

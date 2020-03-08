@@ -1,0 +1,14 @@
+Tue Sep  7 11:51:19 1982
+
+See the makefile for comments on strangenesses that still exist.
+
+In addition, the following don't compile:
+	ecvt.c
+	frexp.c
+	mon.c
+	rin.c
+
+Crypt.c compiles, but produces incorrect code.
+
+		-- Glenn
+

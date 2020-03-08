@@ -1,0 +1,56 @@
+.ig
+	u0: version 1.2 of 11/22/83
+	
+
+	@(#)u0	1.2	(NSC)	11/22/83
+..
+.sz 8
+.RP
+.TL
+The G\s-2ENIX\s0\s4\uTM\d\s0 Operating System For Beginners 
+.AI
+National Semiconductor Corporation
+.AB
+.PP
+This paper is meant to help
+new users get started on
+the
+\s-2GENIX\s0
+operating system.
+The \s-2GENIX\s0 operating system
+was derived from 4.1bsd which was developed at the
+University of California at Berkeley.
+It includes:
+.IP "\ \(bu"
+Basics needed for day-to-day use of the system \(em
+logging in and out, typing commands,
+correcting typing mistakes,
+mail, inter-terminal communication,
+the file system, printing files,
+redirecting I/O, pipes, and the C shell.
+.IP "\ \(bu"
+Document preparation \(em
+a brief discussion of the major formatting programs
+and macro packages,
+hints on preparing documents,
+and capsule descriptions of some supporting software.
+.IP "\ \(bu"
+G\s-2ENIX\s0
+programming \(em
+using the editor, using the C shell, programming in C,
+other languages and tools.
+.IP "\ \(bu"
+An annotated
+bibliography.
+.FS
+G\s-2ENIX\s0, SYS16, NS16000, ISE and ISE/16
+are trademarks of National Semiconductor Corporation.
+.FE
+.FS
+U\s-2NIX\s0 is a trademark of Bell Laboratories.
+.FE
+.FS
+The information in this document is for reference only and is subject
+to change without notice.
+.FE
+.AE

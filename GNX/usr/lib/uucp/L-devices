@@ -1,0 +1,3 @@
+ACU tty06 0 1200
+ACU tty06 0 300
+DIR tty07 0 9600

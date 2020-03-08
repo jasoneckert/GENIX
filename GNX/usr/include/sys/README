@@ -1,0 +1,100 @@
+This file gives useful information about the include files.
+It tells about the orgin of the .h files and if they are part
+of the GENIX.
+All of these files are under sccs control but most of these are
+kernel source files and because of that most of them do not have
+a corresponding sccs file in the ./SCCS directory.
+
+File            Status
+______________  ______
+acct.h		genix,4.1
+bk.h		4.1		(berknet stuff)
+blt.h		workstation
+buf.h		genix,4.1
+callo.h		obsolete	(old genix kernels)
+callout.h	genix,4.1
+clist.h		4.1		(genix should use when go to dyn alloc clists)
+clock.h		4.1		(timer.h should probably be renamed to this)
+cmap.h		4.1
+conf.h		genix,4.1
+cons.h		4.1
+cpu.h		4.1
+dcu.h		genix
+dcusaio.h	genix
+dcusize.h	genix
+devpm.h		genix
+devvm.h		genix
+dir.h		genix,4.1	(4.1-style directories)
+dk.h		genix,4.1
+dkbad.h		4.1
+dmap.h		4.1		(disk map stuff - perhaps we should use it too)
+fblk.h		genix,4.1
+file.h		genix,4.1
+filsys.h	genix,4.1
+flp.h		4.1
+hpreg.h		4.1
+htreg.h		4.1
+icu.h		genix
+inline.h	4.1		(perhaps will want genix version)
+ino.h		genix,4.1
+inode.h		genix,4.1
+ioctl.h		genix,4.1
+map.h		4.1		(resource manager defs - we'll want this stuff)
+mbareg.h	4.1
+mbavar.h	4.1
+mem.h		genix,4.1
+mmu.h		genix
+modtable.h	genix
+mount.h		genix,4.1
+msgbuf.h	genix,4.1
+mtio.h		genix,4.1
+mtpr.h		4.1
+mx.h		4.1		(unsupported in genix)
+nexus.h		4.1
+oreg.h		obsolete	(former version of reg.h)
+param.h		genix,4.1
+pcb.h		4.1
+pcb.m		4.1
+pdma.h		genix,4.1
+pk.h		4.1		(packet driver stuff)
+pk.p		4.1		(   "     "      "  )
+proc.h		genix,4.1
+psl.h		4.1
+pslt.h		4.1
+psr.h		genix
+pte.h		genix,4.1
+reboot.h	genix,4.1
+reg.h		genix,4.1
+rkreg.h		4.1
+rpb.h		4.1
+rs.h		genix
+scb.h		4.1
+seg.h		4.1		(may want for genix)
+sio.h		genix
+stat.h		genix,4.1
+systm.h		genix,4.1
+tcu.h		genix
+text.h		4.1		(genix handles text segs differently)
+timeb.h		genix,4.1
+timer.h		genix		(should perhaps rename as clock.h)
+times.h		genix,4.1
+tmreg.h		4.1
+trace.h		4.1		(probably want for genix)
+trap.h		genix,4.1
+tsreg.h		4.1
+tty.h		genix,4.1
+types.h		genix,4.1
+ubareg.h	4.1
+ubavar.h	4.1
+upreg.h		4.1
+user.h		genix,4.1
+vcmd.h		4.1		(versatec stuff)
+vlimit.h	genix,4.1
+vm.h		genix,4,1
+vmmac.h		4.1		(probably would be helpful for genix)
+vmmeter.h	genix,4.1
+vmparam.h	4.1		(probably useful for genix)
+vmsysent.h	4.1
+vmsystm.h	genix,4.1
+vmtune.h	genix		(looks like this should be subsumed elsewhere)
+vtimes.h	genix,4.1

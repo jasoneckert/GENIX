@@ -1,0 +1,825 @@
+.ig
+	t3: version 1.2 of 11/29/83
+	
+
+	@(#)t3	1.2	(NSC)	11/29/83
+..
+.bp
+.SH
+3.0\ Keyword\ parameters
+.LP
+Shell variables may be given values
+by assignment
+or when a shell procedure is invoked.
+An argument to a shell procedure of the form
+\f2name=value\fP
+that precedes the command name
+causes \f2value\fP
+to be assigned to \f2name\fP
+before execution of the procedure begins.
+The value of \f2name\fP in the invoking
+shell is not affected.
+For example,
+.DS
+	user=fred\ command
+.DE
+will execute \f2command\fP with
+\f3user\fP set to \f2fred\fP.
+The \f3\(mik\f1 flag causes arguments of the form
+\f2name=value\fP to be interpreted in this way
+anywhere in the argument list.
+Such \f2names\fP are sometimes
+called keyword parameters.
+If any arguments remain they
+are available as positional
+parameters \f3$1, $2, \*(ZZ\|.\fP
+.LP
+The \f2set\fP command
+may also be used to set positional parameters
+from within a procedure.
+For example,
+.DS
+	set\ \(mi\ \*(ST
+.DE
+will set \f3$1\fP to the first file name
+in the current directory, \f3$2\fP to the next,
+and so on.
+Note that the first argument, \(mi, ensures correct treatment
+when the first file name begins with a \(mi\|.
+.LP
+.SH
+3.1\ Parameter\ transmission
+.LP
+When a shell procedure is invoked both positional
+and keyword parameters may be supplied with the call.
+Keyword parameters are also made available implicitly
+to a shell procedure
+by specifying in advance that such parameters
+are to be exported.
+For example,
+.DS
+	export\ user\ box
+.DE
+marks the variables \f3user\fP and \f3box\fP
+for export.
+When a shell procedure is invoked
+copies are made of all exportable variables
+for use within the invoked procedure.
+Modification of such variables
+within the procedure does not
+affect the values in the invoking shell.
+It is generally true of
+a shell procedure
+that it
+may not modify the state
+of its caller without explicit
+request on the part of the caller.
+(Shared file descriptors are an
+exception to this rule.)
+.LP
+Names whose value is intended to remain
+constant may be declared \f2readonly\|.\fP
+The form of this command is the same as that of the \f2export\fP
+command,
+.DS
+	readonly name \*(ZZ
+.DE
+Subsequent attempts to set readonly variables
+are illegal.
+.SH
+3.2\ Parameter\ substitution
+.LP
+If a shell parameter is not set
+then the null string is substituted for it.
+For example, if the variable \f3d\fP
+is not set
+.DS
+	echo $d
+.DE
+or
+.DS
+	echo ${d}
+.DE
+will echo nothing.
+A default string may be given
+as in
+.DS
+	echo ${d\(mi\f3.\f1}
+.DE
+which will echo
+the value of the variable \f3d\fP
+if it is set and `\f3.\fP' otherwise.
+The default string is evaluated using the usual
+quoting conventions so that
+.DS
+	echo ${d\(mi\ '\*(ST\ '}
+.DE
+will echo \f3\*(ST\fP if the variable \f3d\fP
+is not set.
+Similarly
+.DS
+	echo ${d\(mi$1}
+.DE
+will echo the value of \f3d\fP if it is set
+and the value (if any) of \f3$1\fP otherwise.
+A variable may be assigned a default value
+using
+the notation
+.DS
+	echo ${d=\f3.\f1}
+.DE
+which substitutes the same string as
+.DS
+	echo ${d\(mi\f3.\f1}
+.DE
+and if \f3d\fP were not previously set
+then it will be set to the string `\f3.\fP'\|.
+(The notation ${\*(ZZ=\*(ZZ}
+is not available for positional parameters.)
+.LP
+If there is no sensible default then
+the notation
+.DS
+	echo ${d?message}
+.DE
+will echo the value of the variable \f3d\fP if it has
+one, otherwise \f2message\fP is printed by the shell and
+execution of the shell procedure is abandoned.
+If \f2message\fP is absent then a standard message
+is printed.
+A shell procedure that requires some parameters
+to be set might start as follows.
+.DS
+	:\ ${user?}\ ${acct?}\ ${bin?}
+	\*(ZZ
+.DE
+Colon (\f3:\fP) is a command
+that is
+built in to the shell and does nothing
+once its arguments have been evaluated.
+If any of the variables \f3user, acct\fP
+or \f3bin\fP are not set then the shell
+will abandon execution of the procedure.
+.SH
+3.3\ Command\ substitution
+.LP
+The standard output from a command can be
+substituted in a similar way to parameters.
+The command \f2pwd\fP prints on its standard
+output the name of the current directory.
+For example, if the current directory is
+\f3/usr/fred/bin\f1
+then the command
+.DS
+	d=\ `pwd\ `
+.DE
+is equivalent to
+.DS
+	d=/usr/fred/bin
+.DE
+.LP
+The entire string between grave accents (\ `\*(ZZ\ `)
+is taken as the command
+to be executed
+and is replaced with the output from
+the command.
+The command is written using the usual
+quoting conventions
+except that a \f3\ `\f1 must be escaped using
+a \f3\\\|.\f1
+For example,
+.DS
+	ls \ `echo "$1"\ `
+.DE
+is equivalent to
+.DS
+	ls $1
+.DE
+Command substitution occurs in all contexts
+where parameter substitution occurs (including \f2here\fP documents) and the
+treatment of the resulting text is the same
+in both cases.
+This mechanism allows string
+processing commands to be used within
+shell procedures.
+An example of such a command is \f2basename\fP
+which removes a specified suffix from a string.
+For example,
+.DS
+	basename main\f3.\fPc \f3.\fPc
+.DE
+will print the string \f2main\|.\fP
+Its use is illustrated by the following
+fragment from a \f2cc\fP command.
+.DS
+	case $A in
+	\*(Ca\*(ZZ
+	\*(Ca\*(ST\f3.\fPc)	B=\ `basename $A \f3.\fPc\ `
+	\*(Ca\*(ZZ
+	esac
+.DE
+that sets \f3B\fP to the part of \f3$A\fP
+with the suffix \f3.c\fP stripped.
+.LP
+Here are some composite examples.
+.RS
+.IP \(bu
+.ft 3
+for i in \ `ls \(mit\ `; do \*(ZZ
+.ft 1
+.br
+The variable \f3i\fP is set
+to the names of files in time order,
+most recent first.
+.IP \(bu
+.ft 3
+set \ `date\ `; echo $6 $2 $3, $4
+.ft 1
+.br
+will print, e.g.,
+.ft 2
+1977 Nov 1, 23:59:59
+.ft 1
+.RE
+.SH
+3.4\ Evaluation\ and\ quoting
+.LP
+The shell is a macro processor that
+provides parameter substitution, command substitution and file
+name generation for the arguments to commands.
+This section discusses the order in which
+these evaluations occur and the
+effects of the various quoting mechanisms.
+.LP
+Commands are parsed initially according to the grammar
+given in appendix A.
+Before a command is executed
+the following
+substitutions occur.
+.RS
+.IP \(bu
+parameter substitution, e.g. \f3$user\fP
+.IP \(bu
+command substitution, e.g. \f3\ `pwd\ `\fP
+.RS
+.LP
+Only one evaluation occurs so that if, for example, the value of the variable
+\f3X\fP
+is the string \f2$y\fP
+then
+.DS
+	echo $X
+.DE
+will echo \f2$y\|.\fP
+.RE
+.IP \(bu
+blank interpretation
+.RS
+.LP
+Following the above substitutions
+the resulting characters
+are broken into non-blank words (\f2blank interpretation\fP).
+For this purpose `blanks' are the characters of the string
+\f3$\s-1IFS\s0\fP.
+By default, this string consists of blank, tab and newline.
+The null string
+is not regarded as a word unless it is quoted.
+For example,
+.DS
+	echo \ '\ '
+.DE
+will pass on the null string as the first argument to \f2echo\fP,
+whereas
+.DS
+	echo $null
+.DE
+will call \f2echo\f1 with no arguments
+if the variable \f3null\fP is not set
+or set to the null string.
+.RE
+.IP \(bu
+file name generation
+.RS
+.LP
+Each word
+is then scanned for the file pattern characters
+\f3\*(ST, ?\f1 and \f3[\*(ZZ]\f1
+and an alphabetical list of file names
+is generated to replace the word.
+Each such file name is a separate argument.
+.RE
+.RE
+.LP
+The evaluations just described also occur
+in the list of words associated with a \f3for\fP
+loop.
+Only substitution occurs
+in the \f2word\fP used
+for a \f3case\fP branch.
+.LP
+As well as the quoting mechanisms described
+earlier using \f3\\\f1 and \f3\ '\*(ZZ\ '\f1
+a third quoting mechanism is provided using double quotes.
+Within double quotes parameter and command substitution
+occurs but file name generation and the interpretation
+of blanks does not.
+The following characters
+have a special meaning within double quotes
+and may be quoted using \f3\\\|.\fP
+.DS
+	\f3$	\fPparameter substitution
+	\f3\ `\fP	command substitution
+	\f3"\fP	ends the quoted string
+	\f3\e\fP	quotes the special characters \f3$ \ ` " \e\fP
+.DE
+For example,
+.DS
+	echo "$x"
+.DE
+will pass the value of the variable \f3x\fP as a
+single argument to \f2echo.\fP
+Similarly,
+.DS
+	echo "$\*(ST"
+.DE
+will pass the positional parameters as a single
+argument and is equivalent to
+.DS
+	echo "$1 $2 \*(ZZ"
+.DE
+The notation \f3$@\fP
+is the same as \f3$\*(ST\f1
+except when it is quoted.
+.DS
+	echo "$@"
+.DE
+will pass the positional parameters, unevaluated, to \f2echo\f1
+and is equivalent to
+.DS
+	echo "$1" "$2" \*(ZZ
+.DE
+.LP
+The following table gives, for each quoting mechanism,
+the shell metacharacters that are evaluated.
+.DS
+.ce
+.ft 2
+metacharacter
+.ft
+.in 1.5i
+	\e	$	*	\ `	"	\ '
+\ '	n	n	n	n	n	t
+\ `	y	n	n	t	n	n
+"	y	y	n	y	t	n
+
+	t	terminator
+	y	interpreted
+	n	not interpreted
+
+.in
+.ft 3
+.ce
+Figure 2. Quoting mechanisms
+.ft
+.DE
+.LP
+In cases where more than one evaluation of a string
+is required the built-in command \f2eval\fP
+may be used.
+For example,
+if the variable \f3X\fP has the value
+\f2$y\fP, and if \f3y\fP has the value \f2pqr\fP
+then
+.DS
+	eval echo $X
+.DE
+will echo the string \f2pqr\|.\fP
+.LP
+In general the \f2eval\fP command
+evaluates its arguments (as do all commands)
+and treats the result as input to the shell.
+The input is read and the resulting command(s)
+executed.
+For example,
+.DS
+	wg=\\ 'eval who\*(VTgrep\\ '
+	$wg fred
+.DE
+is equivalent to
+.DS
+	who\*(VTgrep fred
+.DE
+In this example,
+\f2eval\fP is required
+since there is no interpretation
+of metacharacters, such as \f3\*(VT\|,\fP following
+substitution.
+.SH
+3.5\ Error\ handling
+.LP
+The treatment of errors detected by
+the shell depends on the type of error
+and on whether the shell is being
+used interactively.
+An interactive shell is one whose
+input and output are connected
+to a terminal (as determined by
+\f2gtty\fP (2)).
+A shell invoked with the \f3\(mii\fP
+flag is also interactive.
+.LP
+Execution of a command (see also 3.7) may fail
+for any of the following reasons.
+.IP \(bu
+Input output redirection may fail.
+For example, if a file does not exist
+or cannot be created.
+.IP \(bu
+The command itself does not exist
+or cannot be executed.
+.IP \(bu
+The command terminates abnormally,
+for example, with a "bus error"
+or "memory fault".
+See Figure 2 below for a complete list
+of UNIX signals.
+.IP \(bu
+The command terminates normally
+but returns a non-zero exit status.
+.LP
+In all of these cases the shell
+will go on to execute the next command.
+Except for the last case an error
+message will be printed by the shell.
+All remaining errors cause the shell
+to exit from a command procedure.
+An interactive shell will return
+to read another command from the terminal.
+Such errors include the following.
+.IP \(bu
+Syntax errors.
+e.g., if \*(ZZ then \*(ZZ done
+.IP \(bu
+A signal such as interrupt.
+The shell waits for the current
+command, if any, to finish execution and
+then either exits or returns to the terminal.
+.IP \(bu
+Failure of any of the built-in commands
+such as \f2cd.\fP
+.LP
+The shell flag \f3\(mie\fP
+causes the shell to terminate
+if any error is detected.
+.DS
+1	hangup
+2	interrupt
+3*	quit
+4*	illegal instruction
+5*	trace trap
+6*	IOT instruction
+7*	EMT instruction
+8*	floating point exception
+9	kill (cannot be caught or ignored)
+10*	bus error
+11*	segmentation violation
+12*	bad argument to system call
+13	write on a pipe with no one to read it
+14	alarm clock
+15	software termination (from \f2kill\fP (1))
+
+.DE
+.ft 3
+.ce
+Figure 3. UNIX signals
+.ft
+
+Those signals marked with an asterisk
+produce a core dump
+if not caught.
+However,
+the shell itself ignores quit which is the only
+external signal that can cause a dump.
+The signals in this list of potential interest
+to shell programs are 1, 2, 3, 14 and 15.
+.SH
+3.6\ Fault\ handling
+.LP
+Shell procedures normally terminate
+when an interrupt is received from the
+terminal.
+The \f2trap\fP command is used
+if some cleaning up is required, such
+as removing temporary files.
+For example,
+.DS
+	trap\ \ 'rm\ /tmp/ps$$; exit\ '\ 2
+.DE
+sets a trap for signal 2 (terminal
+interrupt), and if this signal is received
+will execute the commands
+.DS
+	rm /tmp/ps$$; exit
+.DE
+\f2exit\fP is
+another built-in command
+that terminates execution of a shell procedure.
+The \f2exit\fP is required; otherwise,
+after the trap has been taken,
+the shell will resume executing
+the procedure
+at the place where it was interrupted.
+.LP
+UNIX signals can be handled in one of three ways.
+They can be ignored, in which case
+the signal is never sent to the process.
+They can be caught, in which case the process
+must decide what action to take when the
+signal is received.
+Lastly, they can be left to cause
+termination of the process without
+it having to take any further action.
+If a signal is being ignored
+on entry to the shell procedure, for example,
+by invoking it in the background (see 3.7) then \f2trap\fP
+commands (and the signal) are ignored.
+.LP
+The use of \f2trap\fP is illustrated
+by this modified version of the \f2touch\fP
+command (Figure 4).
+The cleanup action is to remove the file \f3junk$$\f1\|.
+.DS
+	flag=
+	trap\ \ 'rm\ \(mif\ junk$$;\ exit\ '\ 1 2 3 15
+	for i
+	do\ case\ $i\ in
+	\*(DC\(mic)	flag=N ;;
+	\*(DC\*(ST)	if\ test\ \(mif\ $i
+	\*(DC	then	ln\ $i\ junk$$;\ rm\ junk$$
+	\*(DC	elif\ test\ $flag
+	\*(DC	then	echo\ file\ \\\\\ '$i\\\\\ '\ does\ not\ exist
+	\*(DC	else	>$i
+	\*(DC	fi
+	\*(DOesac
+	done
+.DE
+.sp
+.ft 3
+.ce
+Figure 4. The touch command
+.ft
+.sp
+The \f2trap\fP command
+appears before the creation
+of the temporary file;
+otherwise it would be
+possible for the process
+to die without removing
+the file.
+.LP
+Since there is no signal 0 in UNIX
+it is used by the shell to indicate the
+commands to be executed on exit from the
+shell procedure.
+.LP
+A procedure may, itself, elect to
+ignore signals by specifying the null
+string as the argument to trap.
+The following fragment is taken from the
+\f2nohup\fP command.
+.DS
+	trap \ '\ ' 1 2 3 15
+.DE
+which causes \f2hangup, interrupt, quit \f1and\f2 kill\f1
+to be ignored both by the
+procedure and by invoked commands.
+.LP
+Traps may be reset by saying
+.DS
+	trap 2 3
+.DE
+which resets the traps for signals 2 and 3 to their default values.
+A list of the current values of traps may be obtained
+by writing
+.DS
+	trap
+.DE
+.LP
+The procedure \f2scan\fP (Figure 5) is an example
+of the use of \f2trap\fP where there is no exit
+in the trap command.
+\f2scan\fP takes each directory
+in the current directory, prompts
+with its name, and then executes
+commands typed at the terminal
+until an end of file or an interrupt is received.
+Interrupts are ignored while executing
+the requested commands but cause
+termination when \f2scan\fP is
+waiting for input.
+.KS
+.DS
+	d=\ `pwd\ `
+	for\ i\ in\ \*(ST
+	do\ if\ test\ \(mid\ $d/$i
+	\*(DOthen\ cd\ $d/$i
+	\*(DO\*(THwhile\ echo\ "$i:"
+	\*(DO\*(TH\*(WHtrap\ exit\ 2
+	\*(DO\*(TH\*(WHread\ x
+	\*(DO\*(THdo\ trap\ :\ 2;\ eval\ $x;\ done
+	\*(DOfi
+	done
+.DE
+.sp
+.ft 3
+.ce
+Figure 5. The scan command
+.ft
+.sp
+\f2read x\f1 is a built-in command that reads one line from the
+standard input
+and places the result in the variable \f3x\|.\fP
+It returns a non-zero exit status if either
+an end-of-file is read or an interrupt
+is received.
+.KE
+.SH
+3.7\ Command\ execution
+.LP
+To run a command (other than a built-in) the shell first creates
+a new process using the system call \f2fork.\fP
+The execution environment for the command
+includes input, output and the states of signals, and
+is established in the child process
+before the command is executed.
+The built-in command \f2exec\fP
+is used in the rare cases when no fork
+is required
+and simply replaces the shell with a new command.
+For example, a simple version of the \f2nohup\fP
+command looks like
+.DS
+	trap \\ '\\ ' 1 2 3 15
+	exec $\*(ST
+.DE
+The \f2trap\fP turns off the signals specified
+so that they are ignored by subsequently created commands
+and \f2exec\fP replaces the shell by the command
+specified.
+.LP
+Most forms of input output redirection have already been
+described.
+In the following \f2word\fP is only subject
+to parameter and command substitution.
+No file name generation or blank interpretation
+takes place so that, for example,
+.DS
+		echo \*(ZZ >\*(ST.c
+.DE
+will write its output into a file whose name is \f3\*(ST.c\|.\fP
+Input output specifications are evaluated left to right
+as they appear in the command.
+.IP >\ \f2word\fP 12
+The standard output (file descriptor 1)
+is sent to the file \f2word\fP which is
+created if it does not already exist.
+.IP \*(AP\ \f2word\fP 12
+The standard output is sent to file \f2word.\fP
+If the file exists then output is appended
+(by seeking to the end);
+otherwise the file is created.
+.IP <\ \f2word\fP 12
+The standard input (file descriptor 0)
+is taken from the file \f2word.\fP
+.IP \*(HE\ \f2word\fP 12
+The standard input is taken from the lines
+of shell input that follow up to but not
+including a line consisting only of \f2word.\fP
+If \f2word\fP is quoted then no interpretation
+of the document occurs.
+If \f2word\fP is not quoted
+then parameter and command substitution
+occur and \f3\\\fP is used to quote
+the characters \f3\\\fP \f3$\fP \f3\ `\fP and the first character
+of \f2word.\fP
+In the latter case \f3\\newline\fP is ignored (c.f. quoted strings).
+.IP >&\ \f2digit\fP 12
+The file descriptor \f2digit\fP is duplicated using the system
+call \f2dup\fP (2)
+and the result is used as the standard output.
+.IP <&\ \f2digit\fP 12
+The standard input is duplicated from file descriptor \f2digit.\fP
+.IP <&\(mi 12
+The standard input is closed.
+.IP >&\(mi 12
+The standard output is closed.
+.LP
+Any of the above may be preceded by a digit in which
+case the file descriptor created is that specified by the digit
+instead of the default 0 or 1.
+For example,
+.DS
+	\*(ZZ 2>file
+.DE
+runs a command with message output (file descriptor 2)
+directed to \f2file.\fP
+.DS
+	\*(ZZ 2>&1
+.DE
+runs a command with its standard output and message output
+merged.
+(Strictly speaking file descriptor 2 is created
+by duplicating file descriptor 1 but the effect is usually to
+merge the two streams.)
+.LP
+The environment for a command run in the background such as
+.DS
+	list \*(ST.c \*(VT lpr &
+.DE
+is modified in two ways.
+Firstly, the default standard input
+for such a command is the empty file \f3/dev/null\|.\f1
+This prevents two processes (the shell and the command),
+which are running in parallel, from trying to
+read the same input.
+Chaos would ensue
+if this were not the case.
+For example,
+.DS
+	ed file &
+.DE
+would allow both the editor and the shell
+to read from the same input at the same time.
+.LP
+The other modification to the environment of a background
+command is to turn off the QUIT and INTERRUPT signals
+so that they are ignored by the command.
+This allows these signals to be used
+at the terminal without causing background
+commands to terminate.
+For this reason the UNIX convention
+for a signal is that if it is set to 1
+(ignored) then it is never changed
+even for a short time.
+Note that the shell command \f2trap\fP
+has no effect for an ignored signal.
+.SH
+3.8\ Invoking\ the\ shell
+.LP
+The following flags are interpreted by the shell
+when it is invoked.
+If the first character of argument zero is a minus,
+then commands are read from the file \f3.profile\|.\fP
+.IP \f3\(mic\fP\ \f2string\fP
+.br
+If the \f3\(mic\fP flag is present then
+commands are read from \f2string\|.\fP
+.IP \f3\(mis\fP
+If the \f3\(mis\fP flag is present or if no
+arguments remain
+then commands are read from the standard input.
+Shell output is written to
+file descriptor 2.
+.IP \f3\(mii\fP
+If the \f3\(mii\fP flag is present or
+if the shell input and output are attached to a terminal (as told by \f2gtty\fP)
+then this shell is \f2interactive.\fP
+In this case TERMINATE is ignored (so that \f3kill 0\fP
+does not kill an interactive shell) and INTERRUPT is caught and ignored
+(so that \f3wait\fP is interruptable).
+In all cases QUIT is ignored by the shell.
+.SH
+Acknowledgements
+.LP
+The design of the shell is
+based in part on the original UNIX shell
+.[
+unix command language thompson
+.]
+and the PWB/UNIX shell,
+.[
+pwb shell mashey unix
+.]
+some
+features having been taken from both.
+Similarities also exist with the
+command interpreters
+of the Cambridge Multiple Access System
+.[
+cambridge multiple access system hartley
+.]
+and of CTSS.
+.[
+ctss
+.]
+.LP
+I would like to thank Dennis Ritchie
+and John Mashey for many
+discussions during the design of the shell.
+I am also grateful to the members of the Computing Science Research Center
+and to Joe Maranzano for their
+comments on drafts of this document.
+.SH
+.[
+$LIST$
+.]

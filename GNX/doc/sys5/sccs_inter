@@ -1,0 +1,280 @@
+.ig
+	@(#)sccs_inter	1.1	10/12/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.if t .ds ' \h@.05m@\s+4\v@.333m@\'\v@-.333m@\s-4\h@.05m@
+.if n .ds ' '
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.ds :? SCCS Interface Program
+.PH "''''"
+.OH "'\s9\f2\*(:?\fP''\\\\nP\s0'"
+.EH "'\s9\\\\nP''\f2\*(:?\^\fP\s0'"
+.nr Hy 1
+.nr Hs 3
+.nr Hi 0
+.nr Hu 3
+.nr Hb 3
+.ds s \s-1SCCS\s+1
+.ds s) S\s-1CCS\s+1
+.ds p \s-1UNIX\s+1
+.ds k \s-1ID\s+1
+.ds u \s-1UNIX\s+1
+.tr ~
+.ds . \fB.\fP
+.bd S 3 3
+.TL
+Function and Use of an S\s-2CCS\s+2 Interface Program
+.AU "L. E. Bonanni" LEB PY
+.AU "A. Guyton (4/1/80 revision)" AG PY
+.AS 0 6
+This memorandum discusses the use of a Source Code Control System
+Interface Program to allow more than one user to
+use \*s commands upon the same set of files.
+.AE
+.MT 4
+.nr Hi 0
+.H 1 "INTRODUCTION"
+In order to permit \*p\(dg
+.FS \(dg
+UNIX is a trademark of Bell Laboratories.
+.FE
+users with different user identification numbers (user \*ks)
+to use \*s commands upon the same files, an \*s interface program is
+provided to temporarily grant the necessary file access permissions to
+these users.
+This memorandum discusses
+the creation and use of
+such an interface program.
+This memorandum replaces an earlier version dated March 1, 1978.
+.H 1 "FUNCTION"
+When only one user
+uses \*s,
+the real and effective user \*ks are the same, and that user \*k owns the
+directories containing \*s files.
+However, there are situations (for example, in large software
+development projects) in which it is practical
+to allow more than one user to make changes
+to the same set of \*s files.
+In these cases, one user
+must be chosen as the
+.B owner
+of the \*s files
+and be the one who will
+.B administer
+them
+(e.g., by using the
+.I admin
+command).
+This user is termed the
+.I "\*s administrator"
+for that project.
+Since other users of \*s do not have the same privileges and
+permissions as the \*s administrator, they are not able to execute
+directly those commands that
+require write permission in the directory containing the \*s files.
+Therefore, a project-dependent program is required to
+provide an interface to the
+.IR get ,
+.IR delta ,
+and, if desired,
+.IR rmdel ,
+.IR cdc ,
+and
+.I unget
+commands.\*F~
+.FS
+Other \*s commands either do not require write permission in the
+directory containing \*s files or are (generally) reserved for use
+only by the administrator.
+.FE
+.P
+The interface program must be owned by the \*s administrator,
+must be executable by non-owners,
+and must
+have the
+.I set~user~\*k~on~execution
+bit on (see
+.I chmod (1)\*F),
+.FS
+All references of the form
+.I name (\f2N\|\fP)
+refer to item
+.I name
+in section
+.I N
+of the
+.I "U\s-1NIX\s+1 User's Manual."
+.FE
+so that, when executed, the
+.I "effective"
+user \*k is the user \*k of the administrator.
+This program's function is to invoke the desired \*s command
+and to cause it to
+.I inherit
+the privileges of the \*s administrator for the duration of
+that command's execution.
+In this manner, the owner of an \*s file (the administrator)
+can modify it at will.
+Other users whose
+.I login
+names are in the
+.I "user list" \*F
+.FS
+This is the list
+of login names of
+users who are allowed to modify an \*s file
+by adding or removing deltas.
+The login names are specified using the
+.I admin (1)
+command.
+.FE
+for that file (but who are
+.I not
+its owners)
+are given the necessary permissions only for the duration of the
+execution of the interface program,
+and are thus able to modify the \*s files only through the use of
+.I delta
+and, possibly,
+.I rmdel
+and
+.IR cdc .
+.H 1 "A \|BASIC \|PROGRAM"
+When a \*u program is executed
+it is passed (as argument 0) the
+.I name
+by which it is invoked,
+followed by any additional user-supplied arguments.
+Thus, if a program is given a number of
+.I links
+(names), it may alter its processing depending upon which link is
+used to invoke it.
+This mechanism is used by an \*s interface program to determine which
+\*s command it should subsequently invoke (see \fIexec\fP(2)).
+.P
+A generic interface program
+(\fBinter.c\fP, written in C)
+is shown in
+.IR "Attachment I" .
+Note the reference to the (unsupplied) function
+.BR filearg .
+This is intended to demonstrate that the interface program may also
+be used as a pre-processor to \*s commands.
+For example, function
+.B filearg
+could be used to modify file
+arguments to be passed to the \*s command by supplying the
+.I full
+path name of a file, thus avoiding extraneous typing by the user.
+Also, the program could supply any additional (default)
+keyletter arguments desired.
+.H 1 "LINKING \|AND \|USE"
+In general,
+the following demonstrates the steps to be performed by the \*s
+administrator to create the \*s interface program.
+It is assumed, for the purposes of the discussion, that
+the interface program
+.B inter.c
+resides in directory
+.BR /x1/xyz/sccs .
+Thus, the command sequence:
+.DS 1
+cd  /x1/xyz/sccs
+cc  \*.\|\*.\|\*.  inter\*.c  \-o  inter  \*.\|\*.\|\*.
+.DE
+compiles
+.B inter.c
+to produce the executable module
+.B inter
+(\*.\|\*.\|\*. represents arguments that may also be required).
+The proper mode and the
+.I set~user~\*k~on~execution
+bit are set by executing:
+.DS 1
+chmod  4755  inter
+.DE
+Finally, new links are created, by (for example):\*F
+.FS
+The names of the links may be arbitrary,
+provided the interface program is able to determine from them
+the names of \*s commands to be invoked.
+.FE
+.DS 1
+ln  inter  get
+ln  inter  delta
+ln  inter  rmdel
+.DE
+Subsequently,
+.I any
+user whose shell parameter \s-1PATH\s+1 (see
+.I sh (1))
+specifies that directory
+.B /x1/xyz/sccs
+is to be searched first for
+executable commands, may execute, for example:
+.DS 1
+get  \-e  /x1/xyz/sccs/s\*.abc
+.DE
+from any directory to
+invoke the interface program (via its link
+.IR get ).
+The interface program then
+executes
+.B /usr/bin/get
+(the actual \*s
+.I get
+command) upon the named file.
+As previously mentioned, the interface program could be used to supply
+the pathname
+.BR /x1/xyz/sccs ,
+so that the user would only have to
+specify:
+.DS 1
+get  \-e  s\*.abc
+.DE
+to achieve the same results.
+.H 1 "CONCLUSION"
+An \*s interface program is used to permit users
+having different user \*ks to use \*s commands upon the same
+files.
+Although this is its primary purpose,
+such a program may also be used as a pre-processor
+to \*s commands
+since it can
+perform operations upon its arguments.
+.SK
+.ce
+.I "Attachment I"
+.SP 2
+.tl ||\*(s) Interface Program \fBinter.c\fP||
+.SP 2
+.DS
+main(argc, argv)
+int argc;
+char \(**argv[\|];
+{
+	register int i;
+	char cmdstr[\s-1LENGTH\s+1]
+
+	/\(**
+	Process file arguments (those that don\(fmt begin with "\-").
+	\(**/
+	for (i = 1; i < argc; i+\|+)
+		if (argv[\^i\^][0] != \(fm\-\(fm)
+			argv[\^i\^] = filearg(argv[\^i\^]);
+
+	/\(**
+	Get "simple name" of name used to invoke this program
+	(i.e., strip off directory\-name prefix, if any).
+	\(**/
+	argv[0] = sname(argv[0]);
+
+	/\(**
+	Invoke actual \*s command, passing arguments.
+	\(**/
+	sprintf(cmdstr, "/usr/bin/%s", argv[0]);
+	execv(cmdstr, argv);
+}
+.DE
+.D3 "January 1981"

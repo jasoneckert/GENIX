@@ -1,0 +1,61 @@
+/*
+ * mac2defs: version 5.1 of 9/8/83
+ * 
+ *
+ * @(#)mac2defs	5.1	(National Semiconductor)	9/8/83
+ */
+
+/* jima 8/82: MYCANON added */
+/* JZ 9/21/82: moved REAL_REG from allo.c, returns actual compiler representation for 16000
+	       register numbers*/
+
+/*	NS16032 Registers */
+
+	/* scratch registers */
+# define R0 0
+# define R1 1
+# define R2 2
+	/* register variables */
+# define R3 7
+# define R4 8
+# define R5 9
+# define R6 10
+# define R7 11
+	/* special purpose registers */
+#ifndef FP
+# define FP 12
+#endif
+# define SP 13
+
+	/* floating registers */
+#define F0 3
+#define F2 4
+#define F4 5
+#define F6 6
+
+/* The real register number in the compiler of A registers */
+#define REAL_REG(x) ((x)<= R2?(x):((x)+4))
+extern int fregs;
+extern int maxargs;
+
+# define BYTEOFF(x) ((x)&03)
+# define wdal(k) (BYTEOFF(k)==0)
+# define BITOOR(x) ((x)>>3)  /* bit offset to oreg offset */
+
+# define REGSZ 14
+
+# define TMPREG FP	/* I suppose this points to the temporary space */
+
+# define R2REGS   	/* permit double indexing */
+
+# define STOARG(p)     /* just evaluate the arguments, and be done with it... */
+# define STOFARG(p)
+# define STOSTARG(p)
+# define genfcall(a,b,c) gencall(a,b,c)
+
+# define NESTCALLS
+
+# define MYREADER(p) myreader(p)
+# define MYCANON(p) mycanon(p)   /* jima */
+int optim2();
+# define special(a, b) 0

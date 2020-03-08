@@ -1,0 +1,20 @@
+.ig
+	@(#)uvers.1	1.3	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH UVERS I
+.SH NAME
+uvers \- print kernel version
+.SH SYNOPSIS
+.B uvers
+.B [file] ...
+.br
+.SH DESCRIPTION
+.I Uvers
+prints the kernel's version string on the standard output.
+This string contains the date built,
+the login id of the person who built the kernel,
+and the kernel's version number.
+If no files are given, the version of the currently running kernel is found
+(this requires read permission on /dev/kmem).  If any files are given, the
+version string is extracted from each file.

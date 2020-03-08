@@ -1,0 +1,191 @@
+.ig
+	vhel2: version 1.2 of 11/8/83
+	
+
+	@(#)vhel2	1.2	(NSC)	11/8/83
+..
+.NH
+LANGUAGES
+.NH 2
+The C Language
+.LP
+.sh CC
+Compile and/or link edit programs in the C
+language.
+The 
+.UC GENIX
+operating system, most of the
+subsystems and C itself are written in C.
+For a full description of 
+.UC GENIX
+C, read
+.ul
+The C Programming Language,
+Brian W. Kernighan and Dennis M. Ritchie,
+Prentice-Hall, 1978 and 
+.ul
+The Programmer's Guide to C on the NS16000.
+.op
+General purpose language
+designed for structured programming.
+.op
+Data types include
+character,
+integer,
+float,
+double,
+pointers to all types,
+functions returning above types,
+arrays of all types,
+structures and unions of all types.
+.op
+Operations intended to give machine-independent control
+of full machine facility, including to-memory
+operations and
+pointer arithmetic.
+.op
+Macro preprocessor for parameterized code and inclusion of
+standard files.
+.op
+All procedures recursive, with parameters by value.
+.op
+Machine-independent pointer manipulation.
+.op
+Object code uses full
+addressing capability of the NS16000 microprocessor.
+.op
+Runtime library gives access to all system facilities.
+.op
+Definable data types.
+.op
+Modular structure takes advantage of NS16000 architecture.
+.sh  LINT
+Verifier for C programs.
+Reports questionable or nonportable usage such as:
+.nf
+.in +2
+Mismatched data declarations and procedure interfaces
+.br
+Nonportable type conversions
+.br
+Unused variables, unreachable code, no-effect operations
+.br
+Mistyped pointers
+.br
+Obsolete syntax
+.in -2
+.fi
+.op
+Full cross-module checking of separately compiled programs.
+.sh  CB
+C program beautifier.
+.NH 2
+Pascal (optional)
+.LP
+.sh PC
+A compiler for 
+.UC GENIX
+Pascal, an 
+American National Standards Institute compatible Pascal Language with:
+.op
+Strong type checking.
+.op
+Double-precision floating-point arithmetic.
+.op
+Block structure.
+.op
+Easy to learn constuction.
+.op
+Many useful extentions.
+.sh \&
+The compiler features:
+.op
+Generic procedure selection.
+.op
+Separate, modular compilation.
+.op
+Bit and pointer arithmetic.
+.op
+Operator overloading.
+.op
+Compatible at object code level with C and assembly language modules.
+.NH 2
+Other Algorithmic Languages
+.sh DC
+Interactive programmable desk calculator.
+Has named storage locations as well
+as conventional stack for holding integers or programs.
+.op
+Unlimited precision decimal arithmetic.
+.op
+Appropriate treatment of decimal fractions.
+.op
+Arbitrary input and output radices, in particular
+binary, octal, decimal and hexadecimal.
+.op
+Reverse Polish Notation.
+.op
+Operations:
+.in+2
+.nf
++ \- * /
+.br
+Remainder, power, square root
+.br
+Load, store, duplicate, clear
+.br
+Print, enter program text, execute
+.in-2
+.fi
+.sh BC
+A C-like interactive interface to the desk calculator DC.
+.op
+All the capabilities of DC with a high-level syntax.
+.op
+Arrays and recursive functions.
+.op
+Immediate evaluation of expressions and evaluation of
+functions upon call.
+.op
+Arbitrary precision elementary functions:
+exp, sin, cos, atan.
+.op
+Go-to-less programming.
+.NH 2
+Macroprocessing
+.LP
+.nr c 0 1
+.sh  M4
+A general purpose macroprocessor.
+.op
+Stream-oriented, recognizes macros anywhere in text.
+.op
+Syntax fits with functional syntax of most higher-level
+languages.
+.op
+Can evaluate integer arithmetic expressions.
+.NH 2
+Compiler-compilers
+.LP
+.sh YACC
+An LR(1)-based compiler writing system.
+During execution of resulting
+parsers, arbitrary C functions can be
+called to do code generation or semantic actions.
+.op
+BNF syntax specifications.
+.op
+Precedence relations.
+.op
+Accepts formally ambiguous grammars
+with non-BNF resolution rules.
+.sh  LEX
+Generator of lexical analyzers.
+Arbitrary C functions can be called
+upon isolation of each lexical token.
+.op
+Full regular expression,
+plus left and right context dependence.
+.op
+Resulting lexical analysers interface cleanly
+with YACC parsers.

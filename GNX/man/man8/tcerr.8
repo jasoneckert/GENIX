@@ -1,0 +1,22 @@
+.ig
+	@(#)tcerr.8	1.4	10/21/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH TCERR 8
+.SH TCERR
+tcerr \- decipher tape errors
+.SH SYNOPSIS
+.B tcerr
+immediate-status error-status drive-status
+.SH DESCRIPTION
+.I Tcerr
+decodes the error status output by the kernel whenever
+a tape error is detected.
+.PP
+Tape errors prompt the kernel to type error messages on the console.
+The error messages convey the three status numbers associated with the tape
+error.
+.I Tcerr
+may be used to determine the specific type of error that occurred.
+.SH SEE ALSO
+dcerr(8)

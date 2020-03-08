@@ -1,0 +1,1063 @@
+.ig
+	@(#)cc	1.5	9/23/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.he "'\s0G\s-2ENIX\s0 C Programmers Guide''%'"
+.nr sf 3
+.de $0
+.(x
+\\$2	\\$1
+.)x
+..
+.tp
+.sp 3i
+.sz 12
+.(l C
+\f3The Programmers' Guide to the \s-2GENIX\s0 C Language and Compiler 
+.sp 1.5i
+September, 1983\fP
+.)l
+.bp
+.sz 8
+.sh 1 "\f3Introduction\f1"
+.lp
+G\s-2ENIX\s0\s4\uTM\d\s0
+.(f
+G\s-2ENIX\s0, SYS16, and NS16000
+are trademarks of National Semiconductor Corporation.
+.)f
+C follows the 
+semantics and syntax of the C language described in 
+.ul
+The C Programming Language
+by Kernighan and Ritchie (also known as the White Book). 
+Any program that relies on the definition of C in the White Book will
+compile correctly.
+The \s-2GENIX\s0 C compiler runs both cross-support on a VAX\**
+.(f
+\** VAX is a trademark of Digital Equipment Corporation
+.)f
+running
+\s-2UNIX\s0\**
+.(f
+\** U\s-2NIX\s0 is a trademark of Bell Laboratories.
+.)f
+and native on an NS16000\s4\uTM\d\s0\|\-based system running
+\s-2GENIX\s0.
+.lp
+This document describes:
+.ip \(bu
+Recent changes to C  (Section 2)
+.ip \(bu 
+G\s-2ENIX\s0 C language deviations from 
+.ul
+The C Programming Language 
+by Kernighan and Ritchie (Section 3)
+.ip \(bu
+G\s-2ENIX\s0 C compiler operation (Section 4)
+.ip \(bu
+G\s-2ENIX\s0 C compiler calling sequence (Appendix A)
+.ip \(bu
+Embedding assembly language code in \s-2GENIX\s0 C language programs (Appendix
+B)
+.(f
+The information in this document is for reference only and is subject
+to change without notice.
+.)f
+.lp
+This document is intended as a supplement
+to the White Book and does not provide a tutorial for learning C.
+This document
+assumes that the reader 
+is familiar with 
+the White Book and 
+has a working knowledge of the C language.
+C reference and tutorial books include:
+.sp
+.ti +0.5i
+Brian Kernighan and Dennis Ritchie,
+.ul
+The C Programming Language
+(Prentice-Hall, Inc., Englewood Cliffs, New Jersey:  1978).
+.sp
+.ti +0.5i
+Les Hancock and Morris Krieger, 
+.ul
+The C Primer 
+(McGraw-Hill Book Company, New York:  1982).
+.sp
+.ti +0.5i
+Jack Purdam, 
+.ul
+C Programming Guide 
+(Que Corporation, Indianapolis, Indiana:  1983).
+.sp
+.ti +0.5i
+Thomas Plum,
+.ul
+Learning to Program in C 
+(Plum Hall Inc., Philadelphia, Pennsylvania:  1983).
+.lp
+.sh 1 "\f3Recent Changes to C\f1"
+.lp
+A few additions have been made to the C language beyond what is
+described in 
+.ul
+The C Programming Language
+by Kernighan and Ritchie.  These changes have been accepted as standard
+by the C community and are included in the features of \s-2GENIX\s0 C.
+.sh 2 "\f3Structure Assignment\f1"
+.lp
+Structures may be assigned, passed as arguments to functions, and
+returned by functions.  The types of participating operands must 
+be the
+same (i.e., they must 
+have the same structure tag).   
+Other possible operations, such as equality comparison, have
+not been implemented.
+For example:
+.nf
+.sp
+.in 5
+struct a {int a[20];} st1,st2;
+.in 5
+struct b {int a[20];} st3,st4;
+.in 5
+struct a *stpt;
+.in 10
+st1 = st2;	/* legal */
+.in 10
+st3 = st1;	/*illegal*/
+.in 10
+*stpt = st1;	/* legal */
+.in 5
+if (st1 == st2); /* illegal */
+.fi
+.sh 2 "\f3Enumeration Type\f1"
+.lp
+Enumeration types allow the user to name lists of identifiers.  They are
+analogous to the scalar types of Pascal.  Enumeration types have the same
+properties as structures and unions.  To the type-specifiers
+syntax on page 193 of the White Book add:
+.sp
+.in +2.5i
+.i "enum-specifier"
+.lp
+with syntax
+.sp
+.in +1i
+.nf
+.i
+	enum-specifier:
+		\f3enum\f2 { enum-list }
+		\f3enum\f2 identifier { enum-list }
+		\f3enum\f2 identifier
+.i
+
+	enum-list: 
+		enumerator 
+		enum-list , enumerator 
+
+	enumerator: 
+		identifier 
+		identifier = constant-expression 
+.fi
+.lp
+.i Identifier 
+in the enum-specifier names a particular enumeration.
+It plays the same role as the structure tag in a 
+.i struct-specifier .
+For example,
+.sp
+.nf
+.b
+	enum color { yellow, green, blue };
+	.
+	.
+	enum color *cp, col;
+.fi
+.lp
+makes color the enumeration tag of a type describing various colors, and then
+declares 
+.b cp 
+to be a pointer to an object of that type.
+.b Col 
+is declared
+to be an object of type color. 
+.lp
+The identifiers in the enum-declarator are declared as constants, 
+and may appear 
+wherever constants are required.
+If no identifiers with = appear, then the
+values of the constants begin at 0 and increase by 1 as the declaration is
+read from left to right.
+An enum-declarator with = gives the associated
+identifier the value indicated; subsequent identifiers continue the
+progression from the assigned value.
+.lp
+All enumeration tags and constants must be distinct, and, unlike structure
+tags and members, are drawn from the set of identifiers.
+Identifiers are defined on p. 179 of the White Book.
+.lp
+Objects of a given enumeration type have a type distinct
+from objects of all other types.
+.i Lint 
+and the compiler flag enumeration type mismatches.  
+.sh 1 "\f3Deviations From the White Book C\f1"
+.lp
+Deviations include both enhancements and restrictions:
+.lp
+The enhancements are:
+.(l
+Structure handling
+Enumeration type (see Section 2.2)
+Void data type
+Predefined names:  \f3ns16000\fP and \f3unix\fP
+.)l
+.lp
+\s-2GENIX\s0 C places restrictions on:
+.(l
+Bitfields
+Register variables
+.)l
+.lp
+.ul
+The C Programming Language
+discusses handling of mixed signed and unsigned operands, but does not
+explain a case that occurs in all C implementations.
+Section 3.6 clarifies handling of mixed operands.
+.sh 2 "\f3Structure Handling\f1"
+.lp
+G\s-2ENIX\s0 C has made the following improvements to structure handling:
+.ip \(bu
+Implements structure assignment.
+.ip \(bu
+Allows reuse of structure and union member names.
+.ip \(bu
+Provides more efficient code 
+for functions that return structures.
+.ip \(bu
+Structure-returning functions may be interrupted.
+.ip \(bu
+Does not limit structure size.
+.sh 3 "\f3Structure Assignment in \s-2GENIX\s0 C\f1"
+.lp
+G\s-2ENIX\s0 C implements assignment and argument passing with structures
+(see also Section 2.1).
+.lp
+For functions that return structures, the \s-2GENIX\s0 C compiler requires that 
+modules that call these functions declare the
+functions as returning structures.
+Although the return value may be ignored, failure to declare such a
+function correctly may cause the function to scramble the parameters.  
+.lp
+Refer to page 121 of 
+.ul
+The C Programming Language
+for information on structures.
+.sh 3 "\f3Structure And Union Members\f1"
+.lp
+Names of structure and union members need only be unique in the
+structure or union in which the member is located.  Identical names for
+members of different structures or unions can be used in the same
+module.  See page 120 of
+.ul
+The C Programming Language.
+.sh 3 "\f3Functions Returning Structures\f1"
+.lp
+Functions returning structures execute faster and are completely
+interruptable.  In the presence of interrupts, the value 
+returned from a call is not corrupted.
+.lp
+However, a function that returns a structure cannot use void data type
+even if the function's return value is ignored; the function must be
+declared as returning a structure wherever it is used or defined.
+Such a function may be coerced to void type after it was correctly
+declared.
+For example:
+.sp
+.ti +0.5i
+void fun(); /*declares a function to be of type void */
+.sp
+.ti +0.5i
+(void) fun(); /* coerces a function to type void */
+.sh 3 "\f3Structure Size\f1" 
+.lp
+The \s-2GENIX\s0 C compiler places no 
+limitation on the size of a structure.  A structure of any size may be
+created, assigned, and referenced.   
+(Structure sizes are limited only by the amount of host
+system virtual memory.)
+.sh 2 "\f3Void Data Type\f1"
+.lp
+The void data type declares that a function has no return value or that
+the return value is discarded.  It may be used in a cast or in a function 
+declaration (unless the function returns a structure).
+.sh 2 "\f3Predefined Names\f1"  
+.lp
+The name 
+.b ns16000
+is predefined by the preprocessor to have the
+value 1.
+For example:
+.sp
+.ti +0.5
+#if ns16000 
+.ti +0.5i
+x = 42   /* compiled */
+.ti -0.5i
+#else 
+.ti +0.5i
+x = 0   /* not compiled */	
+.ti -0.5i
+#endif 
+.lp
+Like most \s-2UNIX\s0 implementations 
+.b unix
+is also predefined by
+the preprocessor to have the value 1. 
+.sh 2 "\f3Bitfields\f1"  
+.lp
+The \s-2GENIX\s0 C compiler does not sign extend or provide for true
+signed bitfields.
+Although bitfields can be declared int or unsigned, they are always 
+positive.
+See page 136 of
+.ul
+The C Programming Language.
+.sh 2 "\f3Register Variables\f1"
+.lp
+The \s-2GENIX\s0 C compiler implements signed and unsigned integer register
+variables and double register variables.
+It does not implement register char,
+float, or short variables.
+If a program declares a register char, float, or short variable,
+the \s-2GENIX\s0 C compiler ignores the register part of the declaration.
+It does not issue an error message.
+.sh 2 "\f3Clarification Of Assignment Ops\f1"
+.lp
+The White Book  
+states that assignment operators
+can be considered to be equivalent to the assignment of the results of
+the operation to the left side (page 191).  
+For example: 
+.ip
+a/=b 
+.lp
+is equivalent to:
+.ip
+a=a/b 
+.lp
+This is not always true. 
+An exception occurs because
+the type of an assignment operator is
+the type of its left side while the type of a normal operator depends on the
+rules of conversion.  For example, if a is int and b is unsigned: 
+.ip
+a/=b
+.lp
+does a signed division and:
+.ip
+a=a/b
+.lp
+does an unsigned division.
+.sh 1 "\f3G\s-2ENIX\s0 C Compiler Operation\f1" 
+.lp
+The \s-2GENIX\s0 C compiler consists of three parts:
+a preprocessor (\f2cpp\f1), the compiler proper 
+(\f2ccom\f1), and an optimizer (\f2c2\f1).  
+It can 
+create object, executable or assembly language code according to the
+compiler options specified by the user (see Section 4.2).
+.sh 2 "\f3Storage for C Types\f1"
+.lp
+The sizes of
+basic types are:  
+.(l
+32 bits for integers and longs 
+16 bits for shorts
+8 bits for chars
+.)l
+.lp
+G\s-2ENIX\s0 C allows both
+signed and unsigned variants of all of those.  The \s-2GENIX\s0 C compiler
+also allows unlimited size structures in assignments.  A program can
+assign any structure which can be declared.
+.sh 2 "\f3Compiler Options\f1" 
+.lp
+The user directs compiler operation with 
+options.
+All \s-2GENIX\s0 C compiler options are listed in 
+.i cc (1).    
+.lp
+.b \-c 
+.ip
+The 
+.b \-c 
+compile-only 
+option causes the compiler to create an object file.  The code
+created is not linked,
+so it is not executable.  
+The object files which are created
+contain relocatable code which must be linked, usually
+with other
+object files or libraries.  This option gives the user more control over
+the linking processes.
+The object file 
+produced has the same name as the source file with a ``.o'' extension.
+.lp
+.b \-w 
+.ip
+The 
+.b \-w 
+warning option suppresses compiler
+warning diagnostics from being printed on standard error output.
+.lp
+.b \-p
+.ip
+The 
+.b \-p 
+profile option tells the compiler to produce code that 
+.i prof (1) 
+can use to count the number 
+of times a routine is called.
+Also, when loading takes place (the 
+.b \-c 
+option is NOT specified), 
+the compiler replaces the standard startup
+routine with one which automatically calls
+.i monitor (3)
+at the start and arranges to write out a
+.i mon.out
+file at normal termination of execution of the program.
+An execution profile can then be generated by
+using 
+.i prof (1).
+.lp
+.b \-O 
+.ip
+The 
+.b \-O 
+optimize option invokes a code optimizer 
+(\f2c2\f1) which
+improves object code.  The improved object
+code is shorter and executes faster than unimproved object code.
+For example, the optimizer checks for
+code that can never be accessed and deletes it from the file.  
+Use this option with caution when programs contain embedded
+assembly statements; see Appendix B.
+.lp
+.b \-i 
+.ip
+The 
+.b \-i 
+option works with the 
+.b \-O 
+option.
+It tells the compiler to suppress some 
+optimizations.
+Optimizations to programs that access memory that can be changed by an
+external process may be incorrect.
+.b \-i
+suppresses these optimization based on assumptions for memory-mapped
+I/O registers.
+Memory locations
+that are actually mapped device registers 
+can change spontaneously or have reference side-effects.
+.b \-i
+should be used to compile all physical input/output programs with
+optimization.
+.ip 
+Example:
+.ip
+Device status registers are typically polled repeatedly to
+wait for a physical I/O operation to complete.  Without 
+the 
+.b \-i 
+option, the 
+optimizer might copy the device register into a CPU register
+once and use the CPU register subsequently without updating it with the
+current memory contents.
+.lp
+.b \-S 
+.ip
+The 
+.b \-S 
+option causes the compiler to create assembly language code for
+the named file.  The code is written to a file with a ``.s'' extension.
+The file is compiled, but an object file is not created.  The file is
+not linked,  
+so it is not executable.  
+The .s file contains NS16000 assembly language code which may then be
+assembled with 
+.i as (1) 
+or altered then assembled.  After the file is assembled, it
+must be linked before it is executable.
+The assembly language code can be 
+useful for debugging programs.  
+.lp
+.b \-E 
+.ip
+The
+.b \-E 
+runs only the macro preprocessor (\f2cpp\f1)
+on the named arguments and sends the result to the
+standard output.
+.lp
+.b \-C 
+.ip
+The
+.b \-C 
+option stops the
+.i cpp
+from removing comments from the file.
+.lp
+.b \-o \f2objfile\f1 
+.ip
+The
+.b \-o 
+option 
+takes the 
+.i objfile
+argument as the output file name.
+When this option is used, 
+.i cc
+leaves any existing file named `a.out' undisturbed.
+.lp
+.b \-D\f2name\f3=\f2value\f1 
+.ip
+The 
+.b \-D 
+option defines a name or redefines one of the predefined names.
+Using
+.b \-D
+has the same result as using 
+``#define''.
+The option may be followed a name and a value for the name.
+If no value is given, the value 1 is used.
+For example:  
+.sp
+.ti +1i
+-Dkount=10 
+.ti +1i
+-Djz
+.ip
+The value 10 is given to kount and the value 1 is given to jz
+by the preprocessor.
+.lp
+.b \-U\f2name\f1 
+.ip
+The 
+.b \-U
+option removes 
+any initial definition of
+a predefined name  
+(\f3ns16000\fP
+and \f3unix\fP, see Section  3.3).
+Predefined
+names must be undefined before they can be defined in a program.
+For example:  
+.sp
+.ti +1i
+-Uns16000
+.lp
+.b \-I 
+.ip
+The 
+.b \-I 
+option tells the compiler where to look for
+files that are listed after `#include' and do not have explicit path
+names.
+The compiler seeks files   
+whose names do not begin with `/' in this order:  (1)  
+in the directory of the file which is being compiled,  
+(2) in directories named with 
+.b \-I option,
+and (3) in  
+/usr/include or in /usr/NSC/include for cross-support environments.
+The 
+.b \-I
+option must be followed by the name(s) of directories.
+.lp
+.b \-B\f2string\f1 
+.ip
+The 
+.b \-B 
+option substitutes compiler passes.
+The option must be followed by 
+a file name or a path.
+.i String
+is appended with 
+.i ccp
+for the preprocessor,
+.i ccom
+for the compiler proper,
+and 
+.i c2
+for the optimizer.
+The argument with the resulting names functions as parts of the compiler.
+For example using:
+.sp
+.ti +0.5i
+\-Bfoo/
+.sp
+declares the compiler passes as foo/cpp, foo/ccom, and foo/c2.  The 
+.b \-t 
+option allows certain passes from this set to be selected.
+.ip
+If 
+.i string 
+is not specified, the default is /usr/c/o or /usr/NSC/lib/o for
+cross-support environments.
+.lp
+.b \-t\f1[\f3p02\f1]
+.ip
+The 
+.b \-t 
+option 
+selects one or more passes of the compiler from the alternate path
+specified with 
+.b \-B .
+.b \-t 
+must be followed followed by any combination of
+``p'', ``0'', or ``2'' to select the
+preprocessor, the compiler proper, or the optimizer.
+For example:
+.sp
+.in +1i
+-Bfoo/ -tp
+.ip
+substitutes foo/cpp for the standard compiler preprocessor.
+The argument being
+compiled is first processed by foo/cpp, then by the 
+compiler proper
+.i ccom ,
+and finally by the optimizer 
+.i c2 .
+If the 
+.b \-B 
+option is omitted, the file is taken from 
+/usr/c/n or from /usr/NSC/lib/n for cross-support environments.
+.lp
+.b  \-g 
+.ip
+The 
+.b \-g 
+option prints line numbers as comments in the
+assembly language source when the 
+.b \-S
+option is also specified.
+Otherwise, the compiler calls the
+assembler with the 
+.b \-L
+option, which causes the assembler to emit
+more symbol table
+information.
+See 
+.i as (1) 
+for details.
+.lp
+.b \-q 
+.ip
+The 
+.b \-q 
+option is passed on to the assembler and the loader.  
+In response, the assembler puts
+the link table relative to the static base area.
+This reduces execution
+time of external calls and access time of external variables.
+See 
+.i as (1)
+and 
+.i ld (1).
+.lp
+.b \-F
+.ip
+The
+.b \-F
+option tells the compiler to reserve space for 
+all non-extern variables in a local
+static area rather than in
+a common static area.  This results in a considerable increase in
+speed as all variable accesses in the module which declared
+that variable are sb relative, not external. 
+.ip
+The \s-2GENIX\s0 C compiler and the loader check definitions and issue error
+messages when 
+.b \-F
+is used with global variables having more
+than one non-extern definitions.   
+.ip
+On NS16032,  
+.b \-F
+is potentially very useful since 
+static base global variables in local static base area are 
+accessed faster than 
+external addressing mode variables, which the compiler must use
+when
+.b \-F
+is not specified.
+This option also eliminates all uninitialized storage, so modules
+conatining large uninitialized data structures should not be compiled
+with 
+.b \-F .
+.ip
+Note that only one non-extern declaration of each global variable in
+the whole program is possible.
+.lp
+.b \-v\f1[\f3n\f1] 
+.ip
+The 
+.b \-v 
+verbose option tells
+the compiler 
+driver program to print on standard output 
+the commands it executes on the user's behalf.
+If
+.b n
+is also specified, then the driver simply prints the commands without
+executing them;
+nothing is compiled and the only output is the list.
+This output may be an aid in system debugging.
+.bp
+.ce 2
+.b "Appendix A"
+.b "G\s-2ENIX\s0 C Language Calling Conventions"
+.lp
+The \s-2GENIX\s0 C calling sequence utilizes the NS16000 architecture and
+supports these features:
+.in + 5
+.ip [1]
+Pointers to functions 
+.in + 5
+.ip [2]
+Variable number of arguments passed to functions
+.lp
+The \s-2GENIX\s0 C calling sequence pushes arguments on top of the stack then
+executes a call instruction.
+This uses the fewest possible instructions which execute at the
+maximum speed.
+Since C allows a variable number of arguments, calling functions push
+arguments on the stack from right to left.  Therefore, the first
+(left-most) argument is always at a constant offset from the frame
+pointer (fp) regardless of how many arguments were passed.
+The called function can then pop the arguments off the stack.
+.lp
+The \s-2GENIX\s0 C compiler produces
+calls to functions with the NS16000 call external instruction,
+CXP or CXPD.
+This instruction
+allows a function to be assigned a pointer to a function.  
+Using a pointer to a function 
+programs can call static functions in other modules.
+.lp
+Elements of the \s-2GENIX\s0 C calling sequence are:
+.ip "\f2Argument layout\f1"
+The arguments are pushed onto the stack from right to left so that
+the caller can access each argument with
+a constant
+offset from the fp.
+.ip "\f2Argument packing\f1"
+Integer values use a double-word.
+Floating-point
+values use eight bytes.
+Structures use a multiple of double-words.
+G\s-2ENIX\s0 C argument packing is compatible with the
+VAX \s-2UNIX\s0 4.1bsd
+portable C compiler so software 
+written for either can be
+easily transported.  
+.ip "\f2Order of evaluation\f1"
+Although the \s-2GENIX\s0 C compiler pushes arguments on the stack 
+from right to left, the White Book (page 212) 
+states that the order of evaluation of arguments is unspecified.
+.ip "\f2Stack alignment\f1"
+Each function assumes that the stack is double-word aligned so
+interrupt routines and user-interface routines must
+align the stack to a double-word before exiting.
+Argument lists use a whole number of double-words, and
+\s-2GENIX\s0 C compiler produces a CXP or a CXPD to a function
+only when the stack pointer is pointing at a double-word
+boundary.
+.ip "\f2Saving registers\f1"
+General registers R0, R1, and R2 and floating registers F0, F1, F2,
+and F3 are temporary registers
+whose value may be changed by a function call.  If other
+registers are used, the \s-2GENIX\s0 C compiler saves then restores them.  
+.ip "\f2Returning arguments\f1"
+An integer or a pointer that is returned from a function is returned
+in register R0.
+.ip 
+A long or short floating-point value that is returned from a function is
+returned 
+in register pair F0/F1.
+.ip 
+If a function returns a structure,
+the calling function will pass an additional argument at the beginning of
+the argument list.  This argument points to where the called function
+returns the structure.  
+The called function copies the structure into the specified location
+during
+execution of the \f3return\f1 statement.  Note that functions
+which return structures must be correctly declared as such even if the
+return value is ignored.  
+.ip "\f2Passing arrays\f1"
+Arrays are passed by reference using their beginning addresses (see
+page 210 of the White Book). 
+.ip "\f2Passing floating-point and integer variables\f1"
+The syntax of
+C does not allow the compiler to know the number or the types 
+of arguments of a called function.    
+So that expressions can be used as arguments to
+functions, all floating-point numbers are passed 
+as long floats and all integers are passed 
+as long integers.  This also simplifies 
+writing functions which take a variable 
+number of parameters, such as \f3printf\f1.
+.ne 31
+.lp
+When the \s-2GENIX\s0 C compiler builds an argument list, 
+the layout of the stack looks like this:
+.lp
+.nf
+.br
+.if n \{\
+		   ~		~
+	           |            |
+	           |   caller   |
+	           |            |
+	           +------------+
+	           |  last arg  |		High Memory Addresses
+	           |    .       |
+	           |    .       |
+	           |  first arg |
+	           +------------+
+                   |  mod no    |
+	           | return pc  |
+             fp -> | saved fp   |
+	           |    .       |
+	           | local vars |
+	           |    .       |
+	           +------------+
+	           |    .       |
+	           |   saved    |
+	           | registers  |
+	           +------------+		Low  Memory Addresses
+	           |  last arg  |
+	           |    .       |
+             sp -> | current arg|
+                   +------------+
+		   |            |
+		   ~            ~
+.\}
+.if t \{\
+.vS
+.(b
+.TS
+center tab (:);
+c|c|c
+c|c|c.
+:.:
+:.:
+:.:
+:_:
+: :
+:caller:
+: :
+:_:
+:last arg:          High Memory Addresses
+:.:
+:.:
+:first arg:
+:_:
+:mod no:
+:return pc:
+fp -->  :saved fp:
+:.:
+:local vars:
+:.:
+:_:
+:.:
+:saved:
+:registers:
+:_:
+:last arg:          Low Memory Addresses
+:.:
+sp -->  :current arg:
+:_:
+:.:
+:.:
+:.:
+.TE
+.)b
+.vE	\
+.\}
+.fi
+.br
+.ne 13
+.lp
+Example:  
+the call is:
+.ip
+i=func(1,x,*cp,j); 
+.lp
+with these variable declarations:
+.(l
+float x;
+register char *cp;
+int j;
+.)l
+The called function is:
+.ip
+func(first,second,third,last) 
+.lp
+And the compiler generates the code:
+.sp
+.nf
+	movd	-8(fp),tos	;last argument
+	movzbd	0(r7),tos	;byte argument
+	movfl	-12(fp),tos	;float argument
+	movqd	1,tos		;first argument
+	cxp	_func
+	adjspb	-20		;pop args off stack
+	movd	r0,r6		;save return value
+.sp
+.fi
+.br
+.ne 12
+.lp
+An example return sequence for a function is:
+.sp
+.nf
+	enter	[r7,r6],12	;save regs, alloc vars
+	movl	f6,tos		;save floating regs f6 and f7
+	.
+	movd	12(fp),r1	;put first arg in temp reg
+	.
+	movd	r7,r0		;return value
+	movl	tos,f6		;restore floating regs 
+	exit	[r7,r6]		;restore regs
+	rxp	0		;dont pop off args
+.sp
+.fi
+.lp
+The \s-2GENIX\s0 C calling sequence decreases the chance of an error which 
+destroys the stack.   
+Maintaining the stack is crucial since the debugger cannot trace a
+destroyed stack and the user must know what functions in a program are
+currently active. 
+.lp
+The NS16000 architecture has dedicated registers
+defined by the instruction set which
+allow the machine
+language to be more compact since fewer addressing modes 
+are required.
+Also, some of the general purpose registers 
+are used by \s-2GENIX\s0 C 
+as temporary registers to store 
+temporary values for all programs.
+Using general purpose registers as temporary registers
+lets the \s-2GENIX\s0 C compiler save time and space in calling 
+sequences since not as many
+registers need to be saved and restored.
+Small programs that do
+not call other functions operate without saving or restoring any
+registers, which reduces the minimum overhead incurred in the
+calling sequence.
+.bp
+.ce 3
+.b "Appendix B"
+.b "Embedding Assembly Language Code"
+.b "in Optimized C Programs"
+.lp
+The \s-2GENIX\s0 C compiler allows assembly language statements to be
+embedded in programs using the
+.b asm
+statement.
+.b Asm
+statements have the form:
+.sp
+.ti +0.5i
+\f3asm ("\f2assembly code\f3");\f1
+.lp
+where \f2assembly code\f1 is any number of assembly language
+statements.
+An example of an \f3asm\fP statement is:
+.(l 
+main() 
+{ 
+	printf("hello"); 
+	asm("bpt"); 
+} 
+.)l
+.lp
+To continue the \f3asm\fP statement on the next line, use
+.b \en.
+.lp
+The \f2c2\f1 optimizer is only guaranteed to process correctly 
+those assembly
+language programs generated by \f2ccom\f1, the compiler proper,
+so processing with \f2c2\f1 modules which contain
+assembly code inserted via 
+.b asm
+statements should be done with care.
+Following these guidelines can minimize the risk of 
+incorrect optimization of hand-written 
+code:
+.np
+Use assembly language only for special machine instructions,
+such as manipulating privileged registers.  Check the optimized 
+assembly code before first execution.
+.np     
+Where efficiency rather than special instruction use is the goal, 
+writing a pure assembly module may be better because optimizer 
+restrictions can prevent the most efficient code.
+.np
+Instructions must use only default-base (base 10) numbers,
+but anything is acceptable in data constants (.double, .byte, etc.).
+.np
+Labels and other identifiers must not start with an underscore, as 
+they might be confused with procedure-entry labels which trigger
+end-of-procedure processing for the proceeding procedure.
+.np
+Avoid names which are similar to reserved symbols; for example, 
+don't start anything with 'f' as it will likely be confused with the
+frame pointer, fp.
+Dot is a safe initial character.
+.np
+Labels referenced by branch or addr instructions must be local and of the 
+form ``L<number>:'', between L10000 and L99999.  The compiler presently 
+uses labels between L0 and L9999, and the optimizer uses labels from 
+L100000 on up.
+.np
+CHECKi, CASEi, and constants involving program labels (e.g., case
+index table entries) work only in the exact combinations used to 
+implement the C 
+.b switch
+statement.
+.np
+Compile with the optimizer only after successful non-optimized 
+compilation because syntactically incorrect assembly code
+or missing labels can cause the optimizer to delete 
+blocks of code without issuing any warning or error messages.
+.np
+.i C2 
+does not know about the carry bit, so ADDC and SUBC
+will not work as desired. 
+.np
+Be sure the first and last instructions in a procedure are not 
+superfluous (for example, modifying a 
+subsequently unused register).  If the 
+optimizer decides to delete these,
+.i c2
+will crash.
+.hx 
+.bp
+.sp 6
+.(l C
+The Programmers' Guide to the \s-2GENIX\s0 C Language and Compiler
+.)l
+.sp 1.5i
+.tl ''Table of Contents''
+.sp 4
+.xp

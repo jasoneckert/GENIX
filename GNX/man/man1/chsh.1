@@ -1,0 +1,37 @@
+.ig
+	@(#)chsh.1	1.2	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH CHSH 1
+.SH NAME
+chsh \- change default login shell
+.SH SYNOPSIS
+.B chsh
+[
+name
+[
+shell
+] ]
+.SH DESCRIPTION
+.I Chsh
+is a command similar to
+.IR  passwd (1)
+except that it is used to change the login shell field of the password
+file rather than the password entry.
+If no
+.I shell
+is specified
+then the shell reverts to the default login shell
+.I /bin/sh.
+Otherwise,
+unless you are the super-user,
+only an \*(lqapproved\*(rq shell may be given;
+.I chsh
+with no arguments will print a list of such shell names.
+.PP
+An example use of this command would be
+.PP
+.DT
+	chsh bill /bin/csh
+.SH SEE\ ALSO
+csh(1), passwd(1), passwd(5)

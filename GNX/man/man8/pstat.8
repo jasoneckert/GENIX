@@ -1,0 +1,321 @@
+.ig
+	@(#)pstat.8	1.11	10/28/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PSTAT 8
+.SH NAME
+pstat \- print system facts
+.SH SYNOPSIS
+.B /etc/pstat
+[
+.B \-aixptufT
+] [ suboptions ]
+[ file ]
+.SH DESCRIPTION
+.I Pstat
+interprets the contents of certain system tables.
+If
+.I file
+is given,
+the tables are sought there;
+otherwise they are sought in
+.IR /dev/kmem .
+The required namelist is taken from
+.IR /vmunix .
+Options are
+.TP \w'WCHAN\ 'u
+.B \-a
+Under
+.B \-p
+or
+.BR \-x ,
+describe all process (or text) slots rather than just active ones.
+.TP
+.B \-i
+Print the inode table with the these headings:
+.IP LOC
+The core location of this table entry.
+.PD 0
+.IP FLAGS
+Miscellaneous state variables encoded thus:
+.RS
+.IP L
+locked
+.IP U
+update time
+.IR (filsys (5))
+must be corrected
+.IP A
+access time must be corrected
+.IP M
+file system is mounted here
+.IP W
+wanted by another process (L flag is on)
+.IP T
+contains a text file
+.IP C
+changed time must be corrected
+.IP P
+contains a pipe
+.RE
+.IP CNT
+Number of open file table entries for this inode.
+.IP DEV
+Major and minor device number of file system in which
+this inode resides.
+.IP INO
+I-number within the device.
+.IP MODE
+Mode bits, see
+.IR chmod (2).
+.IP NLK
+Number of links to this inode.
+.IP UID
+User ID of owner.
+.IP SIZ/DEV
+Number of bytes in an ordinary file, or
+major and minor device of special file.
+.PD
+.TP
+.B \-x
+Print the shared text portion of the special page table with these headings:
+.IP SPTI
+The index into the spt table.
+.PD 0
+.IP LOC
+The address of this table entry.
+.IP FLAGS
+Miscellaneous state variables encoded thus:
+.RS
+.IP I
+text being initialized or deleted
+.IP W
+some process waiting for text
+.IP D
+no further access allowed (unused)
+.IP X
+resident set size is too big
+.RE
+.IP RSS
+Resident set size \- the number of physical pages allocated
+to this text segment.
+.IP TRSS
+Text resident set size \- the number of physical pages allocated which 
+are read-only.
+.IP SIZE
+Virtual size of text segment, in pages.
+.IP PTPGS
+Number of pages in use as page tables for this text segment.
+.IP PROCS
+Number of processes using this text segment.
+.IP SHARE
+Number of pages of processes which map to pages of this text segment.
+.IP IPTR
+Address of corresponding inode.
+.IP PTE1
+Address of level 1 page table.
+.IP AGE
+Age counter.  More recently used texts have higher numbers.
+.PD
+.TP
+.B \-p
+Print process table for active processes with these headings:
+.IP LOC
+The core location of this table entry.
+.PD 0
+.IP S
+Run state encoded thus:
+.RS
+.IP 0
+no process
+.IP 1
+waiting for some event
+.IP 3
+runnable
+.IP 4
+being created
+.IP 5
+being terminated
+.IP 6
+stopped under trace
+.RE
+.IP F
+Miscellaneous state variables, or-ed together (hexadecimal):
+.RS
+.IP 000001 9n
+loaded
+.IP 000002
+a system process
+.IP 000004
+locked for swap out
+.IP 000008
+swapped out
+.IP 000010
+traced
+.IP 000020
+used in tracing
+.IP 000040
+process resulted from a
+.IR vfork (2).
+.IP 000080
+process used some new signal primitives, i.e.
+.IR sigset (3);
+more system calls will restart.
+.IP 000100
+a parent of this process has exited and this process
+is now considered detached.
+.IP 000200
+exiting
+.IP 000400
+in page-wait
+.IP 001000
+process has exceeded its cputime limit and is running on grace time;
+see
+.IR vlimit (2).
+.RE
+.IP PRI
+Scheduling priority, see
+.IR nice (2).
+.IP SIGNAL
+Signals received (signals 1-32 coded in bits 0-31),
+.IP UID
+Real user ID.
+.IP SLP
+Amount of time process has been blocked.
+.IP TIM
+Time resident in seconds; times over 127 coded as 127.
+.IP CPU
+Weighted integral of CPU time, for scheduler.
+.IP NI
+Nice level,
+see
+.IR nice (2).
+.IP PGRP
+Process number of root of process group
+(the opener of the controlling terminal).
+.IP PID
+The process ID number.
+.IP PPID
+The process ID of parent process.
+.IP RSS
+Resident set size \- the number of physical pages allocated
+to this process.
+.IP SRSS
+RSS at last swap (0 if never swapped).
+.IP SIZE
+Virtual size of process image (data+stack) in multiples of 1024 bytes.
+.IP WCHAN
+Wait channel number of a waiting process.
+.IP LINK
+Link pointer in list of runnable processes.
+.IP SPTI
+Index of the SPT table entry for this process.
+.IP PTE1
+Address of level 1 page table for this process.
+.IP CLKT
+Countdown for
+.IR alarm (2)
+measured in seconds.
+.PD
+.TP
+.B \-t
+Print table for terminals
+with these headings:
+.IP RAW
+Number of characters in raw input queue.
+.PD 0
+.IP CAN
+Number of characters in canonicalized input queue.
+.IP OUT
+Number of characters in output queue.
+.IP MODE
+See
+.IR tty (4).
+.IP ADDR
+Physical device address.
+.IP DEL
+Number of delimiters (newlines) in canonicalized input queue.
+.IP COL
+Calculated column position of terminal.
+.IP STATE
+Miscellaneous state variables encoded thus:
+.RS
+.IP T
+delay timeout in progress
+.IP W
+waiting for open to complete
+.IP O
+open
+.IP C
+carrier is on
+.IP B
+busy doing output
+.IP A
+process is awaiting output
+.IP X
+open for exclusive use
+.IP H
+hangup on close
+.RE
+.IP PGRP
+Process group for which this is controlling terminal.
+.IP DISC
+Line discipline; blank is old tty OTTYDISC or ``ntty'' for NTTYDISC.
+.PD
+.TP
+.B \-u
+Print information about a user process;
+the next argument is its pid as given
+by
+.IR ps (1).
+.TP
+.B \-f
+Print the open file table with these headings:
+.IP LOC
+The core location of this table entry.
+.PD 0
+.IP FLG
+Miscellaneous state variables encoded thus:
+.RS
+.IP R
+open for reading
+.IP W
+open for writing
+.IP P
+pipe
+.RE
+.IP CNT
+Number of processes that know this open file.
+.IP INO
+The location of the inode table entry for this file.
+.IP OFFS
+The file offset;
+see
+.IR lseek (2).
+.PD
+.TP
+.B \-s
+Print information about swap space usage:
+the number of pages used and free is given.
+.TP
+.B \-T
+Print the number of used and free slots in the several system tables.
+This is useful for checking to see how full system tables have become if the
+system is under heavy load.
+.SH FILES
+.nf
+.ta \w'/dev/kmem'u+(4n)
+/vmunix	namelist
+/vmsymbols	namelist used when \f2file\fP not given
+/dev/kmem	default source of tables
+.fi
+.SH "SEE ALSO"
+ps(1), stat(2), filsys(5)
+.br
+K. Thompson,
+.I UNIX Implementation
+.SH BUGS
+It would be very useful if the system recorded \*(lqmaximum occupancy\*(rq
+on the tables reported by
+.BR \-T ;
+even more useful if these tables were dynamically allocated.

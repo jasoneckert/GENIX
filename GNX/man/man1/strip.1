@@ -1,0 +1,37 @@
+.ig
+	@(#)strip.1	1.4	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH STRIP 1
+.SH NAME
+strip \- remove symbols and relocation bits (nstrip when cross-support)
+.SH SYNOPSIS
+.B strip
+.I name ...
+.sp
+.B nstrip
+.I name ...
+.SH DESCRIPTION
+.I Strip
+removes the symbol
+table and relocation bits ordinarily attached to the output
+of the assembler and loader.
+This is useful to save space after a program has been
+debugged.
+.PP
+The effect of
+.I strip
+is the same as use of the
+.B \-s
+option
+of
+.IR ld .
+.SH FILES
+/tmp/stm?	temporary file
+.SH "SEE ALSO"
+ld(1)
+.SH CROSS-SUPPORT
+In a cross-support environment,
+.I strip
+is called
+.IR nstrip .

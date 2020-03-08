@@ -1,0 +1,26 @@
+.ig
+	@(#)dcutest.8	1.1	10/26/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH DCUTEST 8
+.SH NAME
+dcutest \- disk formatter and test program
+.SH DESCRIPTION
+.IR Dcutest
+is a comprehensive standalone disk formatter and test program.
+This program must
+be used to format new disks, and write the drive header on each drive
+in a GENIX system. Numerous commands are also included to
+perform a variety of functional tests on suspect
+drives. A detailed description of this program may be found in
+chapter 4 of the SYS16 Systems Manual.
+.SH DIAGNOSTICS
+Are intended to be self explanatory.
+.SH FILES
+.ta \w'/usr/include/sys/disk.h'u+(4n)
+/usr/include/sys/disk.h	disk header
+.SH "SEE ALSO"
+SYS16 Systems Manual, chapter 4 describing the dcutest program in detail.
+.SH BUGS
+An equivalent facility should be available that operates under a running
+GENIX system.

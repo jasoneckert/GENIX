@@ -1,0 +1,96 @@
+.ig
+	@(#)pc.1	1.7	11/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PC 1
+.SH NAME
+pc \-  Pascal compiler (nmpc for cross-support)
+.SH SYNOPSIS
+.B pc
+[ options ]
+.I sourcefile
+.sp
+.B nmpc
+[ options ]
+.I sourcefile
+.SH DESCRIPTION
+.I Pc
+is a Pascal compiler.
+If given an argument file ending with .p, it will
+compile the file and load it into an executable file called, by default,
+.IR a.out .
+If given an argument ending with `.s'
+it will assemble the file and load it.
+.PP
+The following options are allowed in
+.IR pc .
+.TP
+.SM
+.B \-C
+Compile code to perform run-time checks. 
+.TP
+.B \-c
+Suppress loading and produce `.o' file from source file.
+.TP
+.B \-l
+Make the assembler listing in `.l' file.
+.TP
+.BI \-o " name"
+Name the object file output 
+.I name 
+instead of 
+.IR a.out .
+.TP
+.SM
+.B \-S
+Create assembly language program only and leave it
+on the corresponding `.s' file.  The program is not assembled or loaded.
+(No `.o' is created.)
+.TP
+.B \-s
+Accept ANSI Pascal only; 
+non-standard constructs cause warning diagnostics.
+.TP
+.B \-q
+Pass this switch to the assembler which then puts the link table
+relative to the sb register.
+This speeds up execution time of external calls.
+See
+.IR as (1).
+.PP
+All other options will be interpreted as load-time options (see 
+.IR ld (1)).
+.SH FILES
+.nf
+.nr aa \w'/usr/bin/lib/pmsg'
+.ta \n(aau+(3n)
+file.p	pascal source files
+file.s	assembler source files
+file.o	object files
+/tmp/ptmxxxxxxo	temporary assembler file
+/usr/bin/lib/pcom	pascal compiler
+/usr/bin/lib/pmsg	error message generator
+/usr/lib/libp.a	run-time library
+/usr/lib/libm.a	run-time math library
+.fi
+.SH "SEE ALSO"
+.IR "NS16000 Pascal Language Specification" ,
+as(1), ld(1)
+.SH CROSS-SUPPORT
+In a cross-support environment, 
+.I pc
+is called
+.IR nmpc ,
+and the default output file is
+.IR a16.out .
+Output assembly language files are suffixed with `.s' and output 
+object files are suffixed with `.o'.
+Also the library is taken from /usr/NSC/lib/libp.a
+and /usr/tmp is used instead of /tmp.
+.SH BUGS
+.I Pc
+generates only array bound checks as run-time checks.
+.sp
+Number minint \*(lq-2147483648\*(rq cannot be used in source,
+although it can be represented.
+\*(lq-2147483647-1\*(rq should be used instead.

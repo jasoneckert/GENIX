@@ -1,0 +1,12 @@
+/usr/local is provided to customers to allow them to establish a
+common local path of modified system software.  it is not recommended
+that customers modify their system software (files in /bin, /usr/bin,
+/etc ...) unless it is absolutely needed.  if users adopt the
+follow path:
+
+set path = (. ~/bin /usr/local/bin /usr/nsc/bin /usr/ucb/bin /usr/bin /bin ... )
+
+and placed modified system software in /usr/local/bin, then placing say a
+locally modified copy of /bin/ls in /usr/local/bin/ls, the local version
+would be used rather than the /bin version, and the /bin version would
+remain for programs which called it directly.

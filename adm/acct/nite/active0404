@@ -1,0 +1,4 @@
+Thu Apr  4 07:00:21 EST 1985
+-rw-rw-r--   1 adm      sys         1800 Apr  2 18:19 /etc/wtmp
+-rw-rw-r--   1 adm      adm            0 Mar 12 02:44 pacct
+ERROR: turnacct switch returned rc=1

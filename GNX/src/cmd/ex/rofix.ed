@@ -1,0 +1,3 @@
+g/^[ 	]*\.static/s//.program/
+w
+q

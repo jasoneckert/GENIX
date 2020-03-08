@@ -1,0 +1,122 @@
+diff /usr/src/games/adventure/Makefile /v/mesaux/src/games/adventure/Makefile
+0a1,6
+> .SUFFIXES:	.c .O
+> 
+> .c.O:
+> 	nmcc -c $(cdefs) $*.c
+> 
+> CC = nmcc
+2,4c8
+< OBJS=	done.o init.o io.o main.o save.o subr.o vocab.o wizard.o
+< CFLAGS=	-O
+< LDFLAGS=-n	# should be -i on small machines, -n on a vax
+---
+> OBJS=	done.O init.O io.O main.O save.O subr.O vocab.O wizard.O
+6c10
+< advent:	a.out
+---
+> advent:	image
+8c12
+< 	echo y | ./a.out
+---
+> 	echo y | ./image
+10,11c14,15
+< a.out: ${OBJS}
+< 	${CC} ${LDFLAGS} ${CFLAGS} ${OBJS}
+---
+> image: ${OBJS}
+> 	nmcc ${OBJS}
+13,14c17,18
+< save.o:	save.c	# vax C optimizer bug - infinite loop
+< 	cc -c save.c
+---
+> save.O:	save.c	# vax C optimizer bug - infinite loop
+> 	nmcc -c save.c
+17c21
+< okplay.o: /tmp
+---
+> okplay.O: /tmp
+Only in /v/mesaux/src/games/adventure: SCCS
+Only in /v/mesaux/src/games/adventure: difflist
+diff /usr/src/games/adventure/hdr.h /v/mesaux/src/games/adventure/hdr.h
+92c92
+< int place[101], prop[101],link[201];
+---
+> int place[101], prop[101],Link[201];
+diff /usr/src/games/adventure/init.c /v/mesaux/src/games/adventure/init.c
+15c15
+< {       int stat,adfd;
+---
+> {       int stat,adfd,tmpfi,cnt;char buf[512];
+30a31
+> #ifdef notdef
+37a39,42
+> #endif
+> 	tmpfi = open ( TMPFILE, 0);
+> 	while ( cnt = read(tmpfi,buf,512))
+> 		write(adfd,buf,cnt);
+diff /usr/src/games/adventure/io.c /v/mesaux/src/games/adventure/io.c
+414,432d413
+< #ifdef notdef
+< 	blockadr=chadr=0;
+< 	if (offset<0)                   /* right place is offset+filesize*/
+< 	{       blockadr += 64;         /* take off 32768 bytes         */
+< 		chadr += offset+32768;  /* & make them into 64 blocks   */
+< 	}
+< 	else chadr += offset;
+< 	if (filesize<0)                 /* data starts after file       */
+< 	{       blockadr += 64;         /* which may also be large      */
+< 		chadr += filesize+32768;
+< 	}
+< 	else chadr += filesize;
+< 	if (chadr<0)                    /* and the leftovers may be lge */
+< 	{       blockadr += 64;
+< 		chadr += 32768;
+< 	}
+< 	seek(datfd,blockadr,3);         /* get within 32767             */
+< 	seek(datfd,chadr,1);            /* then the rest of the way     */
+< #endif
+diff /usr/src/games/adventure/main.c /v/mesaux/src/games/adventure/main.c
+69c69
+< 			for (i=atloc[loc]; i!=0; i=link[i])     /*2004  */
+---
+> 			for (i=atloc[loc]; i!=0; i=Link[i])     /*2004  */
+211c211
+< 			if (atloc[loc]==0||link[atloc[loc]]!=0) goto l8000;
+---
+> 			if (atloc[loc]==0||Link[atloc[loc]]!=0) goto l8000;
+Only in /v/mesaux/src/games/adventure: meldmap
+Only in /v/mesaux/src/games/adventure: save
+diff /usr/src/games/adventure/save.c /v/mesaux/src/games/adventure/save.c
+54c54
+< #ifdef vax
+---
+> #if vax||ns16000
+71,72c71,74
+< 		c = (char *) header.a_text;/* starts after text            */
+< 		lseek(fdaout, 1024L, 0);   /* skip unused part of 1st block*/
+---
+> 		c = (char *)
+> 		    header.a_text;	   /* starts after text            */
+> 		header.a_data=sbrk(0)-c;   /* current size (incl allocs)   */
+> 		lseek(fdaout, 1024L, 0);       /* Start on 1K boundary	   */
+77c79,80
+< 	filesize=sizeof header+header.a_text+header.a_data;
+---
+> 	filesize = ((header.a_magic == 0413)? 1024:sizeof header)
+> 		 + header.a_text+header.a_data;
+diff /usr/src/games/adventure/vocab.c /v/mesaux/src/games/adventure/vocab.c
+50c50
+< 	{       atloc[where]=link[object];
+---
+> 	{       atloc[where]=Link[object];
+53,54c53,54
+< 	for (temp=atloc[where]; link[temp]!=object; temp=link[temp]);
+< 	link[temp]=link[object];
+---
+> 	for (temp=atloc[where]; Link[temp]!=object; temp=Link[temp]);
+> 	Link[temp]=Link[object];
+68c68
+< 	link[object]=atloc[where];
+---
+> 	Link[object]=atloc[where];

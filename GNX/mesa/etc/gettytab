@@ -1,0 +1,55 @@
+# this is a comment [so is a blank line]
+# Format:
+# type nexttype speed initflags finalflags loginmsg
+# Notes: 19200 = exta, ? = autobaud
+
+# Mesa Graphics Screen
+g g 9600 ANYP|RAW ANYP|XTABS|ECHO|CRMOD \n\r\n\r\n\r
+
+# DT80/1 and Excel-12,14
+#	cycles between 9600 and 19200
+2 dt19200 9600  ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD \33<\33[?4l\33[2J\33[H\33#6
+dt19200 2 19200 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD \33<\33[?4l\33[2J\33[H\33#6
+
+# Experimental autobaud entry
+X X ? ANYP|RAW|CR1|NL1 ANYP|XTABS|ECHO|CRMOD \r\n\r\n
+
+# Dialup line - auto-baud, then try speeds manually
+D  D1    ? ANYP|RAW|CR1|NL1 ANYP|XTABS|ECHO|CRMOD \r\n\r\r\r
+D1 D2 1200 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|CR2 \n\r
+D2 D   300 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|NL1|CR1|FF1 \n\r\r\r
+
+# High Speed Modem (1200,300,110,150) - doesn't time out
+#	(default entry)
+0 hs300 1200 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|CR2 \n\r
+hs300 hs110 300 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|FF1 \n\r
+hs110 hs150 110 ANYP|RAW|NL1|CR1 ANYP|ECHO|CRMOD|XTABS|CR1 \n\r
+hs150 0 150 ANYP|RAW|NL1|CR1 EVENP|ECHO|FF1|CR2|TAB1|NL1 \n\r
+
+# 1200/300 baud
+#	(a `traditional' entry)
+3 5 1200 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|FF1 \n\r
+5 3 300 ANYP|RAW|NL1|CR1 ANYP|ECHO|CR1 \n\r
+
+# 2400 baud
+6 6 2400 ANYP|RAW ANYP|ECHO|CRMOD \n\r
+
+# 4800 baud
+7 7 4800 ANYP|RAW ANYP|ECHO|CRMOD \n\r
+
+# 9600/300 baud (?!)
+#	(a `traditional' entry)
+8 9 9600 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD \n\r\n\r\n\r
+9 8 300 ANYP|RAW|NL1|CR2 ANYP|XTABS|ECHO|CRMOD|CR2 \n\r
+
+# 300,110,150 dialup - doesn't time out
+d mdm110 300 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|NL1|CR1 \n\r\r\r\n\r\r\r
+mdm110 mdm150 110 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|NL1|CR1 \n\r\r\r\n\r\r\r
+mdm150 d 150 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD|NL1|CR2 \n\r\r\r\n\r\r\r
+
+# Hardwired line to another Unix system
+u u 9600 ANYP|RAW ANYP|ECHO|CRMOD
+& & 4800 ANYP|RAW ANYP|ECHO|CRMOD
+
+# Pseudo tty
+p p 1200 ANYP|RAW ANYP|XTABS|CRMOD \r\n

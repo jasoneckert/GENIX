@@ -1,0 +1,96 @@
+.ig
+	@(#)lpr.1	1.5	11/2/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH LPR 1
+.UC 4
+.SH NAME
+lpr, lprm, lpq, print \- line printer spooler
+.SH SYNOPSIS
+.B lpr
+[
+.B \-m
+] [
+.B \-s ] [name ... ]
+.br
+.B lprm
+[[
+.B \-s
+][
+.B \-a ]
+[
+id ...
+] [
+filename ...
+] [
+owner ...
+]
+.br
+.B lpq
+.br
+.B print
+file ...
+.SH DESCRIPTION
+.I Lpr
+causes the
+named files
+to be queued for printing.
+If no files are named, the standard input is read.
+The option
+.B \-m
+causes notification via
+.IR mail (1)
+to be sent when the job completes.
+.PP
+.I Lprm
+removes an entry from a line printer queue. The default is to remove files
+from the parallel queue, but 
+.B \-s
+causes the program to operate on the serial queue.
+Individual files can be removed by providing an
+id, filename or owner reported by
+.I lpq,
+while
+.B \-a
+will remove all of the files on the queue.  The
+.I id
+of each file removed from the queue will be printed.
+.PP
+.I Lpq
+prints the serial and parallel line printer queues.
+Each entry in a queue is printed showing the owner of the queue entry,
+an identification number,
+the size of the entry in characters,
+and the file which is to be printed.
+The
+.I id
+is useful for removing a specific entry from the printer queue using
+.IR lprm (1).
+.PP
+.I Print
+.I pr's
+a copy of each named file on the line printer.
+It is a one line shell script:
+.PP
+.DT
+	pr $* | lpr
+.SH FILES
+.ta 2i
+/usr/spool/lp	parallel printer device
+.br
+/usr/spool/slp	serial printer device	
+.br
+/usr/spool/lpd/*	parallel spool area
+.br
+/usr/spool/slp/*	serial spool area
+.br
+/usr/lib/lpd	parallel printer daemon
+.br
+/usr/lib/slpd	serial printer daemon
+.br
+/usr/lib/lpf	filter to handle banners and underlining for parallel printer
+.br
+/usr/lib/slpf	filter for serial printer
+.SH SEE\ ALSO
+pr(1)
+.SH BUGS

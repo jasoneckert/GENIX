@@ -1,0 +1,40 @@
+/*
+ * calloc.c: version 1.1 of 9/5/82
+ * Mesa Unix C Library Source File
+ */
+# ifdef SCCS
+static char *sccsid = "@(#)calloc.c	1.1 (NSC) 9/5/82";
+# endif
+
+/*	calloc - allocate and clear memory block
+*/
+
+#define CHARPERINT (sizeof(int)/sizeof(char))
+#define NULL 0
+
+char *
+calloc(num, size)
+unsigned num, size;
+{
+	register char *mp;
+	char *malloc();
+	register int *q;
+	register m;
+
+	num *= size;
+	mp = malloc(num);
+	if(mp == NULL)
+		return(NULL);
+	q = (int *) mp;
+	m = (num+CHARPERINT-1)/CHARPERINT;
+	while(--m>=0)
+		*q++ = 0;
+	return(mp);
+}
+
+cfree(p, num, size)
+char *p;
+unsigned num, size;
+{
+	free(p);
+}

@@ -1,0 +1,279 @@
+.ig
+	@(#)ptrace.2	1.6	10/28/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PTRACE 2
+.SH NAME
+ptrace \- process trace
+.SH SYNOPSIS
+.nf
+.B #include <signal.h>
+.PP
+.B ptrace(request, pid, addr, data)
+.B int *addr;
+.fi
+.SH DESCRIPTION
+.I Ptrace
+provides a means by which a parent process
+may control the execution of a child process,
+and examine and change its core image.
+Its primary use is for the implementation of breakpoint debugging.
+Generally,
+.I pid
+is the process ID of the traced process,
+which must be a child (no more distant descendant)
+of the tracing process.
+A process being traced
+behaves normally until it encounters some signal that may be internally
+generated
+like `illegal instruction' or externally generated like `interrupt.'
+See
+.IR signal (2)
+for the list.
+Then the traced process enters a stopped state
+and its parent is notified via
+.IR wait (2).
+When the child is in the stopped state,
+its parent can examine and modify the child's core image
+using
+.IR ptrace .
+If desired, another
+.I ptrace
+request can then cause the child either to terminate
+or to continue, possibly ignoring the signal.
+.PP
+The value of the
+.I request
+argument determines the precise
+action of the call:
+.TP 4
+0
+This request is the only one used by the child process;
+it declares that the process is to be traced by its parent.
+The request turns on the child's state flag, which stipulates
+the child should be left in a stopped state upon receipt of
+a signal instead of the state specified by 
+.IR func . 
+No return value is defined for this request.
+All the other arguments are ignored.
+Peculiar results will ensue
+if the parent does not expect to trace the child.
+.PP
+The remainder of the requests can only be issued by the parent
+process.
+The child must be in a stopped
+state before these requests are made.
+.TP 4
+1,2
+The
+word in the child process's address space
+at
+.I addr
+is returned.
+If I and D space are separated, request 1 indicates I space,
+2 D space.
+.I Addr
+must be even.
+The child must be stopped.
+The input
+.I data
+items are ignored.
+.TP 4
+3
+The word
+of the system's per-process data area corresponding to
+.I addr
+or the register that matches the values in
+.I reg.h
+or
+.I fpu.h
+is returned.
+.I Addr
+must be less than 2048,
+or one of the
+.I reg.h
+or
+.I fpu.h
+values.
+This space contains the registers and other information about
+the process;
+its layout corresponds to the
+.I user
+structure in the system.
+.TP 4
+4,5
+The
+given
+.I data
+is written at the word in the process's address space corresponding to
+.I addr,
+which must be even, or the register that matches the
+.I reg.h
+or
+.I fpu.h
+offset.
+No useful value is returned.
+If I and D space are separated, request 4 indicates I space, 
+5 D space.
+Attempts to write in pure procedure
+fail if another process is executing the same file.
+.TP 4
+6
+The process's system data is written,
+as it is read with request 3.
+Only a few locations can be written in this way:
+the general registers,
+the floating point status and registers,
+and certain bits of the processor status word.
+However, when
+.I addr
+is 0,
+1,
+2,
+or less than zero, a register is addressed,
+the register being the value that matches the
+.I reg.h
+or
+.I fpu.h
+values for register indexing.
+.TP 4
+7
+The
+.I data
+argument is taken as a signal number
+and the child's execution continues
+at location
+.I addr
+as if it had incurred that signal.
+Normally the signal number will be
+either 0 to indicate that the signal that caused the stop
+should be ignored,
+or that value fetched out of the
+process's image indicating which signal caused
+the stop.
+If
+.I addr
+is (int *)1 then execution continues from where it stopped.
+.TP 4
+8
+The traced process terminates.
+.TP 4
+9
+Execution continues as in request 7;
+however, as soon as possible after execution of at least one instruction,
+execution stops again.
+The signal number from the stop is
+SIGTRAP.
+(On the NS16000,
+PDP-11,
+and VAX-11 the T-bit is used and just one instruction is executed;
+on the Interdata 8/32 the stop does not take place
+until a store instruction is executed.)
+This is part of the mechanism for implementing breakpoints.
+.PP
+The following two requests apply only to the NS16000.
+.TP 4
+10
+An MMU breakpoint is set at location
+.IR addr .
+.I Data
+indicates which of the two breakpoint registers is to be set
+(0 or 1).
+High order bits in
+.I addr
+specify the type of breakpoint
+(read,
+write,
+or combinations thereof)
+as specified in the MMU data sheet,
+except that the AS bit is forced to 1
+and the VP bit is forced to 0
+(so that supervisor or physical breakpoints cannot be set).
+An
+.I addr
+value of 0 clears the breakpoint.
+.TP 4
+11
+Set the breakpoint counter register
+for MMU breakpoint number 0 to
+.IR addr .
+.PP
+As indicated,
+these calls
+(except for request 0)
+can be used only when the subject process has stopped.
+The
+.I wait
+call is used to determine
+when a process stops;
+in such a case the `termination' status
+returned by
+.I wait
+has the value 0177 to indicate stoppage rather
+than genuine termination.
+.PP
+To forestall possible fraud,
+.I ptrace
+inhibits the set-user-id facility
+on subsequent
+.IR exec (2)
+calls.
+If a traced process calls
+.I exec,
+it will stop before executing the first instruction of the new image
+showing signal SIGTRAP.
+.PP
+On the Interdata 8/32,
+`word' means a 32-bit word and `even' means 0 mod 4.
+On the NS16000 and VAX-11,
+`word' also means a 32-bit integer,
+but the `even' restriction does not apply.
+.SH FILES
+.nf
+.DT
+/usr/include/sys/reg.h	values for register requests
+/usr/include/sys/fpu.h
+.fi
+.SH "SEE ALSO"
+wait(2), signal(2), ddt(1)
+.SH DIAGNOSTICS
+The value \-1 is returned if
+.I request 
+is invalid,
+.I pid
+is not a traceable process,
+.I addr
+is out of bounds,
+or
+.I data
+specifies an illegal signal number.
+.SH BUGS
+.I Ptrace
+is unique and arcane; it should be replaced with a special file that
+can be opened and read and written.  The control functions could then
+be implemented with
+.IR ioctl (2)
+calls on this file.  This would be simpler to understand and have much
+higher performance.
+.PP
+On the Interdata 8/32,
+`as soon as possible' (request 7)
+means `as soon as a store instruction has been executed.'
+.PP
+The request 0 call should be able to specify
+signals which are to be treated normally and not cause a stop.
+In this way, for example,
+programs with simulated floating point (which
+use `illegal instruction' signals at a very high rate)
+could be efficiently debugged.
+.PP
+The error indication, \-1, is a legitimate function value;
+.I errno,
+see
+.IR intro (2),
+can be used to resolve any ambiguity.
+.PP
+It should be possible to stop a process on occurrence of a system
+call;
+in this way a completely controlled environment could
+be provided.

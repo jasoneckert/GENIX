@@ -1,0 +1,50 @@
+.ig
+	@(#)pty.4	1.4	7/6/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PTY 4
+.SH NAME
+pty \- pseudo-terminal device
+.SH DESCRIPTION
+Ptys are controllers for terminals that exist only in software.  For each
+pty device, there exists a corresponding software terminal (also known as
+the pty slave device).  Software terminals act like real terminals,
+so that programs running on them act normally.
+However, instead of communicating with real users, their input and output
+go through the process which owns the corresponding pty.  Ptys thus act
+similarly to pipes, but avoid the problems of pipes (for example, interrupt
+characters work on ptys.)
+.PP
+When a write is done to a pty, the data appears to have been "typed" into
+the corresponding software terminal, at which point the program running on
+that terminal can read the data as input.  The normal terminal buffering
+mechanism is used, so that if too much is written to the pty too quickly,
+characters can be lost.  This can be avoided by using the TIOCCHKINP ioctl,
+which returns whether or not any process is sleeping waiting for input on
+the terminal.  Writing to the pty only when input is desired (or when an
+interrupt character has to be typed) will prevent most overflow problems.
+.PP
+When output is written to a software terminal, it is buffered using the
+normal terminal buffer mechanism.  The data remains until a read is
+performed on the pty, at which time the data is returned.  The read will
+return as much data as currently exists, and thus will sleep only if the
+terminal buffer is empty.  The FIONREAD ioctl returns how much data is ready
+for reading on the pty, so that sleeps can be avoided.  If the terminal buffer
+fills up, the program on the terminal will sleep so that no data is lost.
+.PP
+Ioctls performed on the pty are redirected to the corresponding software
+terminal.  This allows the owner of the pty to read the settings of the
+terminal and act accordingly.
+.PP
+A pty is an exclusive-access device, so that it can be opened by only
+one user at a time.  When the pty is closed,
+the processes on the corresponding terminal are sent a SIGHUP signal and
+the terminal buffers are flushed.  Programs that use the software terminal
+when the corresponding pty is not in use will sleep until it is open.
+.PP
+.SH FILES
+/dev/ptyn	The pty numbered n
+.br
+/dev/ttypn	The corresponding software terminal numbered n
+.SH "SEE ALSO"
+tty(4)

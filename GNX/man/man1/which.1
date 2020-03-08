@@ -1,0 +1,36 @@
+.ig
+	@(#)which.1	1.3	11/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH WHICH 1
+.SH NAME
+which \- locate a program file including aliases and paths (csh only)
+.SH SYNOPSIS
+.B which
+[ name ] ...
+.SH DESCRIPTION
+.I Which
+takes a list of names and looks for the files which would be
+executed had these names been given as commands.
+Each argument is expanded if it is aliased,
+and searched for along the user's path.
+Both aliases and path are taken from the user's
+.I \&.cshrc
+file.
+.SH FILES
+.ta 1i
+~/\&.cshrc	source of aliases and path values
+.SH DIAGNOSTICS
+A diagnostic is given for names which are aliased to more than a single
+word,
+or if an executable file with the argument name was not found in the path.
+.SH BUGS
+Only aliases and paths from
+.I ~/\&.cshrc
+are used, importing from the current
+environment is not attempted.
+Must be executed by a
+.IR csh ,
+since only
+.IR csh s
+know about aliases.

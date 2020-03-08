@@ -1,0 +1,112 @@
+.ig
+	@(#)reboot.8	1.2	8/11/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH REBOOT 8
+.SH NAME
+reboot \- UNIX bootstrapping procedures
+.SH SYNOPSIS
+.B /etc/reboot
+[
+.B \-n
+] [
+.B \-q
+]
+.SH DESCRIPTION
+.PP
+UNIX is started by placing it in memory
+at location zero and transferring to zero.
+Since the system is not reenterable,
+it is necessary to read it in from disk or tape
+each time it is to be bootstrapped.
+.PP
+.B Rebooting a running system.
+When a UNIX is running and a reboot is desired,
+.IR shutdown (8)
+is normally used.
+If there are no users then
+.B /etc/reboot
+can be used.
+Reboot causes the disks to be synced, and then a multi-user
+reboot (as described below) is initiated.  This causes a system to be
+booted and an automatic disk check to be performed.  If all this succeeds
+without incident, the system is then brought up for many users.
+.PP
+Options to reboot are:
+.TP
+.B \-n
+option avoids the sync.  It can be used if a disk or the processor
+is on fire!  (It is no longer necessary to reboot after rebuilding
+the root file system.)
+.TP
+.B \-q
+reboots quickly and ungracefully, without shutting down running
+processes first.
+.PP
+.B "Power fail and crash recovery."
+Normally, the system will reboot itself at power-up or after crashes.
+Provided the auto-restart is enabled on the machine front panel,
+an automatic consistency check of the file systems will be performed
+then and unless this fails the system will resume multi-user operations.
+.PP
+.B Cold starts.
+The monitor can boot machine with following commands
+.PP
+Giving the command
+.IP
+b
+invokes a version of the boot program in a way which allows you to
+specify any system as the system to be booted.
+It reads from the console a device specification (see below) followed
+immediately by a pathname.
+check as described in
+.IR fsck (8).
+The command
+.IP
+k
+.LP
+Would load Boot program from ROM. Then can load 'vmunix from dcu unit 1.
+.PP
+On both processors, the 
+.I boot
+program
+finds the corresponding file on the given device, loads that file
+into memory location zero, and starts the program at the entry address
+specified in the program header.
+Normal line editing characters can be used in specifying the pathname.
+.PP
+A device specification has the following form:
+.IP
+device(unit, minor)
+.PP
+where
+.I device
+is the type of the device to be searched,
+.I unit
+is 8* the dcu unit number plus
+the unit number of the device,
+and
+.I minor
+is the minor device index.
+The following list of supported devices may vary from installation to
+installation:
+.ta 5 10
+.nf
+	IMAI	20Mega byte
+	IMAI	60Mega byte
+	3M	20Mega byte
+	3M	60Mega byte
+.fi
+.PP
+For tapes, the minor device number gives a file offset.
+.PP
+In an emergency, the bootstrap methods described in the paper
+``Setting up the Fourth Berkeley Software Tape'' can be used
+to boot from a distribution tape.
+.SH FILES
+.ta
+/vmunix	system code
+.br
+/boot	system bootstrap
+.SH "SEE ALSO"
+crash(8), fsck(8), init(8), rc(8), shutdown(8), halt(8)

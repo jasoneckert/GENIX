@@ -1,0 +1,489 @@
+.ig
+	hier.7: version 1.5 of 8/11/83
+	Unix Manual Page Source
+
+	@(#)hier.7	1.5	(NSC)	8/11/83
+..
+.de XX
+.RS (\\$1-\\n(XX)*.5i
+.nr XX \\$1
+.HP
+.B "\\$2\\ "
+..
+.nr XX 1
+.TH HIER 7
+.SH NAME
+hier \- file system hierarchy
+.SH DESCRIPTION
+The following outline gives a quick tour through
+a representative directory hierarchy.
+.na
+.nh
+.XX 1 /
+root
+.PD 0
+.XX 1 /vmunix
+the kernel binary (UNIX itself)
+.XX 1 /lost+found/
+directory for connecting detached files for
+.IR fsck (5)
+.XX 1 /dev/
+devices (4)
+.XX 2 console
+main console,
+.IR tty (4)
+.XX 2 dc
+disks,
+.IR dcu (4)
+.XX 2 null
+null device,
+.IR null (4)
+.XX 2 pty*
+pseudo-terminals,
+.IR "???" (4)
+.XX 2 rdc
+raw disks,
+.IR dcu (4)
+.XX 2 rtc
+raw tapes,
+.IR tcu (4)
+.XX 2 tc
+.XX 2 tty*
+tapes,
+.IR tcu (4)
+terminals,
+.IR tty (4)
+.XX 1 /bin/
+essential utility programs, cf /usr/bin/ (1)
+.XX 2 "["
+alternate name (link) for
+.IR test (1),
+see
+.IR sh (1)
+.XX 2 cat
+.IR cat (1)
+.XX 3 csh
+C shell,
+.IR csh (1)
+.XX 2 mv
+.IR mv (1)
+.XX 2 wall
+.IR wall (8)
+.XX 2 ...
+.XX 1 /lib/
+essential object libraries and other stuff, cf /usr/lib/
+.XX 1 /etc/
+essential data and maintenance utilities (8)
+.XX 2 dump
+dump program
+.IR dump (8)
+.XX 2 passwd
+password file,
+.IR passwd (5)
+.XX 2 group
+group file,
+.IR group (5)
+.XX 2 motd
+message of the day,
+.IR login (1)
+.XX 2 termcap
+description of terminal capabilities,
+.IR termcap (5)
+.XX 2 ttytype
+table of what kind of terminal is on each port,
+.IR ttytype (5)
+.XX 2 mtab
+mounted file table,
+.IR mtab (5)
+.XX 2 dumpdates
+dump history,
+.IR dump (8)
+.XX 2 fstab
+file system configurtion table
+.IR fstab (5)
+.XX 2 ttys
+properties of terminals,
+.IR ttys (5)
+.XX 2 getty
+part of
+.IR login ,
+.IR getty (8)
+.XX 2 init
+the parent of all processes,
+.IR init (8)
+.XX 2 rc
+shell program to bring the system up
+.XX 2 cron
+the clock daemon,
+.IR cron (8)
+.XX 2 mount
+.IR mount (8)
+.IP ...
+.XX 1 /tmp/
+temporary files, usually on a fast device, cf /usr/tmp/
+.XX 2 Ex*
+used by
+.IR ex ,
+.IR vi (1)
+.XX 2 e*
+used by
+.IR ed (1)
+.XX 2 ctm*
+used by 
+.IR cc (1)
+.XX 2 ...
+.XX 1 /usr/
+general-pupose directory, usually a mounted file system
+.XX 2 adm/
+administrative information
+.XX 3 wtmp
+login history,
+.IR utmp (5)
+.XX 3 messages
+hardware error messages
+.IR troff (1)
+.XX 3 lpacct
+line printer accounting
+.IR lpr (1)
+.XX 2 bin/
+utility programs, to keep /bin/ small
+.XX 3 as
+assembler
+.XX 3 cc
+C compiler executive, cf /usr/lib/{ccom,cpp,c2}
+.XX 3 sort
+sort program,
+.IR sort (1)
+.XX 3 ...
+.XX 2 tmp/
+temporaries, to keep /tmp/ small
+.XX 3 stm*
+used by
+.IR sort (1)
+.XX 2 dict/
+word lists, etc.
+.XX 3 words
+principal word list, used by
+.IR look (1)
+.XX 3 spellhist
+history file for
+.IR spell (1)
+.XX 2 games/
+.XX 3 worms
+worm drawing program,
+.IR worms (6)
+.XX 3 lib/
+library of stuff for the games
+.XX 4 quiz.k/
+what
+.IR quiz (6)
+knows
+.XX 5 index
+category index
+.XX 5 africa
+countries and capitals
+.XX 5 ...
+.XX 4 ...
+.XX 3 ...
+.XX 2 include/
+standard #include files
+.XX 3 a.out.h
+object file layout,
+.IR a.out (5)
+.XX 3 stdio.h
+standard I/O,
+.IR stdio (3)
+.XX 3 math.h
+(3M)
+.XX 3 ...
+.XX 3 sys/
+system-defined layouts, cf /usr/sys/h
+.XX 2 lib/
+object libraries and stuff, to keep /lib/ small
+.XX 3 libc.a
+system calls, standard I/O, etc. (2,3,3S)
+.XX 3 ...
+.XX 3 ccom
+C compiler proper
+.XX 3 cpp
+C preprocessor
+.XX 3 c2
+C code improver
+.XX 3 ...
+.XX 3 atrun
+scheduler for
+.IR at (1)
+.XX 3 lint/
+utility files for lint
+.XX 4 lint[12]
+subprocesses for
+.IR lint (1)
+.XX 4 llib-lc
+dummy declarations for /usr/lib/libc.a, used by
+.IR lint (1)
+.XX 4 llib-lm
+dummy declarations for /usr/lib/libc.m
+.XX 4 ...
+.XX 3 struct/
+passes of
+.IR struct (1)
+.XX 3 ...
+.XX 3 tmac/
+macros for
+.IR nroff ,
+.IR troff (1)
+.XX 4 tmac.an
+macros for
+.IR man (7)
+.XX 4 tmac.s
+macros for
+.IR ms (7)
+.XX 4 tmac.e
+macros for
+.IR me (7)
+.XX 4 ...
+.XX 3 me/
+support files for /usr/lib/tmac/tmac.e
+.XX 4 acm.me
+support for tmac.e's .ac macro
+.XX 4 revisions
+list of bug fixes
+.XX 4 src/
+sources for /usr/lib/tmac/tmac.e, with comments
+.XX 3 font/
+fonts for
+.IR troff (1)
+.XX 4 ftR
+Times Roman
+.XX 4 ftB
+Times Bold
+.XX 4 ...
+.XX 3 uucp/
+programs and data for
+.IR uucp (1)
+.XX 4 L.sys
+remote system names and numbers
+.XX 4 uucico
+the real copy program
+.XX 4 ...
+.XX 3 units
+conversion tables for
+.IR units (1)
+.XX 3 eign
+list of English words to be ignored by
+.IR ptx (1)
+.XX 2 man/
+volume 1 of this manual,
+.IR man (1)
+.XX 3 man0/
+general
+.XX 4 intro
+introduction to volume 1,
+.IR ms (7)
+format
+.XX 4 template.0
+template for manual page
+.XX 3 man1/
+nroff source for chapter 1,
+.IR man (7)
+format
+.XX 4 as.1
+.XX 4 ...
+.XX 3 ...
+.XX 3 cat1/
+preformatted pages for section 1
+.XX 4 as.1
+.XX 4 ...
+.XX 3 ...
+.XX 2 msgs/
+messages, cf
+.IR msgs (1)
+.XX 3 bounds
+highest and lowest message
+.XX 2 new/
+binaries of new versions of programs
+.XX 2 preserve/
+editor temporaries preserved here after crashes/hangups
+.XX 2 public/
+binaries of user programs - write permission to everyone
+.XX 2 spool/
+delayed execution files
+.XX 3 at/
+used by 
+.IR at (1)
+.XX 3 lpd/
+used by
+.IR lpr (1)
+.XX 4 lock
+present when line printer is active
+.XX 4 cf*
+copy of file to be printed, if necessary
+.XX 4 df*
+daemon control file,
+.IR lpd (8)
+.XX 4 tf*
+transient control file, while 
+.I lpr
+is working
+.XX 3 uucp/
+work files and staging area for 
+.IR uucp (1)
+.XX 4 LOGFILE
+summary log
+.XX 4 LOG.*
+log file for one transaction
+.XX 3 mail/
+mailboxes for
+.IR mail (1)
+.XX 4 "\fIname\fP"
+mail file for user
+.I name
+.XX 4 "\fIname\fP.lock
+lock file while
+.I name
+is receiving mail
+.XX 3 secretmail/
+encrypted mail, like mail/
+.XX 3 uucp/
+work files and staging area for 
+.IR uucp (1)
+.XX 4 LOGFILE
+summary log
+.XX 4 LOG.*
+log file for one transaction
+.XX 3 "\fIwd\fP"
+initial working directory of a user, typically
+.I wd
+is the user's login name
+.XX 4 \&.profile
+set environment for
+.IR sh (1),
+.IR environ (5)
+.XX 4 \&.project
+what you are doing, used by
+.IR finger (1)
+.XX 4 \&.cshrc
+startup file for
+.IR csh (1)
+.XX 4 \&.exrc
+startup file for
+.IR ex (1),
+obsolete
+.XX 4 \&.plan
+what your short-term plans are, used by
+.IR finger (1)
+.XX 4 \&.msgsrc
+startup file for
+.IR msgs (1)
+.XX 4 \&.mailrc
+startup file for
+.IR mail (1)
+.XX 4 reminder
+user's datebook for
+.IR remind (1)
+.XX 2 doc/
+papers, mostly in volume 2 of this manual, typically in
+.IR ms (7)
+format
+.XX 3 as/
+assembler manual
+.XX 3 c
+C manual
+.XX 3 ...
+.XX 2 src/
+source files for utilities, kernel, etc.  Not shipped with basic system
+.XX 3 cmd/
+source of commands
+.XX 4 ar.c
+source for
+.IR ar (1)
+.XX 4 ...
+.XX 4 troff/
+source for
+.I nroff
+and
+.IR troff (1)
+.XX 5 font/
+source for font tables, /usr/lib/font/
+.XX 6 ftR.c
+Roman
+.XX 6 ...
+.XX 5 term/
+terminal characteristics tables, /usr/lib/term/
+.XX 6 tab300.c
+DASI 300
+.XX 6 ...
+.XX 5 ...
+.XX 3 games/
+source for /usr/games
+.XX 3 libc/
+source for functions in /usr/lib/libc.a
+.XX 4 csu
+startup and wrapup routines needed with every C program
+.XX 5 crt0.s
+regular startup
+.XX 5 mcrt0.s
+modified startup for
+.I cc \-p
+.XX 4 sys/
+system calls (2)
+.XX 5 access.s
+.XX 5 alarm.s
+.XX 5 ...
+.XX 4 stdio/
+standard I/O functions (3S)
+.XX 5 fgets.c
+.XX 5 fopen.c
+.XX 5 ...
+.XX 4 gen/
+other functions in (3)
+.XX 5 abs.c
+.XX 5 ...
+.XX 3 local/
+source which isn't normally distributed
+.XX 3 new/
+source for new versions of commands and library routines
+.XX 3 old/
+source for old versions of commands and library routines
+.XX 3 sys/
+system source
+.XX 4 h/
+header (include) files
+.XX 5 acct.h
+.IR acct (5)
+.XX 5 stat.h
+.IR stat (2)
+.XX 5 ...
+.XX 4 sys/
+system source proper
+.XX 5 main.c
+.XX 5 pipe.c
+.XX 5 sysent.c
+system entry points
+.XX 2 ucb/
+binaries of programs developed at UCB
+.XX 3 ...
+.XX 3 edit
+editor for beginners
+.XX 3 ex
+command editor for experienced users
+.XX 3 ...
+.XX 3 mail
+mail reading/sending subsystem
+.XX 3 man
+on line documentation
+.XX 3 ...
+.XX 3 vi
+visual editor
+.XX 2 nsc/
+binaries of programs developed at NSC
+.XX 2 pc
+EPascal compiler
+.ad
+.SH SEE ALSO
+ls(1), apropos(1), whatis(1), whereis(1), finger(1), which(1), ncheck(8),
+find(1), grep(1)
+.SH BUGS
+The position of files is subject to change without notice.
+.sp
+What about cross software file organization

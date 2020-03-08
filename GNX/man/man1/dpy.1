@@ -1,0 +1,81 @@
+.ig
+	@(#)dpy.1	1.5	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH DPY 1
+.SH NAME
+dpy \- display the output of a command repeatedly
+.SH SYNOPSIS
+.B dpy
+[ -a# ] [ -d ] [ -o# ] [ -s# ] [ -t ] command [ arg ... ]
+.SH DESCRIPTION
+.I Dpy
+executes the given command repeatedly while displaying the output of the
+command to the terminal.  This is done with minimal changes to the screen
+by using the
+.IR curses (3)
+subroutine package.  When given commands such as
+.IR ps (1)
+or
+.IR w (1),
+you can produce a continuously updating status of the system.
+.PP
+In order to increase the speed of the program,
+.I dpy
+executes the command directly without the involvement of any shell.  This
+does not affect most commands, since the arguments are expanded by the
+shell before
+.I dpy
+is run.  However, if you need repeated argument expansion (such as in the
+command "ls *"), want to run multiple commands in series, or want to
+pipe the output of one program into another, then you need to run a shell.
+This is done by running the shell explicitly, as in the
+examples 'dpy csh -cf "ls *"' and 'dpy sh -c "ls *"'.
+.PP
+To prevent excessive loading of the system,
+.I dpy
+sleeps between each execution of the command.  The default sleep time is
+10 seconds.  This can be changed by using the -s option, which takes the
+desired sleep time in seconds (the letter 's' is optional). The top line of
+the display usually contains a title line which describes the command being
+executed, the sleep time, and the date.  The -t option removes the title
+line completely, while the -d option removes just the date.  Normally, only
+the first screenful (page) of the command output can be seen.  This can be
+changed by using the -a option, which automatically advances to the next page.
+Its argument is the number of updates to make between page advancements.
+To provide a sense of continuity, the last line of the old screen is normally
+also shown as the top line of the new screen to provide a one line overlap.
+The -o option can be used to change this overlap value.
+.PP
+Commands can be given to
+.I dpy
+while it is running.  Such commands do not echo, are self-terminating
+(no return is necessary), and can be edited before completion by using
+the erase and kill characters.
+The return character updates the screen immediately.
+The space character advances to the next page of data.
+The sequence '#s', where '#' is a number, sets a new sleep time.
+The sequence '#p' shows the specified page of data.
+The sequence '#a' sets automatic page advancment for every '#' updates.
+The sequence 'na' turns off automatic page advancement.
+The sequence '#o' sets the number of lines of overlap between pages.
+The sequence 'nt' turns off the title line, while the character 't' restores it.
+The sequence 'nd' turns off the date, while the character 'd' restores it.
+The character '^L' refreshes the screen.
+The character 'q' (or the interrupt character) exits.
+The character 'i' initializes all parameters to their default values.
+.PP
+As long as no commands are being typed, the sleep time increases at the
+rate of one second per minute, up to a maximum of one minute.  Typing
+any command restores the desired sleep time.  This feature reduces the
+load on the system when users walk away from the program.
+.SH BUGS
+Fast typing causes the screen to blank out briefly.  This is due to the
+"feature" of the curses package of not updating when input is ready.
+.PP
+Since
+.I dpy
+does not show any output until a command has exited, running commands which
+never exit (such as
+.IR vmstat (1))
+is pointless.

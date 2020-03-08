@@ -1,0 +1,7 @@
+qtroff -t -F cm   $* m.mac m0
+tbl m0a | qtroff -t -F cm   $* m.mac -
+tbl m[1234] | qtroff -t -F cm   $* m.mac -
+qtroff -t -F cm   $* m.mac m5
+qtroff -t -F cm   $* m.mac table1
+qtroff -t -F cm   $* m.mac table2
+qtroff -t -F cm  $* m.mac add

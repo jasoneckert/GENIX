@@ -1,0 +1,3212 @@
+.ig
+	@(#)sccs_guide	1.3	11/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.nr Hs 5
+.nr Hi 0
+.nr Hu 1
+.nr Hb 5
+.ds HP 10 10 10 10 10
+.if n .ds d " -- 
+.if t .ds d \-
+.ds s \s-1SCCS\s+1
+.ds s) S\s-1CCS\s+1
+.ds p \s-1UNIX\s+1
+.ds p) U\s-1NIX\s+1
+.ds i \s-1SID\s+1
+.ds i) S\s-1ID\s+1
+.ds k \s-1ID\s+1
+.ds k) I\s-1D\s+1
+.ds a \s-1ASCII\s+1
+.ds m \f2U\s-1NIX\s+1 User's Manual\^\fP
+.ds m, \f2U\s-1NIX\s+1 User's Manual,\^\fP
+.tr ~
+.ds . \f3.\fP
+.ds :? SCCS User's Guide
+.PH "''''"
+.OH "|\s9\f2\*(:?\fP||\\\\nP\s0|"
+.EH "|\s9\\\\nP||\f2\*(:?\^\fP\s0|"
+.bd S 3 3
+.nr Hy 1
+.TL
+Source Code Control System User's Guide
+.AU "L. E. Bonanni" LEB PY
+.AU "C. A. Salemi" CAS PY
+.AS 0 6
+The Source Code Control System (\*s)
+is a system for controlling changes to files of text
+(typically, the source code and documentation of software systems).
+It provides facilities for storing,
+updating,
+and retrieving any version of a file of text,
+for controlling updating privileges to that file,
+for identifying the version of a retrieved file,
+and for recording who made each change,
+when and where it was made,
+and why.
+\*(s) is a collection of programs that run
+under the \*p\(dg
+.FS \(dg
+UNIX is a trademark of Bell Laboratories.
+.FE
+Time-Sharing System.
+.P
+This document, together
+with relevant portions of the
+\*(m,
+is a complete user's guide to
+\*s,
+and supersedes all previous versions.
+The following topics are covered:
+.BL "" 1
+.LI
+How to get started with
+\*s.
+.LI
+The scheme used to identify versions of text kept in an \*s file.
+.LI
+Basic information needed for
+day-to-day
+use of
+\*s commands,
+including a discussion of the more useful arguments.
+.LI
+Protection and auditing of \*s files,
+including the differences between
+the use of \*s by
+.I individual
+users on one hand, and
+.I groups
+of users on the other.
+.LE
+.P
+Neither the implementation of \*s nor the installation procedure
+for \*s are described here.
+.AE
+.MT 4
+.H 1 "INTRODUCTION"
+The Source Code Control System (\*s)
+is a collection of
+\*p
+commands that help individuals
+or projects control and account for
+changes to files of text
+(typically, the source code and documentation of software systems).
+It is convenient to conceive of
+\*s
+as a custodian of files; it allows retrieval of particular
+versions of the files, administers changes to them,
+controls updating privileges to them,
+and records who made each change, when and
+where it was made, and why.
+This is important when programs and
+documentation undergo frequent changes (because of maintenance and/or
+enhancement work), inasmuch as it is sometimes desirable
+to regenerate the version of a program
+or document as it was before changes were applied to it.
+Obviously, this could be done by keeping copies (on paper or
+other media), but this quickly becomes unmanageable and wasteful
+as the number of programs and documents increases.
+\*(s)
+provides an attractive solution because it stores on disk
+the original file and, whenever changes are made to it, stores only the
+.I changes;
+each set of changes is called a ``delta.''
+.P
+This document,
+together with
+relevant portions of the
+\*(m, is a complete user's guide
+to
+\*s.
+This manual contains the following sections:
+.BL "" 1
+.LI
+.I "\*(s) for Beginners:"
+How to make an
+\*s
+file,
+how to update it,
+and how to retrieve a version thereof.
+.LI
+.I "How Deltas Are Numbered:"
+How versions of \*s files are numbered and named.
+.LI
+.I "\*(s) Command Conventions:"
+Conventions and rules generally applicable to all \*s commands.
+.LI
+.I "\*(s) Commands:"
+Explanation of all \*s commands, with discussions of the more useful arguments.
+.LI
+.I "\*(s) Files:"
+Protection, format, and auditing of \*s files,
+including a discussion of the differences between using \*s as an
+individual and using it as a member of a group or project.
+The role of a ``project \*s administrator'' is introduced.
+.LE
+.H 1 "SCCS \|FOR \|BEGINNERS"
+It is assumed that the reader knows how to log onto a
+\*p system,
+create files, and use the text editor.
+A number of terminal-session fragments are presented below.
+All of them should be tried:
+the best way to learn
+\*s
+is to use it.
+.P
+To supplement the material in this manual,
+the detailed \*s command descriptions
+(appearing in
+the \*m)
+should be consulted.
+Section 5 below contains a list of all the \*s commands.
+For the time being, however, only basic concepts will be discussed.
+.H 2 "Terminology"
+.P
+Each \*s file is composed of one or more
+sets of changes applied to the null (empty) version of the file,
+with each set of changes usually depending on all
+previous sets.
+Each set of changes is called a ``delta'' and is assigned a name,
+called the
+\f2S\|\fP\s-1CCS\s+1 \f2ID\|\fPentification string
+(\*i),
+composed of at most four components, only the first two of which
+will concern us for now;
+these are the ``release'' and
+``level'' numbers, separated by a period.
+Hence, the first delta is called ``1\*.1'', the second ``1\*.2'', the
+third ``1\*.3'', etc.
+The release number can also be changed
+allowing, for example, deltas ``2.1'', ``3.19'', etc.
+The change in the release number usually indicates
+a major change to the file.
+.P
+Each delta of an \*s file defines a particular version of the file.
+For example, delta 1\*.5 defines version 1\*.5 of the \*s file,
+obtained by applying to the null (empty) version of the file
+the changes that constitute deltas 1\*.1, 1\*.2, etc., up to and
+including delta 1\*.5 itself, in that order.
+.H 2 "Creating \|an \|SCCS \|File:  the \|``admin'' \|Command"
+.P
+Consider, for example, a file called ``lang'' that contains a list
+of programming languages:
+.DS 1
+c
+pl/i
+fortran
+cobol
+algol
+.DE
+.P
+We wish to give custody of this file to
+\*s.
+The following
+.I admin
+command (which is used to
+.I administer
+\*s
+files)
+creates an
+\*s
+file and initializes delta 1\*.1 from the file ``lang'':
+.DS 1
+admin  \-ilang  s\*.lang
+.DE
+.P
+All
+\*s
+files
+.I must
+have names that begin with ``s\*.'', hence, ``s\*.lang''.
+The
+.B \-i
+keyletter,
+together with its value ``lang'',
+indicates that
+.I admin
+is to create a new
+\*s
+file and
+.I initialize
+it with the contents of the file ``lang''.
+This initial version is a set of changes applied to the
+null \*s file;
+it is delta 1\*.1.
+.P
+The
+.I admin
+command replies:
+.DS 1
+No id keywords (cm7)
+.DE
+This is a warning message (which may also be issued by other
+\*s commands) that is to be ignored for the purposes of this section.
+Its significance is described in Section 5.1 below.
+In the following examples, this warning message is not shown, although
+it may actually be issued by the various command.
+.P
+The file ``lang'' should be removed
+(because it can be easily reconstructed by using the
+.I get
+command, below):
+.DS 1
+rm  lang
+.DE
+.H 2 "Retrieving \|a \|File:  the \|``get'' \|Command"
+The command:
+.DS 1
+get  s\*.lang
+.DE
+causes the creation (retrieval) of the latest version of file
+``s\*.lang'',
+and prints the following messages:
+.DS 1
+1\*.1
+5 lines
+.DE
+This means that
+.I get
+retrieved version 1\*.1 of the file, which is made up of 5 lines of text.
+The retrieved text is placed in a file whose name is formed by deleting
+the ``s\*.'' prefix from the name of the
+\*s
+file; hence, the file ``lang'' is created.
+.P
+The above
+.I get
+command simply creates the file ``lang'' read-only,
+and keeps no information whatsoever regarding its creation.
+On the other hand, in order to be able to subsequently apply changes to an
+\*s
+file with the
+.I delta
+command (see below), the
+.I get
+command must be informed of your intention to do so.
+This is done as follows:
+.DS 1
+get  \-e  s\*.lang
+.DE
+The
+.B \-e
+keyletter causes
+.I get
+to create
+a file ``lang'' for both reading and writing (so that it may be
+edited)
+and places certain information about the
+\*s
+file in another new file, called the
+.I p-file,
+that will be read by the
+.I delta
+command.
+The
+.I get
+command prints the same messages as before,
+except that the \*i of the version to be created through the use of
+.I delta
+is also issued.
+For example:
+.DS 1
+get  \-e  s\*.lang
+1\*.1
+new delta  1\*.2
+5 lines
+.DE
+.P
+The file ``lang'' may now be changed, for example, by:
+.DS 1
+ed  lang
+27
+$a
+snobol
+ratfor
+\&\f3.\fP
+w
+41
+q
+.DE
+.H 2 "Recording \|Changes:  the \|``delta'' \|Command"
+.P
+In order to record within the \*s file the changes that have been applied to
+``lang'', execute:
+.DS 1
+delta  s\*.lang
+.DE
+.I Delta
+prompts with:
+.DS 1
+comments?
+.DE
+the response to which should be a description of why the changes were made;
+for example:
+.DS 1
+comments? added more languages
+.DE
+.P
+.I Delta
+then reads the
+.I p-file,
+and determines what changes were made to the file ``lang''.
+It does this by doing its own
+.I get
+to retrieve the original
+version, and by applying
+.I diff\| (1)\*F
+.FS
+All references of the form
+.I name\^ (\f2N\|\fP)
+refer to item
+.I name
+in Section
+.I N
+of \*m.
+.FE
+to the original version and the edited version.
+.P
+When this process is complete, at which point the changes to ``lang''
+have been stored in ``s\*.lang'',
+.I delta
+outputs:
+.DS 1
+1\*.2
+2 inserted
+0 deleted
+5 unchanged
+.DE
+The number ``1\*.2'' is the name of the delta just created,
+and the next three lines of output refer to the number of lines in
+the file ``s\*.lang''.
+.H 2 "More \|about \|the \|``get'' \|Command"
+.P
+As we have seen:
+.DS 1
+get  s\*.lang
+.DE
+retrieves the latest version (now 1\*.2) of the file ``s\*.lang''.
+This is done by starting with the original version of the file and
+successively applying deltas (the changes) in order, until all have
+been applied.
+.P
+For our example, the following commands are all equivalent:
+.DS 1
+get  s\*.lang
+.sp .5
+get  \-r1  s\*.lang
+.sp .5
+get  \-r1.2  s\*.lang
+.DE
+The numbers following the
+.B \-r
+keyletter are \*is (see Section 2.1 above).
+Note that omitting the level number of the \*i (as in the second
+example above) is equivalent to specifying the
+.I highest
+level number that
+exists within the specified release.
+Thus, the second command requests the retrieval of the latest version in
+release 1, namely 1\*.2.
+The third command specifically requests the retrieval of a particular
+version, in this case, also 1\*.2.
+.P
+Whenever a truly major change is made to a file, the significance of that
+change is usually indicated by changing the
+.I release
+number (first component of the \*i)
+of the delta being made.
+Since normal, automatic, numbering of deltas proceeds by
+incrementing the level number (second component of the \*i), we must
+indicate to \*s
+that we wish to change the release number.
+This is done with the
+.I get
+command:
+.DS 1
+get  \-e  \-r2  s\*.lang
+.DE
+Because release 2 does not exist,
+.I get
+retrieves the latest version
+.I before
+release 2;
+it also interprets this as a request to change the
+release number of the delta we wish to create to 2,
+thereby causing it to be named 2\*.1, rather than 1\*.3.
+This information is conveyed to
+.I delta
+via the
+.I p-file.
+.I Get
+then outputs:
+.DS 1
+1\*.2
+new delta 2\*.1
+7 lines
+.DE
+which indicates that version 1.2 has been retrieved and that 2.1 is
+the version
+.I delta
+will create.
+If the file is now edited, for example, by:
+.DS 1
+ed  lang
+41
+/cobol/d
+w
+35
+q
+.DE
+and
+.I delta
+executed:
+.DS 1
+delta  s\*.lang
+comments? deleted cobol from list of languages
+.DE
+we will see, by
+.I delta's
+output, that version 2\*.1 is indeed created:
+.DS 1
+2\*.1
+0 inserted
+1 deleted
+6 unchanged
+.DE
+.P
+Deltas may now be created in release 2 (deltas 2\*.2, 2\*.3, etc.),
+or another new release may be created in a similar manner.
+This process may be continued as desired.
+.H 2 "The \|``help'' \|Command"
+.P
+If the command:
+.DS 1
+get  abc
+.DE
+is executed, the following message will be output:
+.DS 1
+ERROR [abc]\f3:\fP not an SCCS file (co1)
+.DE
+The string ``co1'' is a code for the diagnostic message,
+and may be used to obtain a fuller explanation of that message
+by use of the
+.I help
+command:
+.DS 1
+help  co1
+.DE
+This produces the following output:
+.DS 1
+co1\f3:\fP
+"not an SCCS file"
+A file that you think is an SCCS file
+does not begin with the characters "s\*.".
+.DE
+Thus,
+.I help
+is a useful command to use whenever there is any doubt about
+the meaning of an \*s message.
+Fuller explanations of almost all \*s messages may be found in this manner.
+.H 1 "HOW \|DELTAS \|ARE \|NUMBERED"
+It is convenient to conceive of the deltas applied to an \*s file
+as the nodes of a tree, in which the root is the initial version
+of the file.
+The root delta (node) is normally named ``1\*.1''
+and successor deltas (nodes) are named ``1\*.2'', ``1\*.3'', etc.
+The components of the names of the deltas are called the ``release''
+and the ``level'' numbers, respectively.
+Thus, normal naming of successor deltas proceeds by incrementing
+the level number,
+which is performed automatically by \*s whenever a delta is made.
+In addition, the user may wish to change the
+.I release
+number when making a delta, to indicate that
+a major change is being made.
+When this is done, the release number also applies to all successor deltas,
+unless specifically changed again.
+Thus, the evolution of a particular file may be represented as in \%Figure\ 1.
+.DS
+.sp 1i
+.FG "Evolution of an \*s File"
+.sp 0.5v
+.DE
+Such a structure may be termed the ``trunk'' of the \*s tree.
+It represents the normal
+.I sequential
+development of an \*s file, in which changes that are part of any given
+delta are dependent upon
+.I all
+the preceding deltas.
+.P
+However, there are situations in which it is
+necessary to cause a
+.I branching
+in the tree, in that changes applied as part of a given delta are
+.I not
+dependent upon all previous deltas.
+As an example, consider a program which is in production use
+at version 1\*.3, and for which development work on release 2
+is already in progress.
+Thus, release 2 may already have some deltas, precisely as shown in Figure\ 1.
+Assume that a production user reports a problem in version 1\*.3,
+and that the nature of the problem is such that it cannot wait to be repaired
+in release 2.
+The changes necessary to repair the trouble will
+be applied as a delta to version 1\*.3 (the version in production use).
+This creates a new version that will then be released to the user,
+but will
+.I not
+affect the changes being applied for release 2
+(i.e., deltas 1\*.4, 2\*.1, 2\*.2, etc.).
+.P
+The new delta is a node on a ``branch'' of the tree,
+and its name consists of
+.I four
+components, namely, the release and level numbers, as with trunk
+deltas, plus the ``branch'' and ``sequence'' numbers, as follows:
+.DS 1
+release\*.level\*.branch\*.sequence
+.DE
+The
+.I branch
+number is assigned to each branch
+that is a descendant of a
+particular trunk delta, with the first such branch being 1, the next one 2,
+and so on.
+The
+.I sequence
+number is assigned, in order, to each delta on a
+.I "particular branch."
+Thus, 1\*.3\*.1\*.2 identifies the second delta of the first branch
+that derives from delta 1\*.3.
+This is shown in Figure\ 2.
+.DS
+.sp 2i-.5v
+.FG "Tree Structure with Branch Deltas"
+.sp 0.5v
+.DE
+.P
+The concept of branching may be extended to any delta in the tree;
+the naming of the resulting deltas proceeds in the manner just illustrated.
+.P
+Two observations are of importance with regard to naming deltas.
+First, the names of trunk deltas contain exactly two components, and
+the names of branch deltas contain exactly four components.
+Second, the first two components of the name of branch deltas are
+always those of the ancestral trunk delta,
+and the branch component is assigned in the order of creation of the
+branch, independently of its location relative to the trunk delta.
+Thus, a branch delta may always be identified as such from its name.
+Although the ancestral trunk delta may be identified from the
+branch delta's name, it is
+.I not
+possible to determine the
+.I entire
+path leading from the trunk delta to the branch delta.
+For example,
+if delta 1\*.3 has one branch emanating from it, all deltas on that
+branch will be named 1\*.3\*.1\*.\f2n\fP.
+If a delta on this branch then has another branch emanating from
+.I it,
+all deltas on the new branch will be named 1\*.3\*.2\*.\f2n\fP
+(see Figure\ 3).
+The only information that may be derived from the name of delta
+1\*.3\*.2\*.2 is that it is the
+.I chronologically
+second delta on the
+.I chronologically
+second branch whose
+.I trunk
+ancestor is
+delta 1\*.3.
+In particular, it is
+.I not
+possible to determine from the name of delta 1\*.3\*.2\*.2 all of the deltas
+between it and its trunk ancestor (1\*.3).
+.DS
+.sp 2i-.5v
+.FG "Extending the Branching Concept"
+.sp 0.5v
+.DE
+It is obvious that the concept of branch deltas allows the generation
+of arbitrarily complex tree structures.
+Although this capability has been provided for certain specialized uses,
+it is strongly recommended that the \*s tree be kept as
+simple as possible, because comprehension of
+its structure becomes extremely difficult as the tree becomes more complex.
+.H 1 "SCCS \|COMMAND \|CONVENTIONS"
+This section discusses the conventions and rules that
+apply to \*s commands.
+These rules and conventions are generally applicable to
+.I all
+\*s commands, except as indicated below.
+\*(s) commands accept two types of arguments:
+.I keyletter
+arguments and
+.I file
+arguments.
+.P
+.I Keyletter
+arguments (hereafter called simply ``keyletters'')
+begin with a minus sign (\-), followed by a lower-case
+alphabetic character, and, in some cases, followed by a value.
+These keyletters control the execution of the command to which
+they are supplied.
+.P
+.I File
+arguments (which may be names of files and/or directories)
+specify the file(s) that the given \*s command is to process;
+naming a directory is equivalent to naming
+.I all
+the \*s files within the directory.
+Non-\*s files and unreadable\*F
+.FS
+Because of permission modes
+(see
+.I chmod\^ (1)).
+.FE
+files in the named directories are silently ignored.
+.P
+In general, file arguments may
+.I not
+begin with a minus sign.
+However, if the name ``\-'' (a lone minus sign) is specified as an argument
+to a command, the command reads the standard
+input for lines and takes each line as the
+.I name
+of an \*s file to
+be processed.
+The standard input is read until end-of-file.
+This feature is often used in pipelines with, for example,
+the
+.I find\^ (1)
+or
+.I ls\^ (1)
+commands.
+Again, names of non-\*s files and of unreadable files are silently ignored.
+.P
+All keyletters specified for a given command
+apply to
+.I all
+file arguments of that command.
+All keyletters are processed before any file arguments,
+with the result that the placement of keyletters is arbitrary
+(i.e., keyletters may be interspersed with file arguments).
+File arguments, however, are processed left to right.
+.P
+Somewhat different argument conventions apply to the
+.I help,
+.I what,
+.I sccsdiff,
+and
+.I val
+commands (see Sections 5.5, 5.8, 5.9, and 5.11).
+.P
+Certain actions of various \*s commands are controlled by
+.I flags
+appearing in \*s files.
+Some of these flags are discussed below.
+For a complete description of all such flags, see
+.I admin\^ (1).
+.P
+The distinction between the
+.I "real user"
+(see
+.I passwd\^ (1))
+and the
+.I "effective user"
+of a \*p system is of concern in discussing various actions of \*s commands.
+For the present, it is assumed that both the real user and the
+effective user are one and the same (i.e., the user who is
+logged into a \*p system);
+this subject is further discussed in Section 6.1.
+.P
+All \*s commands that modify an \*s file do so by writing a
+temporary copy, called the
+.I x-file,
+which ensures that the \*s file will not be damaged should processing
+terminate abnormally.
+The name of the
+.I x-file
+is formed by replacing the ``s\*.'' of the \*s file name with ``x\*.''.
+When processing is complete, the old \*s file is removed and the
+.I x-file
+is renamed to be the \*s file.
+The
+.I x-file
+is created in the directory containing the \*s file, is given the
+same mode (see
+.I chmod\^ (1))
+as the \*s file, and is owned by the effective user.
+.P
+To prevent simultaneous updates to an \*s file,
+commands that modify \*s files create a
+.I lock-file,
+called the
+.I z-file,
+whose name is formed by replacing the
+``s\*.'' of the \*s file name with ``z\*.''.
+The
+.I z-file
+contains the
+.I "process number"
+of the command that creates it,
+and its existence is an indication to other commands that
+that \*s file is being updated.
+Thus, other commands that
+modify \*s files will not process an \*s file if the corresponding
+.I z-file
+exists.
+The
+.I z-file
+is created with mode 444 (read-only) in the directory containing the \*s file,
+and is owned by the effective user.
+This file exists only for the duration of the execution of the command
+that creates it.
+In general, users can ignore
+.I x-files
+and
+.I z-files;
+they may be useful in the event of system crashes or similar situations.
+.P
+\*(s) commands produce diagnostics (on the diagnostic output)
+of the form:
+.DS 1
+ERROR [name-of-file-being-processed]\f3:\fP message text (code)
+.DE
+The
+.I code
+in parentheses may be used as an argument to the
+.I help
+command (see Section 5.5) to obtain a further explanation of the diagnostic
+message.
+.P
+Detection of a fatal error during the processing of a file
+causes the \*s command to terminate processing of
+.I that
+file and to proceed with the next file, in order, if
+more than one file has been named.
+.H 1 "SCCS \|COMMANDS"
+.P
+This section describes the major features of all the \*s commands.
+Detailed descriptions of the commands and of all their arguments
+are given in the
+.I "\*(p) User's Manual,"
+and should be consulted
+for further information.
+The discussion below
+covers only the more common arguments of the various \*s commands.
+.P
+Because the commands
+.I get
+and
+.I delta
+are the most frequently used, they are presented first.
+The other commands follow in approximate order of importance.
+.P
+The following is a
+summary of all the \*s commands and of their
+major functions:
+.VL 13 3
+.LI get
+Retrieves versions of \*s files.
+.LI delta
+Applies changes (deltas) to the text of \*s files,
+i.e., creates new versions.
+.LI admin
+Creates \*s files and applies changes to parameters of \*s files.
+.LI prs
+Prints portions of an \*s file in user specified format.
+.LI help
+Gives explanations of diagnostic messages.
+.LI rmdel
+Removes a delta from an \*s file;
+allows the removal of
+deltas that were created by mistake.
+.LI cdc
+Changes the commentary
+associated with a delta.
+.LI what
+Searches any \*p file(s) for all occurrences of a special pattern and prints out
+what follows it;
+is useful in finding identifying information inserted
+by the
+.I get
+command.
+.LI sccsdiff
+Shows the differences between any two versions of an \*s file.
+.LI comb
+Combines two or more consecutive deltas of an \*s file into a single delta;
+often reduces the size of the \*s file.
+.LI val
+Validates an \*s file.
+.LE
+.H 2 "get"
+.P
+The
+.I get
+command creates a text file that contains a particular version
+of an \*s file.
+The particular version is retrieved by beginning with the initial version,
+and then applying deltas, in order, until the desired version is
+obtained.
+The created file is called the
+.I g-file;
+its name is formed by removing the ``s\*.'' from the \*s file name.
+The
+.I g-file
+is created in the current directory and is owned by the real user.
+The mode assigned to the
+.I g-file
+depends on how the
+.I get
+command is invoked, as discussed below.
+.P
+The most common invocation of
+.I get
+is:
+.DS 1
+get  s\*.abc
+.DE
+which normally retrieves the latest version on the trunk of the
+\*s file tree, and produces (for example) on the standard output:
+.DS 1
+1\*.3
+67 lines
+No id keywords (cm7)
+.DE
+which indicates that:
+.AL 1 "" 1
+.LI
+Version 1\*.3 of file
+``s\*.abc''
+was retrieved (1\*.3 is the latest trunk delta).
+.LI
+This version has 67 lines of text.
+.LI
+No
+\*k keywords
+were substituted in the file (see Section 5.1.1 for a discussion of
+\*k keywords).
+.LE 1
+.P
+The generated
+.I g-file
+(file ``abc'') is given mode 444 (read-only), since this
+particular way of invoking
+.I get
+is intended to produce
+.I g-files
+only for inspection, compilation, etc., and
+.I not
+for editing (i.e.,
+.I not
+for making deltas).
+.P
+In the case of several file arguments (or directory-name arguments),
+similar information is given for each file processed,
+but the \*s file name precedes it.
+For example:
+.DS 1
+get  s\*.abc  s\*.def
+.DE
+produces:
+.DS 1
+s\*.abc\f3:\fP
+1\*.3
+67 lines
+No id keywords (cm7)
+.sp .5
+s\*.def\f3:\fP
+1\*.7
+85 lines
+No id keywords (cm7)
+.DE
+.H 3 "ID \|Keywords"
+In generating a
+.I g-file
+to be used for compilation, it is useful and informative
+to record the date and time of creation, the version retrieved,
+the module's name, etc., within the
+.I g-file,
+so as to have this information appear in a load module when one is
+eventually created.
+\*(s) provides a convenient mechanism for doing this automatically.
+.I "Identification (\*k) keywords"
+appearing anywhere in the generated file are replaced by
+appropriate values according to the
+definitions of these
+\*k keywords.
+The format of an
+\*k keyword
+is an upper-case letter enclosed by percent signs (%).
+For example:
+.DS 1
+1.1
+.DE
+is defined as the
+\*k keyword
+that is replaced by the \*i of the retrieved version of a file.
+Similarly,
+.B 1/11/82
+is defined as the \*k keyword for the current date (in the form ``mm/dd/yy''),
+and
+.B sccs_guide
+is defined as the name of the
+.I g-file.
+Thus, executing
+.I get
+on an \*s file that contains the PL/I declaration:
+.DS 1
+DCL  ID  CHAR(100)  VAR  INIT(\^\(fm\^sccs_guide  1.1  1/11/82\^\(fm\^)\f3;\fP
+.DE
+gives (for example) the following:
+.DS 1
+DCL  ID  CHAR(100)  VAR  INIT(\^\(fm\^MODNAME  2\*.3  07/07/77\^\(fm\^)\f3;\fP
+.DE
+.P
+When no
+\*k keywords
+are substituted by
+.I get,
+the following message is issued:
+.DS 1
+No id keywords (cm7)
+.DE
+This message is normally
+treated as a warning by
+.I get,
+although the presence of the
+.B i
+flag in the \*s file
+causes it to be treated as an error
+(see Section 5.2 for further information).
+.P
+For a complete list of the approximately twenty
+\*k keywords
+provided, see
+.I get\^ (1).
+.H 3 "Retrieval \|of \|Different \|Versions"
+Various keyletters are provided to allow the retrieval of other
+than the default version of an \*s file.
+Normally, the default version is the most recent delta of the
+highest-numbered release on the
+.I trunk
+of the \*s file tree.
+However, if the \*s file being processed has a
+.B d
+(default \*i) flag,
+the \*i specified as the value of this flag is used as a default.
+The default \*i
+is interpreted in exactly the same way as the value supplied with
+the
+.B \-r
+keyletter of
+.I get.
+.P
+The
+.B \-r
+keyletter is used to specify an \*i to be retrieved,
+in which case the
+.B d
+(default \*i) flag (if any) is ignored.
+For example:
+.DS 1
+get  \-r1\*.3  s\*.abc
+.DE
+retrieves version 1\*.3 of file ``s\*.abc'',
+and produces (for example) on the standard output:
+.DS 1
+1\*.3
+64 lines
+.DE
+A branch delta may be retrieved similarly:
+.DS 1
+get  \-r1\*.5\*.2\*.3  s\*.abc
+.DE
+which produces (for example) on the standard output:
+.DS 1
+1\*.5\*.2\*.3
+234 lines
+.DE
+When a two- or four-component \*i
+is specified as a value for the
+.B \-r
+keyletter (as above) and the particular version does not exist
+in the \*s file, an error message results.
+Omission of the level number, as in:
+.DS 1
+get  \-r3  s\*.abc
+.DE
+causes retrieval of the
+.I trunk
+delta with the highest level number
+within the given release, if the given release exists.
+Thus, the above command might output:
+.DS 1
+3\*.7
+213 lines
+.DE
+If the given release does not exist,
+.I get
+retrieves the
+.I trunk
+delta with the highest level number within
+the highest-numbered existing release that is lower than the given release.
+For example, assuming release 9 does not exist in file ``s\*.abc'', and that
+release 7 is actually the highest-numbered release below 9, execution of:
+.DS 1
+get  \-r9  s\*.abc
+.DE
+might produce:
+.DS 1
+7\*.6
+420 lines
+.DE
+which indicates that trunk delta 7\*.6 is the latest version of
+file ``s\*.abc'' below release 9.
+Similarly, omission of the sequence number, as in:
+.DS 1
+get  \-r4\*.3\*.2  s\*.abc
+.DE
+results in the retrieval of the branch delta with the highest
+sequence number on the given branch, if it exists.~
+(If the given branch does not exist, an error message results.)~
+This might result in the following output:
+.DS 1
+4\*.3\*.2\*.8
+89 lines
+.DE
+.P
+The
+.B \-t
+keyletter is used to retrieve the latest (``top'') version
+in a particular
+.I release
+(i.e., when no
+.B \-r
+keyletter is supplied, or when its value is simply a release number).
+The latest version is defined as that delta which was produced most recently,
+independent of its location on the \*s file tree.
+Thus, if the most recent delta in release
+3 is 3\*.5,
+.DS 1
+get  \-r3  \-t  s\*.abc
+.DE
+might produce:
+.DS 1
+3\*.5
+59 lines
+.DE
+However, if branch delta 3\*.2\*.1\*.5 were the latest delta
+(created after delta 3\*.5), the same command might produce:
+.DS 1
+3\*.2\*.1\*.5
+46 lines
+.DE
+.H 3 "Retrieval \|with \|Intent \|to \|Make \|a \|Delta"
+Specification of the
+.B \-e
+keyletter to the
+.I get
+command is an indication of the intent to make a delta,
+and, as such, its use is restricted.
+The presence of this keyletter causes
+.I get
+to check:
+.br
+.if t .ne 4v
+.AL 1 "" 1
+.LI
+The
+.I "user list"
+(which is
+the list of
+.I login
+names and\f3/\fPor
+.I "group \*ks"
+of users allowed to make deltas (see
+Section 6.2))
+to determine if the login name or group \*k of the user executing
+.I get
+is on that list.
+Note that a
+.I null
+(empty) user list behaves as if it contained
+.I all
+possible login names.
+.LI
+That the
+.I release
+(R) of the version being retrieved satisfies the relation:
+.DS 1
+floor \(<= R \(<= ceiling
+.DE
+to determine if the release being accessed is a protected release.
+The
+.I floor
+and
+.I ceiling
+are specified as
+.I flags
+in the \*s file.
+.LI
+That the
+.I release
+(R) is not
+.I locked
+against editing.
+The
+.I lock
+is specified as a flag in the \*s file.
+.LI
+Whether or not
+.I "multiple concurrent edits"
+are allowed for the \*s file as specified by the
+.B j
+flag in the \*s file
+(multiple concurrent edits are described in Section 5.1.5).
+.LE
+.P
+A failure of any of the first three conditions causes the
+processing of the corresponding \*s file to terminate.
+.P
+If the above checks succeed, the
+.B \-e
+keyletter causes the creation of a
+.I g-file
+in the current directory with mode 644 (readable by everyone, writable only
+by the owner) owned by the real user.
+If a
+.I writable
+.I g-file
+already exists,
+.I get
+terminates with an error.
+This is to prevent inadvertent destruction of a
+.I g-file
+that already exists and is being edited for the purpose of making a
+delta.
+.P
+Any
+\*k keywords
+appearing in the
+.I g-file
+are
+.I not
+substituted by
+.I get
+when the
+.B \-e
+keyletter is specified,
+because the generated
+.I g-file
+is to be subsequently used to create another delta,
+and replacement of
+\*k keywords
+would cause them to be
+permanently changed within the \*s file.
+In view of this,
+.I get
+does not need to check for the presence of \*k keywords within the
+.I g-file,
+so that the message:
+.DS 1
+No id keywords (cm7)
+.DE
+is never output when
+.I get
+is invoked with the
+.B \-e
+keyletter.
+.P
+In addition, the
+.B \-e
+keyletter causes the creation (or updating) of a
+.I p-file,
+which is used to pass information to the
+.I delta
+command (see Section 5.1.4).
+.P
+The following is an example of the use of the
+.B \-e
+keyletter:
+.DS 1
+get  \-e  s\*.abc
+.DE
+which produces (for example) on the
+standard output:
+.DS 1
+1\*.3
+new delta 1\*.4
+67 lines
+.DE
+.P
+If the
+.B \-r
+and/or
+.B \-t
+keyletters are used together with the
+.B \-e
+keyletter,
+the version retrieved for editing
+is as specified by the
+.B \-r
+and/or
+.B \-t
+keyletters.
+.P
+The keyletters
+.B \-i
+and
+.B \-x
+may be used to specify a list (see
+.I get\^ (1)
+for the syntax of such a list)
+of deltas to be
+.I included
+and
+.I excluded,
+respectively, by
+.I get.
+Including a delta means
+forcing the changes that constitute the particular delta to be
+included in the retrieved version.
+This is useful if one wants to apply the same
+changes to more than one version of the \*s file.
+Excluding a delta means forcing it to be
+.I not
+applied.
+This may be used to undo, in the version of the \*s file
+to be created, the effects of a previous delta.
+Whenever deltas are included or excluded,
+.I get
+checks for possible interference between such deltas and those deltas
+that are normally used in retrieving the particular version of the \*s file.
+(Two deltas can interfere, for example, when each one changes the
+same line of the retrieved
+.I g-file. )~
+Any interference is indicated by a warning that shows the range of lines
+within the retrieved
+.I g-file
+in which the problem may exist.
+The user is expected to examine the
+.I g-file
+to determine whether a problem actually exists,
+and to take whatever corrective measures (if any) are deemed necessary
+(e.g., edit the file).
+.P
+.I
+\ \(rh\ \ 
+The
+.B \-i
+and
+.B \-x
+keyletters should be used with extreme care.
+.R
+.P
+The
+.B \-k
+keyletter is provided to facilitate
+regeneration of a
+.I g-file
+that may have been accidentally removed or
+ruined subsequent to the execution of
+.I get
+with the
+.B \-e
+keyletter, or to simply generate a
+.I g-file
+in which the replacement of
+\*k keywords
+has been suppressed.
+Thus, a
+.I g-file
+generated by the
+.B \-k
+keyletter is identical to one produced by
+.I get
+executed with the
+.B \-e
+keyletter.
+However, no processing related to the
+.I p-file
+takes place.
+.H 3 "Concurrent \|Edits \|of \|Different \|SIDs"
+The ability to retrieve different versions of an \*s file allows
+a number of deltas to be ``in progress'' at any given time.
+This means that a number of
+.I get
+commands with the
+.B \-e
+keyletter may be executed on the same file, provided that no two
+executions retrieve the same version
+(unless multiple concurrent edits are allowed, see Section 5.1.5).
+.P
+The
+.I p-file
+(which is created by the
+.I get
+command invoked with the
+.B \-e
+keyletter)
+is named
+by replacing the ``s\*.'' in the \*s file name with ``p\*.''.
+It is created in the directory containing the \*s file, is given mode
+644 (readable by everyone, writable only by the owner),
+and is owned by the effective user.
+The
+.I p-file
+contains the following information for each delta that
+is still ``in progress'':\*F
+.FS
+Other information may be present, but is not of concern here.
+See
+.I get\^ (1)
+for further discussion.
+.FE
+.BL 6 1
+.LI
+The \*i of the retrieved version.
+.LI
+The \*i that will be given to the new delta when it is created.
+.LI
+The login name of the real user executing
+.I get.
+.LE
+.P
+The first execution of
+``get \-e''
+causes the
+.I creation
+of the
+.I p-file
+for the corresponding \*s file.
+Subsequent executions only
+.I update
+the
+.I p-file
+with a line
+containing the above information.
+Before updating, however,
+.I get
+checks that
+no entry already in the
+.I p-file
+specifies as already retrieved
+the \*i of the version to be retrieved,
+unless multiple concurrent edits are allowed.
+.P
+If both checks succeed,
+the user is informed that other deltas are in progress,
+and processing continues.
+If either check fails, an error message results.
+It is important to note that the various executions of
+.I get
+should be carried out from different directories.
+Otherwise, only the first execution will succeed, since subsequent
+executions would attempt to over-write a
+.I writable
+.I g-file,
+which is an \*s error condition.
+In practice, such multiple executions are performed by different users,\*F
+.FS
+See Section 6.1 for a discussion of how different users are permitted
+to use SCCS commands on the same files.
+.FE
+so that this problem does not arise, since each user normally has
+a different working directory.
+.P
+Table\ 1 shows, for the most useful cases,
+what version of an \*s file is retrieved by
+.I get,
+as well as the \*i of the version to be eventually created by
+.I delta,
+as a function of the \*i specified to
+.I get.
+.DF
+.B
+.TB "\s-1Determination of New SID\s+1"
+.R
+.sp 3p
+.TS
+center expand;
+cfI cfI cfI cfI cfI cfI
+cfI cfI cfI cfI cfI cfI
+nfR lfR cfR lfR lfR lfR .
+=
+Case	\*i	\f3\-b\fP Keyletter	Other	\*i	\*i of Delta
+\^	Specified\|\f1*\fP	Used\|\f1\(dg\fP	Conditions	\
+Retrieved	to be Created
+=
+1.	none\(dd	no	R defaults to mR	mR\*.mL	mR\*.(mL\|+1)
+_
+2.	none\(dd	yes	R defaults to mR	mR\*.mL	mR\*.mL\*.(mB\|+1)\*.1
+=
+3.	R	no	R > mR	mR\*.mL	R\*.1\(sc
+_
+4.	R	no	R = mR	mR\*.mL	mR\*.(mL\|+1)
+_
+5.	R	yes	R > mR	mR\*.mL	mR\*.mL\*.(mB\|+1)\*.1
+_
+6.	R	yes	R = mR	mR\*.mL	mR\*.mL\*.(mB\|+1)\*.1
+_
+7.	R	\-	R < mR and	hR\*.mL**	hR\*.mL\*.(mB\|+1)\*.1
+\^	\^	\^	R does \f2not\fP exist	\^	\^
+_
+8.	R	\-	Trunk successor	R\*.mL	R\*.mL\*.(mB\|+1)\*.1
+\^	\^	\^	in release > R	\^	\^
+\^	\^	\^	and R exists	\^	\^
+=
+9.	R\*.L	no	No trunk successor	R\*.L	R\*.(L\|+1)
+_
+10.	R\*.L	yes	No trunk successor	R\*.L	R\*.L\*.(mB\|+1)\*.1
+_
+11.	R\*.L	\-	Trunk successor	R\*.L	R\*.L\*.(mB\|+1)\*.1
+\^	\^	\^	in release \(>= R	\^	\^
+=
+12.	R\*.L\*.B	no	No branch successor	R\*.L\*.B\*.mS	R\*.L\*.B\*.(mS\|+1)
+_
+13.	R.L\*.B	yes	No branch successor	R\*.L\*.B\*.mS	R\*.L\*.(mB\|+1)\*.1
+=
+14.	R\*.L\*.B\*.S	no	No branch successor	R\*.L\*.B\*.S	R\*.L\*.B\*.(S\|+1)
+_
+15.	R\*.L\*.B\*.S	yes	No branch successor	R\*.L\*.B\*.S	R\*.L\*.(mB\|+1)\*.1
+_
+16.	R\*.L\*.B\*.S	\-	Branch successor	R\*.L\*.B\*.S	R\*.L\*.(mB\|+1)\*.1
+=
+.TE
+.ft 1
+.ps 8
+.vs 9.5p
+.VL 5 2
+.LI *
+``R'', ``L'', ``B'', and ``S'' are the ``release'', ``level'',
+``branch'', and ``sequence'' components of the SID, respectively;
+``m'' means ``maximum''.
+Thus, for example, ``R\*.mL'' means ``the maximum
+level number within release R'';
+``R\*.L\*.(mB\|+1)\*.1'' means
+``the first sequence number on the
+.I new
+branch (i.e., maximum branch number plus
+1) of level L within release R''.
+Note that if the SID specified is of the form ``R\*.L'',
+``R\*.L\*.B'', or ``R\*.L\*.B\*.S'', each of the
+specified components
+.I must
+exist.
+.LI \(dg
+The
+.B \-b
+keyletter is effective only if the
+.B b
+flag (see
+.I admin\^ (1))
+is present in the file.
+In this table, an entry of ``\-'' means ``irrelevant''.
+.LI \(dd
+This case applies if the
+.B d
+(default SID) flag is
+.I not
+present in the file.
+If the
+.B d
+flag
+.I is
+present in the file, then the
+SID obtained from the
+.B d
+flag is interpreted as if it had been specified on the command line.
+Thus, one of the other cases in this table applies.
+.LI \(sc
+This case is used to force the creation of the
+.I first
+delta in a
+.I new
+release.
+.LI **
+``hR'' is the highest
+.I existing
+release that is lower than
+the specified,
+.I nonexistent,
+release\ R.
+.LE
+.br
+\l'\n(.lu'
+.br
+.vs
+.ps
+.DE
+.H 3 "Concurrent \|Edits \|of \|the \|Same \|SID"
+Under normal conditions,
+\f2get\f1s for editing
+.B (\-e
+keyletter is specified)
+based on the same \*i are not permitted to
+occur concurrently.
+That is,
+.I delta
+must be executed before a subsequent
+.I get
+for editing is executed at the same \*i as the previous
+.I get.
+However, multiple concurrent edits
+(defined
+to be
+two or more
+.I successive
+executions of
+.I get
+for editing based on the same retrieved \*i)
+.I are
+allowed if the
+.B j
+flag is set in the \*s file.
+Thus:
+.DS 1
+get  \-e  s\*.abc
+1\*.1
+new delta 1\*.2
+5 lines
+.DE
+may be immediately followed by:
+.DS 1
+get  \-e  s\*.abc
+1\*.1
+new delta 1\*.1\*.1\*.1
+5 lines
+.DE
+without an intervening execution of
+.I delta.
+In this case, a
+.I delta
+command corresponding to the first
+.I get
+produces delta 1.2
+(assuming 1.1 is the latest (most recent) trunk delta),
+and the
+.I delta
+command corresponding to the second
+.I get
+produces delta 1.1.1.1.
+.H 3 "Keyletters \|that \|Affect \|Output"
+Specification of the
+.B \-p
+keyletter causes
+.I get
+to write the retrieved text to the standard output, rather than to a
+.I g-file.
+In addition, all output normally directed to the standard output
+(such as the \*i of the version retrieved and the number of lines
+retrieved)
+is directed instead to the diagnostic output.
+This may be used, for example, to create
+.I g-files
+with arbitrary names:
+.DS 1
+get  \-p  s\*.abc  >  arbitrary-file-name
+.DE
+The
+.B \-p
+keyletter is particularly useful when used with the ``!'' or
+``$'' arguments of the \*p
+.I send\~ (1C)
+command.
+For example:
+.DS 1
+send  MOD=s\*.abc  REL=3  compile
+.DE
+given that file ``compile'' contains:
+.DS 1
+//plicomp  job  job-card-information
+//step1  exec  plickc
+//pli\*.sysin  dd  \(**
+.tr ~~
+~\^\-s
+~\^!\^get  \-p  \-rREL  MOD
+/\(**
+//
+.DE
+will
+.I send
+the highest level of release 3 of file ``s\*.abc''.
+Note that the line ``\^~\^\-s'', which causes
+.I send\~ (1C)
+to make \*k keyword substitutions before detecting and interpreting
+control lines, is necessary if
+.I send\~ (1C)
+is to substitute ``s\*.abc'' for MOD and ``3'' for REL in the line
+``\^~\^!\^get   \-p  \-rREL  MOD''.
+.P
+The
+.B \-s
+keyletter suppresses all output that is
+.I normally
+directed to the
+standard output.
+.tr ~
+Thus, the \*i of the retrieved version, the
+number of lines retrieved, etc., are not output.
+This does not, however, affect messages to the diagnostic output.
+This keyletter is used to prevent non-diagnostic messages from appearing
+on the user's terminal, and is often used in
+conjunction with the
+.B \-p
+keyletter to ``pipe'' the output of
+.I get,
+as in:
+.DS 1
+get  \-p  \-s  s\*.abc  \(bv  nroff
+.DE
+.P
+The
+.B \-g
+keyletter is supplied to suppress the actual retrieval
+of the text of a version of the \*s file.
+This may be useful in a number of ways.
+For example, to verify the existence of a particular \*i in an \*s
+file, one may execute:
+.DS 1
+get  \-g  \-r4\*.3  s\*.abc
+.DE
+This outputs the given \*i if it exists in the \*s file,
+or it generates an error message, if it does not.
+Another use of the
+.B \-g
+keyletter
+is in regenerating a
+.I p-file
+that may have been accidentally destroyed:
+.DS 1
+get  \-e  \-g  s\*.abc
+.DE
+The
+.B \-l
+keyletter causes the creation of an
+.I l-file,
+which is named by replacing the ``s\*.'' of the \*s file name with ``l\*.''.
+This file is created in the current directory, with mode 444 (read-only),
+and is owned by the real user.
+It contains a table
+(whose format is described in
+.I get\^ (1))
+showing which deltas were
+used in constructing a particular version of
+the \*s file.
+For example:
+.DS 1
+get  \-r2\*.3  \-l  s\*.abc
+.DE
+generates an
+.I l-file
+showing which deltas were applied to retrieve version 2\*.3 of the
+\*s file.
+Specifying a
+.I value
+of ``p'' with the
+.B \-l
+keyletter, as in:
+.DS 1
+get  \-lp  \-r2\*.3  s\*.abc
+.DE
+.br
+.if t .ne 4v
+causes the generated output to be written to the standard output
+rather than to the
+.I l-file.
+The
+.B \-g
+keyletter may be used with the
+.B \-l
+keyletter to suppress the actual retrieval of the text.
+.P
+The
+.B \-m
+keyletter is of use in identifying, line by line, the
+changes applied to an \*s file.
+Specification of this keyletter causes each line of the generated
+.I g-file
+to be preceded by the \*i of the delta that caused that line to be
+inserted.
+The \*i is separated from the text of the line by a tab character.
+.P
+The
+.B \-n
+keyletter causes each line of the generated
+.I g-file
+to be preceded by the value of the sccs_guide
+\*k keyword
+(see Section 5.1.1)
+and a tab character.
+The
+.B \-n
+keyletter is most often used in a pipeline with
+.I grep\^ (1).
+For example, to find
+all lines that match a given pattern in the latest version of each
+\*s file in a directory, the following may be executed:
+.DS 1
+get  \-p  \-n  \-s  directory  \(bv  grep  pattern
+.DE
+If both the
+.B \-m
+and
+.B \-n
+keyletters are specified, each line of the generated
+.I g-file
+is preceded by the value of the sccs_guide
+\*k keyword
+and a tab
+(this is the effect of the
+.B \-n
+keyletter),
+followed by the line in the format produced by the
+.B \-m
+keyletter.
+Because use of the
+.B \-m
+keyletter
+and/or the
+.B \-n
+keyletter causes the contents of the
+.I g-file
+to be modified, such a
+.I g-file
+must
+.I not
+be used for creating a delta.
+Therefore, neither
+the
+.B \-m
+keyletter nor the
+.B \-n
+keyletter may
+be specified together with the
+.B \-e
+keyletter.
+.P
+See
+.I get\^ (1)
+for a full description of additional
+.I get
+keyletters.
+.H 2 "delta"
+.P
+The
+.I delta
+command is used to incorporate the changes made to a
+.I g-file
+into the corresponding \*s file, i.e.,
+to create a delta, and, therefore, a new version of
+the file.
+.P
+Invocation of the
+.I delta
+command requires the existence of a
+.I p-file
+(see Sections 5.1.3 and 5.1.4).
+.I Delta
+examines the
+.I p-file
+to verify the presence of an entry
+containing the user's login name.
+If none is found, an error message results.
+.I Delta
+also performs the same permission checks that
+.I get
+performs when invoked with the
+.B \-e
+keyletter.
+If all checks are successful,
+.I delta
+determines what has been changed in the
+.I g-file,
+by comparing it (via
+.I diff\| (1))
+with its own, temporary copy of the
+.I g-file
+as it was before editing.
+This temporary copy of the
+.I g-file
+is called the
+.I d-file
+(its name is formed by replacing the ``s\*.''
+of the \*s file name with ``d\*.'')
+and is obtained by performing an internal
+.I get
+at the \*i specified in the
+.I p-file
+entry.
+.P
+The required
+.I p-file
+entry is the one containing the login name of the user executing
+.I delta,
+because the user who retrieved the
+.I g-file
+must be the one who will create the delta.
+However, if the login name of the user appears in
+more than one entry
+(i.e., the same user executed
+.I get
+with the
+.B \-e
+keyletter more than once on the same \*s file), the
+.B \-r
+keyletter must be
+used with
+.I delta
+to specify an
+\*i that uniquely identifies the
+.I p-file
+entry\*F.
+.FS
+The SID specified may be either the SID retrieved by
+.I get,
+or the SID
+.I delta
+is to create.
+.FE
+This entry is the one used to obtain the \*i of the
+delta to be created.
+.P
+In practice, the most common invocation of
+.I delta
+is:
+.DS 1
+delta  s\*.abc
+.DE
+which prompts on the standard output (but only if it is a terminal):
+.DS 1
+comments?
+.DE
+to which the user replies
+with a description of why the
+delta is being made, terminating the reply with a new-line character.
+The user's response may be up to 512 characters long,
+with new-lines
+.I not
+intended to terminate the response
+escaped by ``\e''.
+.P
+If the \*s file has a
+.B v
+flag,
+.I delta
+first prompts with:
+.DS 1
+MRs?
+.DE
+on the standard output.~
+(Again, this prompt is printed only if the standard output is a terminal.)~
+The standard input is then read for
+MR\*F
+.FS
+In a tightly controlled environment, it is expected that deltas
+are created only as a result of some trouble report,
+change request, trouble ticket, etc. (collectively called here Modification
+Requests, or MRs) and that it is desirable or necessary to record such
+MR number(s) within each delta.
+.FE
+numbers, separated by blanks and/or tabs,
+terminated in the same manner as the response to
+the prompt ``comments?''.
+.P
+The
+.B \-y
+and/or
+.B \-m
+keyletters may be used to supply the commentary (comments and MR numbers,
+respectively) on the command line, rather than through the standard
+input:
+.DS 1
+delta  \-y"descriptive comment"  \-m"mrnum1 mrnum2"  s\*.abc
+.DE
+In this case, the corresponding prompts are not printed, and the
+standard input is not read.
+The
+.B \-m
+keyletter is allowed only if the \*s file has a
+.B v
+flag.
+These keyletters are useful when
+.I delta
+is executed from within a
+.I "shell procedure"
+(see
+.I sh\^ (1)).
+.P
+The commentary (comments and/or MR numbers),
+whether solicited by
+.I delta
+or supplied via keyletters,
+is recorded as part of the entry for the delta being created,
+and applies to
+.I all
+\*s files processed by the
+same invocation of
+.I delta.
+This implies that if
+.I delta
+is invoked with more than one file argument, and the first
+file named has a
+.B v
+flag, all files named must have this flag.
+Similarly, if the first file named does not have this flag, then
+none of the files named may have it.
+Any file that does not conform to these rules is not processed.
+.P
+When processing is complete,
+.I delta
+outputs (on the standard
+output) the \*i of the created delta (obtained from
+the
+.I p-file
+entry)
+and the counts of lines inserted, deleted, and left
+unchanged by the delta.
+Thus, a typical output might be:
+.DS 1
+1\*.4
+14 inserted
+7 deleted
+345 unchanged
+.DE
+.P
+It is possible that the counts of lines reported as inserted, deleted,
+or unchanged by
+.I delta
+do not agree with the user's perception of the changes applied to the
+.I g-file.
+The reason for this is that there usually are a number of ways to
+describe a set of such changes, especially if lines are moved around
+in the
+.I g-file,
+and
+.I delta
+is likely to find a description that differs from the user's perception.
+However, the
+.I total
+number of lines of the new delta (the number inserted plus the
+number left unchanged) should agree with the number of lines in the
+edited
+.I g-file.
+.P
+If, in the process of making a delta,
+.I delta
+finds no
+\*k keywords
+in the edited
+.I g-file,
+the message:
+.DS 1
+No id keywords (cm7)
+.DE
+is issued after the prompts for
+commentary, but before any other output.
+This indicates that any
+\*k keywords
+that may have existed in the \*s file have been replaced
+by their values, or deleted during the editing process.
+This could be caused by creating a delta from a
+.I g-file
+that was created by a
+.I get
+without the
+.B \-e
+keyletter (recall that
+\*k keywords
+are replaced by
+.I get
+in that case),
+or by accidentally deleting or changing the
+\*k keywords
+during the editing of the
+.I g-file.
+Another possibility is that the file may never have had any
+\*k keywords.
+In any case, it is left up to the user to determine what remedial action is
+necessary, but the delta is made,
+unless there is an
+.B i
+flag in the \*s file,
+indicating that this
+should be treated as a fatal error.
+In this last case, the delta is not created.
+.P
+After processing of an \*s file is complete, the corresponding
+.I p-file
+entry is removed from the
+.I p-file. \*F~
+.FS
+All updates to the
+.I p-file
+are made to a temporary copy, the
+.I q-file,
+whose use is similar to the use of the
+.I x-file,
+which is described in Section 4 above.
+.FE
+If there is only
+.I one
+entry in the
+.I p-file,
+then the
+.I p-file
+itself is removed.
+.P
+In addition,
+.I delta
+removes the edited
+.I g-file,
+unless the
+.B \-n
+keyletter is specified.
+Thus:
+.DS 1
+delta  \-n  s\*.abc
+.DE
+will keep the
+.I g-file
+upon completion of processing.
+.P
+The
+.B \-s
+(``silent'') keyletter suppresses all output
+that is normally directed to the standard output,
+other than the prompts ``comments?'' and ``MRs?''.
+Thus, use of the
+.B \-s
+keyletter together with the
+.B \-y
+keyletter (and possibly, the
+.B \-m
+keyletter) causes
+.I delta
+neither to read the standard input nor to write the standard output.
+.P
+The differences between the
+.I g-file
+and the
+.I d-file
+(see above),
+which constitute the delta, may be printed
+on the standard output by using the
+.B \-p
+keyletter.
+The format of this output is similar to that produced by
+.I diff\| (1).
+.H 2 "admin"
+.P
+The
+.I admin
+command is used to
+.I administer
+\*s files, that is,
+to create new \*s files and to change parameters of
+existing ones.
+When an \*s file is created,
+its parameters are initialized by use of keyletters
+or are assigned default
+values if no keyletters are supplied.
+The same keyletters are used to change the parameters of existing files.
+.P
+Two keyletters are supplied for use in conjunction with
+detecting and correcting ``corrupted'' \*s files, and
+are discussed in Section 6.3 below.
+.P
+Newly-created \*s
+files are given mode 444 (read-only) and are owned by the effective
+user.
+.P
+Only a user with write permission in the directory containing the \*s
+file may use the
+.I admin
+command upon that file.
+.H 3 "Creation \|of \|SCCS \|Files"
+An \*s file may be created by executing the command:
+.DS 1
+admin  \-ifirst  s\*.abc
+.DE
+in which the value (``first'') of the
+.B \-i
+keyletter specifies the name of a file from which the text of the
+.I initial
+delta of the \*s file ``s\*.abc'' is to be taken.
+Omission of the value of the
+.B \-i
+keyletter indicates that
+.I admin
+is to read the standard input for the text of the initial delta.
+Thus, the command:
+.DS 1
+admin  \-i  s\*.abc  <  first
+.DE
+is equivalent to the previous example.
+If the text of the initial delta does not contain
+\*k keywords,
+the message:
+.DS 1
+No id keywords (cm7)
+.DE
+is issued by
+.I admin
+as a warning.
+However, if the same invocation of the command also sets the
+.B i
+flag (not to be confused with the
+.B \-i
+keyletter),
+the message is treated as an error and the
+\*s file is not created.
+Only
+.I one
+\*s file may be created at a time using the
+.B \-i
+keyletter.
+.br
+.if t .ne 4v
+.P
+When an \*s file is created, the
+.I release
+number assigned to its first delta is normally ``1'', and
+its
+.I level
+number is always  ``1''.
+Thus, the first delta of an \*s file is normally ``1\*.1''.
+The
+.B \-r
+keyletter is used to
+specify
+the release number to be assigned to the first delta.
+Thus:
+.DS 1
+admin  \-ifirst  \-r3  s\*.abc
+.DE
+indicates that the first delta should be named ``3\*.1'' rather
+than ``1\*.1''.
+Because this keyletter is only meaningful in creating the
+first delta, its use is only permitted with the
+.B \-i
+keyletter.
+.H 3 "Inserting \|Commentary \|for \|the \|Initial \|Delta"
+When an \*s file is created, the user may choose to supply commentary
+stating the reason for creation of the file.
+This is done by supplying comments
+.B (\-y
+keyletter) and/or MR numbers\*F
+.FS
+The creation of an SCCS file may sometimes be the direct result
+of an MR.
+.FE
+.B (\-m
+keyletter)
+in exactly the same manner as for
+.I delta.
+If comments
+.B (\-y
+keyletter)
+are omitted, a comment line of the form:
+.DS 1
+date  and  time  created  \s-1YY/MM/DD  HH:MM:SS\s+1  by  logname
+.DE
+is automatically generated.
+.P
+If it is desired to supply MR numbers
+.B (\-m
+keyletter), the
+.B v
+flag
+must also be set
+(using the
+.B \-f
+keyletter described below).
+The
+.B v
+flag simply determines whether or not MR numbers must be
+supplied when using any \*s command that modifies a
+.I "delta commentary"
+(see
+.I sccsfile\^ (5))
+in the \*s file.
+Thus:
+.DS 1
+admin  \-ifirst  \-mmrnum1  \-fv  s\*.abc
+.DE
+Note that the
+.B \-y
+and
+.B \-m
+keyletters are only effective if
+a new \*s file is being created.
+.H 3 "Initialization \|and \|Modification \|of \|SCCS \|File \|Parameters"
+The portion of the \*s file reserved for
+.I "descriptive text"
+(see Section 6.2)
+may be initialized or changed through the use of the
+.B \-t
+keyletter.
+The descriptive text is intended as a summary of the contents and
+purpose of the \*s file, although its contents may be arbitrary,
+and it may be arbitrarily long.
+.P
+When an \*s file is being created and the
+.B \-t
+keyletter is supplied, it must be followed by the name of
+a file from which the descriptive text is to be taken.
+For example, the command:
+.DS 1
+admin  \-ifirst  \-tdesc  s\*.abc
+.DE
+specifies that the descriptive text is to be
+taken from file ``desc''.
+.P
+When processing an
+.I existing
+\*s file, the
+.B \-t
+keyletter specifies that the descriptive text (if any) currently in the
+file is to be
+.I replaced
+with the text in the named file.
+Thus:
+.DS 1
+admin  \-tdesc  s\*.abc
+.DE
+specifies that the descriptive text of the \*s file
+is to be replaced by the contents of ``desc'';
+omission of the file name after the
+.B \-t
+keyletter as in:
+.DS 1
+admin  \-t  s\*.abc
+.DE
+causes the
+.I removal
+of the descriptive text from the \*s file.
+.P
+The
+.I flags
+(see Section 6.2)
+of an \*s file may be initialized and changed, or deleted through the use of the
+.B \-f
+and
+.B \-d
+keyletters, respectively.
+The flags of an \*s file are used to direct certain
+actions of the various commands.
+See
+.I admin\^ (1)
+for a description of all the flags.
+For example, the
+.B i
+flag specifies that
+the warning message stating there are no \*k keywords contained in the
+\*s file should be treated as an error,
+and the
+.B d
+(default \*i) flag specifies the default version of the \*s file
+to be retrieved by the
+.I get
+command.
+The
+.B \-f
+keyletter is used to set a flag and, possibly, to set its value.
+For example:
+.DS 1
+admin  \-ifirst  \-fi  \-fmmodname  s\*.abc
+.DE
+sets the
+.B i
+flag
+and the
+.B m
+(module name) flag.
+The value ``modname'' specified for the
+.B m
+flag is the value that the
+.I get
+command will use to replace the
+.B sccs_guide
+\*k keyword.
+(In the absence of the
+.B m
+flag, the name of the
+.I g-file
+is used as the replacement for the
+.B sccs_guide
+\*k keyword.)~
+Note that several
+.B \-f
+keyletters may be supplied on a single invocation of
+.I admin,
+and that
+.B \-f
+keyletters
+may be supplied whether the command is creating a new \*s file
+or processing an existing one.
+.P
+The
+.B \-d
+keyletter is used to delete a flag from an \*s file, and may only be
+specified when processing an existing file.
+As an example, the command:
+.DS 1
+admin  \-dm  s\*.abc
+.DE
+removes the
+.B m
+flag from the \*s file.
+Several
+.B \-d
+keyletters may be supplied on a single invocation of
+.I admin,
+and may be intermixed with
+.B \-f
+keyletters.
+.P
+\*(s) files contain a list (\c
+.I "user list" )
+of login names and/or group \*ks of users who are allowed
+to create deltas (see Sections 5.1.3 and 6.2).
+This list is empty by default, which implies that
+.I anyone
+may create deltas.
+To add login names and/or group \*ks to the list, the
+.B \-a
+keyletter is used.
+For example:
+.DS 1
+admin  \-axyz  \-awql  \-a1234  s\*.abc
+.DE
+adds the login names ``xyz'' and ``wql'' and the group \*k ``1234'' to the list.
+The
+.B \-a
+keyletter may be used whether
+.I admin
+is creating a new \*s file or processing an existing one, and
+may appear several times.
+The
+.B \-e
+keyletter is used in an analogous
+manner if one wishes
+to remove (``erase'')
+login names or group \*ks from the list.
+.H 2 "prs"
+.P
+.I Prs
+is used to print on the standard output all or parts of an \*s file
+(see Section 6.2) in
+a format, called the output
+.I "data specification,"
+supplied by the user via the
+.B \-d
+keyletter.
+The data specification is a string consisting of \*s file
+\f2data keywords\f1\*F
+.FS
+Not to be confused with
+.I "get ID"
+.I keywords.
+.FE
+interspersed with optional user text.
+.P
+Data keywords are replaced by appropriate values according to their
+definitions.
+For example:
+.DS 1
+\f3:\f1I\f3:\f1
+.DE
+is defined as the data keyword that is replaced by the \*i
+of a specified delta.
+Similarly, \f3:F:\f1 is defined as the data keyword for the
+\*s file name currently being processed,
+and \f3:C:\f1 is defined as the comment line associated with a
+specified delta.
+All parts of an \*s file have an associated data keyword.
+For a complete list of the data keywords, see
+.I prs\^ (1).
+.P
+There is no limit to the number of times a data keyword may appear
+in a data specification.
+Thus, for example:
+.DS 1
+prs  \-d"\f3:\f1I\f3:\f1 this is the top delta for \f3:\f1F\f3: :\f1I\f3:\f1"  s\*.abc
+.DE
+may produce on the standard output:
+.DS 1
+2\*.1 this is the top delta for s\*.abc 2\*.1
+.DE
+Information may be obtained from a single delta by specifying the
+\*i of that delta using the
+.B \-r
+keyletter.
+For example:
+.DS 1
+prs  \-d"\f3:\f1F\f3:: :\f1I\f3:\f1 comment line is\f3: :\f1C\f3:\f1"  \-r1\*.4 s\*.abc
+.DE
+may produce the following output:
+.DS 1
+s\*.abc\f3:\f1  1\*.4 comment line is\f3:\f1 \s-1THIS IS A COMMENT\s+1
+.DE
+If the
+.B \-r
+keyletter is
+.I not
+specified, the value of the \*i defaults to the most recently created
+delta.
+.P
+In addition, information from a
+.I range
+of deltas may be obtained by
+specifying the
+.B \-l
+or
+.B \-e
+keyletters.
+The
+.B \-e
+keyletter substitutes data keywords for the \*i designated via the
+.B \-r
+keyletter and all deltas created
+.I earlier.
+The
+.B \-l
+keyletter substitutes data keywords for the \*i designated via the
+.B \-r
+keyletter and all deltas created
+.I later.
+Thus, the command:
+.DS 1
+prs  \-d\f3:\f1I\f3:\f1  \-r1\*.4  \-e  s\*.abc
+.DE
+may output:
+.DS 1
+1\*.4
+1\*.3
+1\*.2\*.1\*.1
+1\*.2
+1\*.1
+.DE
+and the command:
+.DS 1
+prs  \-d\f3:\f1I\f3:\f1  \-r1\*.4  \-l  s\*.abc
+.DE
+may produce:
+.DS 1
+3\*.3
+3\*.2
+3\*.1
+2\*.2\*.1\*.1
+2\*.2
+2\*.1
+1\*.4
+.DE
+Substitution
+of data keywords for
+.I all
+deltas of the \*s file may be obtained by
+specifying both the
+.B \-e
+and
+.B \-l
+keyletters.
+.H 2 "help"
+.P
+The
+.I help
+command prints explanations of \*s commands and of messages that
+these commands may print.
+Arguments to
+.I help,
+zero or more of which may be supplied,
+are simply the names of \*s commands or
+the code numbers that appear in parentheses
+after \*s messages.
+If no argument is given,
+.I help
+prompts for one.
+.I Help
+has no concept of
+.I keyletter
+arguments or
+.I file
+arguments.
+Explanatory information related to an argument, if it exists,
+is printed on the standard output.
+If no information is found, an error message is printed.
+Note that each argument is processed independently, and an error
+resulting from one argument will
+.I not
+terminate the processing of the other arguments.
+.P
+Explanatory information related to a command is a synopsis of the
+command.
+For example:
+.DS 1
+help  ge5  rmdel
+.DE
+produces:
+.DS 1
+ge5\f3:\fP
+"nonexistent sid"
+The specified sid does not exist in the
+given file.
+Check for typos.
+.sp .5v
+rmdel\f3:\fP
+	rmdel  \-rSID  name  .\|.\|.
+.DE
+.H 2 "rmdel"
+.P
+The
+.I rmdel
+command is provided to allow
+.I removal
+of a delta from an \*s file, though its use
+should be reserved for those cases in which
+incorrect, global changes were made a part of the
+delta to be removed.
+.P
+The delta to be removed must be a ``leaf'' delta.
+That is, it must be the latest (most recently created) delta on its
+branch or on the trunk of the \*s file tree.
+In Figure\ 3, only deltas 1\*.3\*.1\*.2, 1\*.3\*.2\*.2, and
+2\*.2 can be removed;
+once they are removed, then deltas 1\*.3\*.2\*.1 and 2\*.1 can be
+removed, and so on.
+.P
+To be allowed to remove a delta, the effective user must have
+write permission in the directory containing the \*s file.
+In addition, the real user must
+either be the one who created the delta being removed, or
+be the owner of the \*s file and its directory.
+.P
+The
+.B \-r
+keyletter, which is mandatory, is used to specify the
+.I complete
+\*i of the delta to be removed
+(i.e., it must have two components for a trunk delta, and four
+components for a branch delta).
+Thus:
+.DS 1
+rmdel  \-r2\*.3  s\*.abc
+.DE
+specifies the removal of (trunk) delta ``2\*.3'' of the \*s file.
+Before removal of the delta,
+.I rmdel
+checks that the
+.I release
+number (R) of the given \*i satisfies the relation:
+.DS 1
+floor \(<= R \(<= ceiling
+.DE
+.I Rmdel
+also checks that the \*i specified is
+.I not
+that of a version for which a
+.I get
+for editing has been executed and whose associated
+.I delta
+has not yet been made.
+In addition, the login name or group \*k of the user must appear in the file's
+.I "user list,"
+or the
+.I "user list"
+must be empty.
+Also,
+the release specified can not be
+.I locked
+against editing
+(i.e., if the
+.B l
+flag is set
+(see
+.I admin\^ (1)),
+the release specified
+.I must
+not be contained in the list).
+If these conditions are not satisfied, processing is
+terminated, and the delta is not removed.
+After the specified delta has been removed,
+its type indicator in the
+.I "delta table"
+of the \*s file
+(see Section 6.2)
+is changed from
+``D'' (for ``delta'') to ``R'' (for ``removed'').
+.H 2 "cdc"
+.P
+The
+.I cdc
+command is used to
+.I change
+a delta's commentary
+that was supplied
+when that delta was created.
+Its invocation is analogous to that of the
+.I rmdel
+command,
+except that the delta to be processed is
+.I not
+required to be a leaf delta.
+For example:
+.DS 1
+cdc  \-r3\*.4  s\*.abc
+.DE
+specifies that the commentary of delta ``3\*.4'' of the \*s file is to
+be changed.
+.P
+The
+.I new
+commentary is solicited by
+.I cdc
+in the same manner as that of
+.I delta.
+The old commentary associated with the specified delta is kept, but it is
+preceded by a comment line indicating that it has been
+changed (i.e., superseded), and the new commentary is entered
+ahead of this comment line.
+The ``inserted'' comment line records the login name
+of the user executing
+.I cdc
+and the time of its execution.
+.P
+.I Cdc
+also allows for the deletion of selected MR numbers associated
+with the specified delta.
+This is specified by preceding the selected MR numbers by the
+character ``\f3!\f1''.
+Thus:
+.DS 1
+cdc  \-r1\*.4  s\*.abc
+MRs?  mrnum3 \f3!\fPmrnum1
+comments?  deleted wrong MR number and inserted correct MR number
+.DE
+inserts ``mrnum3'' and deletes ``mrnum1'' for delta 1.4.
+.H 2 "what"
+.P
+The
+.I what
+command is used to find identifying information within
+.I any
+\*p file whose name is given as an argument to
+.I what.
+Directory names and a name of ``\-'' (a lone minus sign) are
+.I not
+treated specially, as they are by other \*s commands, and no
+.I keyletters
+are accepted by the command.
+.P
+.I What
+searches the given file(s) for all occurrences of the string ``@(#)'',
+which is the replacement for the
+.B @(#)
+\*k keyword
+(see
+.I get\^ (1)),
+and prints (on the standard output) what follows that string until the first
+double quote (\^"\^),
+greater than (>),
+backslash (\^\\),
+new-line, or (non-printing) NUL character.
+Thus, for example, if the \*s file
+``s.prog.c''
+(which is a
+C program), contains the following line
+(the sccs_guide and 1.1
+\*k keywords
+were defined in Section 5.1.1):
+.DS 1
+char  id[\|]  "@(#)sccs_guide\f3:\fP1.1"\f3;\fP
+.DE
+and then the command:
+.DS 1
+get  \-r3\*.4  s\*.prog\*.c
+.DE
+is executed, and finally the resulting
+.I g-file
+is compiled to produce
+``prog.o''
+and
+``a.out'',
+then the command:
+.DS 1
+what  prog\*.c  prog\*.o  a\*.out
+.DE
+produces:
+.DS 1
+prog\*.c\f3:\fP
+	prog\*.c\f3:\fP3\*.4
+prog\*.o\f3:\fP
+	prog\*.c\f3:\fP3\*.4
+a\*.out\f3:\fP
+	prog\*.c\f3:\fP3\*.4
+.DE
+.P
+The string searched for by
+.I what
+need not be inserted
+via an
+\*k keyword
+of
+.I get;
+it may be
+inserted in any convenient manner.
+.H 2 "sccsdiff"
+.P
+The
+.I sccsdiff
+command determines (and prints on the standard output) the differences
+between two specified versions of one or more \*s files.
+The versions to be compared are specified by using the
+.B \-r
+keyletter,
+whose format is the same as for the
+.I get
+command.
+The two versions
+.I must
+be specified
+as the first two arguments to this command in the order in which they
+were created,
+i.e., the older version is specified first.
+Any following keyletters are interpreted as arguments to the
+.I pr\^ (1)
+command (which actually prints the differences)
+and must appear before any file names.
+\*(s) files to be processed are named last.
+Directory names and a name of ``\-'' (a lone minus sign) are
+.I not
+acceptable to
+.I sccsdiff.
+.P
+The differences are printed in the form generated by
+.I diff\| (1).
+The following is an example of the invocation of
+.I sccsdiff:
+.DS 1
+sccsdiff  \-r3\*.4  \-r5\*.6  s\*.abc
+.DE
+.br
+.if t .ne 5v
+.H 2 "comb"
+.P
+.I Comb
+generates a
+.I "shell procedure"
+(see
+.I sh\^ (1))
+which attempts to
+reconstruct the named \*s files so that
+the reconstructed files are smaller than the originals.
+The generated shell procedure is written on the standard output.
+.P
+Named \*s files are reconstructed by
+discarding unwanted deltas and combining specified other deltas.
+The intended use is for those \*s files that contain deltas that are
+so old that they are no longer useful.
+It is
+.I not
+recommended that
+.I comb
+be used as a matter of routine;
+its use should be restricted to a
+.I very
+small number of times in the life of an \*s file.
+.P
+In the absence of any keyletters,
+.I comb
+preserves only leaf deltas and the minimum number of
+ancestor deltas necessary to preserve the ``shape'' of the \*s file
+tree.
+The effect of this is to eliminate ``middle'' deltas on
+the trunk and on all branches of the tree.
+Thus, in Figure\ 3, deltas 1\*.2, 1\*.3\*.2\*.1, 1\*.4, and 2\*.1
+would be eliminated.
+Some of the keyletters are summarized as follows:
+.P
+The
+.B \-p
+keyletter specifies the oldest delta that is to be preserved
+in the reconstruction.
+All older deltas are discarded.
+.P
+The
+.B \-c
+keyletter specifies a
+.I list
+(see
+.I get\^ (1)
+for the syntax of such a list)
+of deltas to be preserved.
+All other deltas are discarded.
+.P
+The
+.B \-s
+keyletter causes the generation of a shell procedure, which, when run,
+produces
+.I only
+a report summarizing the percentage space (if any) to be saved
+by reconstructing each named \*s file.
+It is recommended that
+.I comb
+be run with this keyletter
+(in addition to any others desired)
+.I before
+any actual reconstructions.
+.P
+It should be noted that the shell procedure generated by
+.I comb
+is
+.I not
+guaranteed to save any space.
+In fact, it is possible for the
+reconstructed file to be
+.I larger
+than the original.
+Note, too, that the shape of the \*s file tree may be altered by
+the reconstruction process.
+.H 2 "val"
+.P
+.I Val
+is used to determine if a file is an \*s file meeting the
+characteristics specified by an optional list of keyletter
+arguments.
+Any characteristics not met are considered errors.
+.P
+.I Val
+checks for the existence of a particular delta when
+the \*i for that delta is \f2explicitly\f1 specified via the
+.B \-r
+keyletter.
+The
+string following the
+.B \-y
+or
+.B \-m
+keyletter is used to check the value set by the
+.B t
+or
+.B m
+flag respectively
+(see
+.I admin\^ (1)
+for a description of the flags).
+.P
+.I Val
+treats the special argument ``\f3\-\fP'' differently from other \*s commands
+(see Section 4).
+This argument allows
+.I val
+to read the argument list from the standard input
+as opposed to obtaining it from the command line.
+The standard input is read until end-of-file.
+This capability allows for one invocation of
+.I val
+with different values for the keyletter and file arguments.
+For example:
+.DS 1
+val  \-
+\-yc  \-mabc  s\*.abc
+\-mxyz  \-ypl1  s\*.xyz
+.DE
+first checks if file ``s.abc'' has a value ``c'' for its
+.I type
+flag and value ``abc'' for the
+.I "module name"
+flag.
+Once processing of the first file is completed,
+.I val
+then processes the remaining files, in this case ``s.xyz'',
+to determine if they meet the characteristics specified by the
+keyletter arguments associated with them.
+.P
+.I Val
+returns an 8-bit code;
+each bit set indicates the occurrence of a specific error
+(see
+.I val\^ (1)
+for a description of the possible errors and their codes).
+In addition, an appropriate diagnostic is printed unless
+suppressed by the
+.B \-s
+keyletter.
+A return code of ``0'' indicates all named files met
+the characteristics specified.
+.H 1 "SCCS \|FILES"
+This section discusses several
+topics that must be considered before
+extensive use is made of \*s.
+These topics deal with the protection mechanisms relied upon by
+\*s, the format of \*s files, and the recommended
+procedures for auditing \*s files.
+.H 2 "Protection"
+\*(s) relies on the capabilities of the \*p operating system
+for most of the protection mechanisms required to prevent unauthorized
+changes to \*s files (i.e., changes made by non-\*s commands).
+The only protection features provided directly by \*s are the
+.I "release lock"
+flag, the
+.I "release floor"
+and
+.I "ceiling"
+flags, and the
+.I "user list"
+(see Section 5.1.3).
+.P
+New \*s files created by the
+.I admin
+command are given mode
+444 (read only).
+It is recommended that this mode
+.I not
+be changed, as it prevents any direct modification of the files
+by non-\*s commands.
+It is further recommended that the directories containing \*s files
+be given mode 755, which allows only the
+.I owner
+of the directory
+to modify its contents.
+.P
+\*(s) files should be kept in directories that contain only
+\*s files and any
+temporary files created by \*s commands.
+This simplifies protection and auditing of \*s files (see Section 6.3).
+The contents of directories should correspond to
+convenient logical groupings, e.g., sub-systems of a large project.
+.P
+\*(s) files must have only
+.I one
+link (name),
+because the commands that modify \*s files
+do so by creating a copy of the file (the
+.I x-file,
+see Section 4)
+and, upon completion of processing, remove the old file and rename
+the
+.I x-file.
+If the old file has more than one link, this
+would break such additional links.
+Rather than process such files, \*s commands produce an error message.
+All \*s files
+.I must
+have names that begin with ``s\*.''.
+.P
+When only one user
+uses \*s,
+the real and effective user \*ks are the same, and that user \*k owns the
+directories containing \*s files\*F.
+.FS
+Previously, the UNIX system allowed only
+256 unique user IDs.
+Thus, several users often had to
+share
+user IDs
+and, therefore, file permissions.
+The current UNIX system
+allows 65,536 unique
+user IDs;
+it is recommended that each user have a unique
+user ID.
+.FE
+Therefore, \*s may be used directly without any preliminary preparation.
+.P
+However, in those situations in which several users with unique user \*ks
+are assigned responsibility for one \*s file
+(for example, in large software development
+projects),
+one user (equivalently, one user \*k)
+must be chosen as the ``owner'' of the \*s files
+and be the one who will ``administer'' them
+(e.g., by using the
+.I admin
+command).
+This user is termed the
+.I "\*s administrator"
+for that project.
+Because other users of \*s do not have the same privileges and
+permissions as the \*s administrator, they are not able to execute
+directly those commands that
+require write permission in the directory containing the \*s files.
+Therefore, a project-dependent program is required to
+provide an interface to the
+.I get,
+.I delta,
+and, if desired,
+.I rmdel
+and
+.I cdc
+commands.
+.P
+The interface program must be owned by the \*s administrator, and must
+have the
+.I set~user~\*k~on~execution
+bit on (see
+.I chmod\^ (1)),
+so that the effective user \*k
+is the user \*k of the administrator.
+This program invokes the desired \*s command
+and causes it to
+.I inherit
+the privileges of the interface program for the duration of
+that command's execution.
+Thus, the owner of an \*s file can modify it at will.
+Other users whose
+.I login
+names or
+.I group
+\*ks are in the
+.I "user list"
+for that file (but who are
+.I not
+its owner)
+are given the necessary permissions only for the duration of the
+execution of the interface program,
+and are thus able to modify the \*s files only through the use of
+.I delta
+and, possibly,
+.I rmdel
+and
+.I cdc.
+The project-dependent interface program, as its name implies, must be
+custom-built for each project.
+.H 2 "Format"
+\*(s) files are composed of lines of
+\*a text\*F
+.FS
+Previous versions of SCCS up to and including Version 3 used non-ASCII files.
+Therefore, files created by earlier versions of SCCS are incompatible with
+the current version of SCCS.
+.FE
+arranged in six parts, as follows:
+.VL 20 3
+.LI Checksum
+A line containing the ``logical'' sum of all the characters of the file
+(\c
+.I not
+including this checksum itself).
+.LI Delta~Table
+Information about each delta,
+such as its type, its \*i, date and time of creation, and commentary.
+.LI User~Names
+List of login names and/or group \*ks of users who are allowed to modify the file by
+adding or removing deltas.
+.LI Flags
+Indicators that control certain actions of various \*s commands.
+.LI Descriptive~Text
+Arbitrary text provided by the user; usually a
+summary of the contents and purpose of the file.
+.LI Body
+Actual text that is being administered by \*s,
+intermixed with internal \*s control lines.
+.LE
+.P
+Detailed information about the contents of the various sections of the file
+may be found in
+.I sccsfile\^ (5);
+the
+.I checksum
+is the only portion of the file which is of interest below.
+.P
+It is important to note that because \*s files are \*a files, they
+may be processed by various \*p commands, such as
+.I ed\^ (1),
+.I grep\^ (1),
+and
+.I cat\^ (1).
+This is very convenient in those instances in which
+an \*s file must be modified manually
+(e.g., when the time and date of a delta was recorded incorrectly
+because the system clock was set incorrectly),
+or when it is desired to simply ``look'' at the file.
+.P
+.I
+\ \(rh\ \ 
+Extreme care should be exercised when modifying
+\*s files with non-\*s commands.
+.R
+.H 2 "Auditing"
+On rare occasions, perhaps due to an operating system or
+hardware malfunction, an \*s file, or portions of it (i.e., one or
+more ``blocks'') can be destroyed.
+\*(s) commands (like most \*p commands) issue an error message when a file
+does not exist.
+In addition, \*s commands use the
+.I checksum
+stored in the \*s file to determine whether a file has
+been
+.I corrupted
+since it was last accessed
+(possibly by having lost one or more blocks,
+or by having been modified with, for example,
+.I ed\^ (1)).
+.I No
+\*s command will process a corrupted \*s file
+except the
+.I admin
+command with the
+.B \-h
+or
+.B \-z
+keyletters,
+as described below.
+.P
+It is recommended that \*s files be audited (checked) for possible
+corruptions on a regular basis.
+The simplest and fastest way to perform an audit
+is to execute the
+.I admin
+command with the
+.B \-h
+keyletter on all \*s files:
+.DS 1
+admin  \-h  s\*.file1  s\*.file2  .\|.\|.
+	or
+admin  \-h  directory1  directory2  .\|.\|.
+.DE
+If the new checksum of any file is not equal to the checksum in the
+first line of that file, the message:
+.DS 1
+corrupted file (co6)
+.DE
+is produced for that file.
+This process continues until all the files have been examined.
+When examining directories (as in the second example above),
+the process just described will not detect
+.I missing
+files.
+A simple way to detect whether
+.I any
+files are missing from a directory is to periodically execute the
+.I ls\^ (1)
+command on that directory, and compare the outputs of the most current
+and the previous executions.
+Any file whose name appears in the previous output but not in
+the current one has been removed by some means.
+.P
+Whenever a file has been corrupted, the manner in which the file is restored
+depends upon the extent of the corruption.
+If damage is extensive, the best solution is to contact
+the local \*p operations group and request that the file be restored from
+a backup copy.
+In the case of minor damage, repair through use of the editor
+.I ed\^ (1)
+may be possible.
+In the latter case, after such repair,
+the following command must be executed:
+.DS 1
+admin  \-z  s\*.file
+.DE
+The purpose of this is to
+recompute the checksum to bring it into agreement with the actual
+contents of the file.
+After this command is executed on a file,
+any corruption which may have existed
+in that file will no longer be detectable.
+.D3 "January 1981"

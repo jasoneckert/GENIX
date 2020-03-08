@@ -1,0 +1,456 @@
+.ig
+	@(#)ps.1	1.3	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH PS 1
+.UC 4
+.SH NAME
+ps \- process status
+.SH SYNOPSIS
+.B ps
+.B [acegklstuvwx#]
+.br
+.SH DESCRIPTION
+.I Ps
+prints information about processes.  Normally, only 
+your processes are candidates to be printed by
+.I ps;
+specifying a causes other users processes to be 
+candidates to be printed; specifying 
+.B x
+includes processes without control terminals 
+in the candidate pool.
+.PP
+All output formats include, for each process, the 
+process id PID, control terminal of the process 
+.B TT,
+cpu time used by the process
+.B TIME
+(this includes both user and system time), the stat 
+.B STAT
+of the process, and an indication of the 
+.B COMMAND
+which is running.  The state is given by a sequence 
+of four letters,
+e.g. 
+.B "RWNA".
+The first letter indicates the runnability of 
+the process:
+.B R
+for runnable processes, 
+.B T
+for stopped processes,
+.B P
+for processes in page wait,
+.B D
+for those in disk (or other short term) waits,
+.B S
+for those sleeping for less than about 20 
+seconds, and
+.B I
+for idle (sleeping longer than about 20 seconds) 
+processes.  The second letter indicates whether 
+a process is swapped out, showing
+.B W
+if it is, or a blank if it is loaded (in core); 
+a process which has specified a soft limit on 
+memory requirements and which is exceeding that 
+limit shows >; such a process 
+is (necessarily) not swapped.  The third letter 
+indicates whether a process is running with altered
+.B CPU
+scheduling priority (nice); if the processes 
+priority is reduced, a
+.B N
+is shown, if the process priority has been 
+artificially raised then a '<' is shown; process 
+running without special treatment have just a 
+blank.  The final letter indicates any special 
+treatment of the process for virtual memory 
+replacement; the letters correspond to
+options to the 
+.I vadvise
+(2) call; currently the possibilities are 
+.B A
+standing for 
+.B VA_ANOM,
+.B S
+for 
+.B VA_SEQL
+and blank for 
+.B VA_NORM
+; an 
+.B A
+typically represents a 
+.I lisp
+(1) in garbage collection,
+.B S
+is typical of large image processing programs 
+which are using virtual memory to sequentially 
+address voluminous data.
+.PP
+Here are the options:
+.TP 
+.B a
+asks for information about all processes with 
+terminals (ordinarily only one's own processes 
+are displayed).
+.TP 
+.B c
+prints the command name, as stored internally in 
+the system for purposes of accounting, rather than 
+the command arguments, which are kept in the 
+process' address space.  This is more reliable, if
+less informative, since the process is free to 
+destroy the latter information.
+.TP
+.B e
+asks for the environment to be printed as well 
+as the arguments to the command.
+.TP
+.B g
+asks for all processes.  Without this option, 
+.I ps
+only prints "interesting" processes.  Processes 
+are deemed to be uninteresting if they are 
+process group leaders.  This normally
+eliminates top\-level command interpreters and 
+processes waiting for users to login on free 
+terminals.
+.TP
+.B k
+causes the file /
+.I vmcore
+is used in place of /
+.I "dev/kmen"
+and 
+.I "/dev/men".
+This is used for post\-mortem system debugging.
+.TP
+.B l
+asks for a long listing, with fields PPID, CP, 
+PRI, NI, ADDR, SIZE, RSS and WCHAN as described below.
+.TP
+.B S
+adds the size SSIZ of the kernel stack of 
+each process (for use by system maintainers) 
+to the basic output format.
+.TP
+.BI tx
+restricts output to processes whose controlling tty is 
+.I x
+(which should be specified as printed by
+.I ps,
+e.g.
+.I t3
+for tty3,
+.I tco
+for console,
+.I td0
+for ttyd0,
+.I t?
+for processes with no tty, etc).  This option 
+must be the last one given.
+.TP
+.B u
+A user oriented output is produced.  This 
+includes fields USER, %CPU, NICE, SIZE, 
+and RSS as described below.
+.TP
+.B v
+A version of the output containing virtual 
+memory statistics is output.  This includes 
+fields RE, SL, PAGEIN, SIZE, RSS,
+LIM, TSIZ, TRS, %CPU and %MEM, described below.
+.TP
+.B w
+Use a wide output format (132 columns rather 
+than 80); if repeated, e.g. ww, use arbitrarily 
+wide output.  This information is used to decide 
+how much of long commands print.
+.TP
+.B x
+asks even about processes with no terminal.
+.TP
+.B #
+A process number may be given, (indicated here
+by #), in which case the output is restricted to 
+that process.  This option must also be last.
+.PP
+A second argument tells 
+.I ps
+where to look for
+.I core
+if the 
+.B k
+option is given, instead of /vmcore.  A third 
+argument is the name of a swap file to use instead
+of the default /dev/drum.  If a fourth argument
+is given, it is taken to be the file containing
+the system's namelist.  Otherwise, /vmunix is used.
+.PP
+Fields which are not common to all output formats:
+.TP 10
+.B USER
+name of the owner of the process
+.br
+.br
+.ns
+.TP 10
+.B "%CPU"
+cpu utilization of the process; this is a decaying 
+average over up to a minute of previous (real) time.
+Since the time base over which this is computed
+varies (since processes may be very young)
+it is possible for the sum of all 
+.B "%CPU"
+fields to exceed 100%.
+.br
+.br
+.ns
+.TP 10
+.B NICE
+(or
+.B NI)
+process scheduling increment (see
+.I nice(2))
+.br
+.br
+.ns
+.TP 10
+.B SIZE
+vitual size of the process (in 1024 byte unites)
+.br
+.br
+.ns
+.TP 10
+.B RSS
+real memory (resident set) size of the process
+(in 1024 byte unites)
+.br
+.br
+.ns
+.TP 10
+.B LIM
+soft limit on memory used,
+specified via a call to
+.I vlimit(2);
+if no limit has been specified then shown as 
+.I xx
+.br
+.br
+.ns
+.TP 10
+.B TSIZ
+size of text (shared program) image
+.br
+.br
+.ns
+.TP 10
+.B TRS
+size of resident (real memory) set of text.
+.br
+.br
+.ns
+.TP 10
+.B "%MEM"
+percentage of real memory used by this process.
+.br
+.br
+.ns
+.TP 10
+.B RE
+residency time of the process (seconds in core)
+.br
+.br
+.ns
+.TP 10
+.B SL
+sleep time of the process (seconds blocked)
+.br
+.br
+.ns
+.TP 10
+.B PAGEIN
+number of disk i/o's resulting from references by
+the process to pages not to loaded in core.
+.br
+.br
+.ns
+.TP 10
+.B UID
+numerical user-id of process owner
+.br
+.br
+.ns
+.TP 10
+.B PPID
+numerical id of parent of process
+.br
+.br
+.ns
+.TP 10
+.B CP
+short-term cpu utilization factor (used in scheduling)
+.br
+.br
+.ns
+.TP 10
+.B PRI
+process priority (non-positive when in 
+non\-interruptible wait)
+.br
+.br
+.ns
+.TP 10
+.B ADDR
+swap address of the process
+.br
+.br
+.ns
+.TP 10
+.B WCHAN
+event on which process is waiting (an address in
+the system), with the initial part of the address
+trimmed off e.g. 80004000 prints as 4000.
+.TP 10
+.B F
+flags associated with process as in /usr/include/sys/proc.h:
+.RS
+.PD 0
+.TP 12
+.B SLOAD
+000001 in core
+.br
+.ns
+.TP 12
+.B SSYS
+000002 swapper or pager process
+.br
+.ns
+.TP 12
+.B SLOCK
+000004 process being swapped out
+.br
+.ns
+.TP 12
+.B SSWAP
+000008 save area flag
+.br
+.ns
+.TP 12
+.B STRC
+000010 process is being traced
+.br
+.ns
+.TP 12
+.B SWTED
+000020 another tracing flag
+.br
+.ns
+.TP 12
+.B SULOCK
+000040 user settable lock in core
+.br
+.ns
+.TP 12
+.B SPAGE
+000080 process in page wait state
+.br
+.ns
+.TP 12
+.B SKEEP
+000100 another flag to prevent swap out
+.br
+.ns
+.TP 12
+.B SDLYU
+000200 delayed unlock of pages
+.br
+.ns
+.TP 12
+.B SWEXIT
+000400 working on exiting
+.br
+.ns
+.TP 12
+.B SPHYSIO
+000800 doing physical i/o (bio.c)
+.br
+.ns
+.TP 12
+.B SVFORK
+001000 process resulted from vfork()
+.br
+.ns
+.TP 12
+.B SVFDONE
+002000 another vfork flag
+.br
+.ns
+.TP 12
+.B SNOVM
+004000 no vm, parent in a vfork()
+.br
+.ns
+.TP 12
+.B SPAGI
+008000 init data space on demand, from inode
+.br
+.ns
+.TP 12
+.B SANOM
+010000 system detected anomalous vm behavior
+.br
+.ns
+.TP 12
+.B SUANOM
+020000 user warned of anomalous vm behavior
+.br
+.ns
+.TP 12
+.B STIMO
+040000 timing out during sleep
+.br
+.ns
+.TP 12
+.B SDETACH
+080000 detached inherited by init
+.br
+.ns
+.TP 12
+.B SNUSIG
+100000 using new signal mechanism
+.PD
+.RE
+.LP
+A process that has exited and has a parent, but has 
+not yet been waited for by the parent is
+marked <defunct>; a process which is blocked 
+trying to exit is marked <exiting>;
+.I Ps
+makes an educated guess as to the file name and 
+arguments given when the process was created by 
+examining memory or the swap area.  The method
+is inherently somewhat unreliable and in any
+event a process is entitled to destroy this
+information, so the names cannot be counted
+on too much.
+.SH FILES
+.ta \w'/dev/kmen\ \ 'u
+/vmunix	system namelist
+.br
+/dev/kmem	kernel memory
+.br
+/dev/drum	swap device
+.br
+/vmcore	core file
+.br
+/dev	searched to find swap device and tty names
+.br
+.SH "SEE ALSO"
+kill(1), w(1)
+.SH BUGS
+Things can change while ps is running; the
+picture it gives is only a close 
+approximation to reality.

@@ -1,0 +1,140 @@
+.ig
+	t4: version 1.3 of 11/29/83
+	
+
+	@(#)t4	1.3	(NSC)	11/29/83
+..
+.bp
+.SH
+Appendix\ A\ -\ Grammar
+.LP
+.DS
+\f2item:		word
+		input-output
+		name = value
+.sp 0.8
+simple-command: item
+		simple-command item
+.sp 0.8
+command:	simple-command
+		\f3( \f2command-list \f3)
+		\f3{ \f2command-list \f3}
+		\f3for \f2name \f3do \f2command-list \f3done
+		\f3for \f2name \f3in \f2word \*(ZZ \f3do \f2command-list \f3done
+		\f3while \f2command-list \f3do \f2command-list \f3done
+		\f3until \f2command-list \f3do \f2command-list \f3done
+		\f3case \f2word \f3in \f2case-part \*(ZZ \f3esac
+		\f3if \f2command-list \f3then \f2command-list \f2else-part \f3fi
+.sp 0.8
+\f2pipeline:		command
+		pipeline \f3\*(VT\f2 command
+.sp 0.8
+andor:		pipeline
+		andor \f3&&\f2 pipeline
+		andor \f3\*(VT\*(VT\f2 pipeline
+.sp 0.8
+command-list:	andor
+		command-list \f3;\f2
+		command-list \f3&\f2
+		command-list \f3;\f2 andor
+		command-list \f3&\f2 andor
+.sp 0.8
+input-output:	\f3> \f2file
+		\f3< \f2file
+		\f3\*(AP \f2word
+		\f3\*(HE \f2word
+.sp 0.8
+file:		word
+		\f3&\f2 digit
+		\f3&\f2 \(mi
+.sp 0.8
+case-part:	pattern\f3 ) \f2command-list\f3 ;;
+.sp 0.8
+\f2pattern:	word
+		pattern \f3\*(VT\f2 word
+.sp 0.8
+\f2else-part:	\f3elif \f2command-list\f3 then\f2 command-list else-part\fP
+		\f3else \f2command-list\f2
+		empty
+.sp 0.8
+empty:
+.sp 0.8
+word:		\f1a sequence of non-blank characters\f2
+.sp 0.8
+name:		\f1a sequence of letters, digits or underscores starting with a letter\f2
+.sp 0.8
+digit:		\f30 1 2 3 4 5 6 7 8 9\fP
+.DE
+.LP
+.bp
+.SH
+Appendix\ B\ -\ Meta-characters\ and\ Reserved\ Words
+.LP
+a) syntactic
+.RS
+.IP \f3\*(VT\f1 6
+pipe symbol
+.IP \f3&&\f1 6
+`andf' symbol
+.IP \f3\*(VT\*(VT\f1 6
+`orf' symbol
+.IP \f3;\fP 6
+command separator
+.IP \f3;;\fP 6
+case delimiter
+.IP \f3&\fP 6
+background commands
+.IP \f3(\ )\fP 6
+command grouping
+.IP \f3<\fP 6
+input redirection
+.IP \f3\*(HE\fP 6
+input from a here document
+.IP \f3>\fP 6
+output creation
+.IP \f3\*(AP\fP 6
+output append
+.sp 2
+.RE
+.LP
+b) patterns
+.RS
+.IP \f3\*(ST\fP 6
+match any character(s) including none
+.IP \f3?\fP 6
+match any single character
+.IP \f3[...]\fP 6
+match any of the enclosed characters
+.sp 2
+.RE
+.LP
+c) substitution
+.RS
+.IP \f3${...}\fP 6
+substitute shell variable
+.IP \f3\ `...\ `\fP 6
+substitute command output
+.sp 2
+.RE
+.LP
+d) quoting
+.RS
+.IP \f3\e\fP 6
+quote the next character
+.IP \f3\ '...\ '\fP 6
+quote the enclosed characters except for \ '
+.IP \f3"\&..."\f1 6
+quote the enclosed characters except
+for \f3$ \ ` \e "\fP
+.sp 2
+.RE
+.LP
+e) reserved words
+.DS
+.ft 3
+if then else elif fi
+case in esac
+for while until do done
+{  }
+.ft
+.DE

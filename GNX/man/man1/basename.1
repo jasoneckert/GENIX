@@ -1,0 +1,42 @@
+.ig
+	@(#)basename.1	1.2	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH BASENAME 1
+.SH NAME
+basename \- strip filename affixes
+.SH SYNOPSIS
+.B basename
+string [ suffix [ prefix ] ] 
+.SH DESCRIPTION
+.I Basename
+first deletes any prefix ending in `/' and the
+.IR suffix ,
+if present in
+.IR string ,
+from
+.IR string .
+It then deletes the
+.IR prefix ,
+if present,
+from
+.I string
+and prints the result on the standard output.
+It is normally used inside substitution marks \`\ \`
+in shell procedures.
+.PP
+The optional
+.I prefix
+argument is useful for stripping off SCCS-style file prefixes.
+.PP
+This shell procedure invoked with the argument
+.I /usr/src/cmd/cat.c
+compiles the named file and moves the output to
+.I cat
+in the current directory:
+.IP "" 15n
+cc $1
+.br
+mv a.out \`basename $1 .c\`
+.SH "SEE ALSO"
+sh(1)

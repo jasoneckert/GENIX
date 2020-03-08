@@ -1,0 +1,62 @@
+.ig
+	@(#)sccshelp.1	1.3	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH SCCSHELP 1
+.SH NAME
+sccshelp \- ask for help about \s-1SCCS\s0-related commands
+.SH SYNOPSIS
+.B sccshelp
+[\^args\^]
+.SH DESCRIPTION
+.I Sccshelp\^
+finds information to explain a message from a command or explain the use of
+a command.
+Zero or more arguments may be supplied.
+If no arguments are given,
+.I sccshelp\^
+will prompt for one.
+.PP
+The arguments may be either
+message numbers (which normally appear in parentheses following messages)
+or command names,
+of one of the following types:
+.PP
+.RE 
+.RS 10
+.TP 10
+type 1
+Begins with non-numerics, ends in numerics.
+The non-numeric prefix is usually an abbreviation for the program or
+set of routines which produced the message
+(e.g., \fBge6\fP, for message 6 from the
+.I get\^
+command).
+.PP
+.RE 
+.RS 10
+.TP 10
+type 2
+Does not contain numerics (as a command, such as
+.BR get )
+.PP
+.RE 
+.RS 10
+.TP 10
+type 3
+Is all numeric (e.g., \fB212\fP)
+.RE
+.PP
+The response of the program will be the explanatory information related
+to the argument, if there is any.
+.PP
+When all else fails, try ``sccshelp stuck''.
+.SH FILES
+.PP
+.TP 20
+/usr/nsc/lib/help
+directory containing files of message text.
+.SH DIAGNOSTICS
+Use
+.IR sccshelp (1)
+for explanations.

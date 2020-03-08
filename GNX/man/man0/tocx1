@@ -1,0 +1,184 @@
+admin(1) admin: create and administer SCCS files.
+apropos(1) apropos: locate commands by keyword lookup.
+ar(1) ar: archive and library maintainer (nar for cross-support).
+as(1) as: NS16000 assembler (nasm when cross-support).
+at(1) at: execute commands at a later time.
+awk(1) awk: pattern scanning and processing language.
+basename(1) basename: strip filename affixes.
+bc(1) bc: arbitrary-precision arithmetic language.
+bdiff(1) bdiff: big diff.
+burn(1) burn: run for an interval.
+cal(1) cal: print calendar.
+calendar(1) calendar: reminder service.
+cat(1) cat: catenate and print.
+cb(1) cb: C program beautifier.
+cc(1) cc: C compiler (nmcc for cross-support).
+cd(1) cd: change working directory.
+cdc(1) cdc: change the delta commentary of an SCCS delta.
+checknr(1) checknr: check nroff/troff files.
+chfn(1) chfn: change full name of user.
+chmod(1) chmod: change mode.
+chsh(1) chsh: change default login shell.
+clear(1) clear: clear terminal screen.
+cmp(1) cmp: compare two files.
+col(1) col: filter reverse line feeds.
+colcrt(1) colcrt: filter nroff output for CRT previewing.
+colrm(1) colrm: remove columns from a file.
+comb(1) comb: combine SCCS deltas.
+comm(1) comm: select or reject lines common to two sorted files.
+compact(1) compact, uncompact, ccat: compress and uncompress files, and cat them.
+cp(1) cp: copy.
+cref(1) cref: make cross-reference listing.
+crypt(1) crypt: encode/decode.
+csh(1) csh: a shell (command interpreter) with C-like syntax.
+ctags(1) ctags: create a tags file.
+cu(1c) cu: call UNIX.
+cu16(1) cu16: remote terminal program.
+date(1) date: print and set the date.
+dc(1) dc: desk calculator.
+dd(1) dd: convert and copy a file.
+ddt(1) ddt: debug remote and local programs.
+delta(1) delta: make a delta (change) to an SCCS file.
+deroff(1) deroff: remove nroff, troff, tbl and eqn constructs.
+df(1) df: disk free.
+diction(1) diction,explain: print wordy sentences; thesaurus for diction.
+diff(1) diff: differential file and directory comparator.
+diff3(1) diff3: 3-way differential file comparison.
+dpy(1) dpy: display the output of a command repeatedly.
+du(1) du: summarize disk usage.
+echo(1) echo: echo arguments.
+ed(1) ed: text editor.
+eqn(1) eqn, neqn, checkeq: typeset mathematics.
+ex(1) ex, edit: text editor.
+expand(1) expand, unexpand: expand tabs to spaces, and vice versa.
+expr(1) expr: evaluate arguments as an expression.
+file(1) file: determine file type.
+find(1) find: find files.
+finger(1) finger: user information lookup program.
+fmt(1) fmt: simple text formatter.
+fold(1) fold: fold long lines for finite width output device.
+from(1) from: who is my mail from?.
+get(1) get: get a version of an SCCS file.
+gets(1) gets: get a string from standard input.
+grep(1) grep, egrep, fgrep: search a file for a pattern.
+head(1) head: give first few lines.
+help(1) help: give pointers to system documentation.
+intro(1) intro: introduction to commands.
+kill(1) kill: terminate a process with extreme prejudice.
+last(1) last: indicate last logins of users and teletypes.
+lastcomm(1) lastcomm: show last commands executed in reverse order.
+ld(1) ld: NS16000 link editor (nmeld for cross-support).
+leave(1) leave: remind you when you have to leave.
+lex(1) lex: generator of lexical analysis programs.
+lint(1) lint: a C program verifier.
+ln(1) ln: make links.
+lock(1) lock: reserve a terminal.
+login(1) login: sign on.
+look(1) look: find lines in a sorted list.
+lpr(1) lpr, lprm, lpq, print: line printer spooler.
+ls(1) ls: list contents of directory.
+m4(1) m4: macro processor.
+mail(1) mail: send and receive mail.
+make(1) make: maintain program groups.
+man(1) man: find manual information by keywords; print out the manual.
+mesg(1) mesg: permit or deny messages.
+mkdir(1) mkdir: make a directory.
+mkstr(1) mkstr: create an error message file by massaging C source.
+monfix(1) monfix: a monitor maker.
+more(1) more, page: file perusal filter for crt viewing.
+msgs(1) msgs: system messages and junk mail program.
+mt(1) mt: Magnetic tape manipulating program.
+mv(1) mv: move or rename files.
+nburn(1) nburn: an EPROM burner.
+newaliases(1) newaliases: rebuild the data base for the mail aliases file.
+newgrp(1) newgrp: log in to a new group.
+nice(1) nice, nohup: run a command at low priority (sh only).
+nm(1) nm: print name list (nnm for cross-support).
+num(1) num: number lines.
+od(1) od: octal dump.
+passwd(1) passwd: change login password.
+pc(1) pc: Pascal compiler (nmpc for cross-support).
+pr(1) pr: print file.
+print(1) print: pr to the line printer.
+printenv(1) printenv: print out the environment.
+prmail(1) prmail: print out mail in the post office.
+prof(1) prof: display profile data.
+prs(1) prs: print an SCCS file.
+prt(1) prt: print SCCS file.
+ps(1) ps: process status.
+ptx(1) ptx: permuted index.
+pwd(1) pwd: working directory name.
+ranlib(1) ranlib: convert archives to libraries (nranlib for cross-support).
+remind(1) remind: date book.
+reset(1) reset: reset the teletype bits to a sensible state.
+rev(1) rev: reverse lines of a file.
+rewind(1) rewind: rewind tape drive.
+rm(1) rm, rmdir: remove (unlink) files.
+rmdel(1) rmdel: remove a delta from an SCCS file.
+sact(1) sact: print current SCCS file editing activity.
+sccs(1) sccs: front end for the SCCS subsystem.
+sccsdiff(1) sccsdiff: compare two versions of an SCCS file.
+sccshelp(1) sccshelp: ask for help about SCCS-related commands.
+sed(1) sed: stream editor.
+see(1) see: see what a file has in it.
+sh(1) sh, for, case, if, while, \f3:\fP, \f3.\fP, break, continue, cd, eval, exec, exit, export, login, newgrp, read, readonly, set, shift, times, trap, umask, wait: command language.
+size(1) size: size of an object file (nsize for cross-support).
+sleep(1) sleep: suspend execution for an interval.
+soelim(1) soelim: eliminate \&.so's from nroff input.
+sort(1) sort: sort or merge files.
+spell(1) spell, spellin, spellout: find spelling errors.
+split(1) split: split a file into pieces.
+stat(1) stat: print formatted inode contents.
+strings(1) strings: find the printable strings in a object, or other binary, file.
+strip(1) strip: remove symbols and relocation bits (nstrip when cross-support).
+stty(1) stty: set terminal options.
+style(1) style: analyze surface characteristics of a document.
+su(1) su: substitute user id temporarily.
+su1(1) su1: substitute user id for one command.
+sum(1) sum: sum and count blocks in a file.
+tabs(1) tabs: set terminal tabs.
+tail(1) tail: deliver the last part of a file.
+tar(1) tar: tape archiver.
+tbl(1) tbl: format tables for nroff or troff.
+tee(1) tee: pipe fitting.
+test(1) test: condition command.
+time(1) time: time a command.
+touch(1) touch: update date last modified of a file.
+tr(1) tr: translate characters.
+trman(1) trman: translate version 6 manual macros to version 7 macros.
+troff(1) troff, nroff: text formatting and typesetting.
+true(1) true, false: provide truth values.
+tset(1) tset: set terminal modes.
+tsort(1) tsort: topological sort.
+tty(1) tty: get terminal name.
+uid(1) uid: print real and effective user and group ids.
+ul(1) ul: do underlining.
+unget(1) unget: undo a previous get of an SCCS file.
+uniq(1) uniq: report repeated lines in a file.
+units(1) units: conversion program.
+uptime(1) uptime: show how long system has been up.
+users(1) users: compact list of users who are on the system.
+uuclean(1c) uuclean: uucp spool directory clean-up.
+uucp(1c) uucp, uulog, uuname: unix to unix copy.
+uuencode(1c) uuencode,uudecode: encode/decode a binary file for tranmission via mail.
+uusend(1c) uusend: send a file to a remote host.
+uustat(1c) uustat: uucp status inquiry and job control.
+uux(1c) uux: unix to unix command execution.
+uvers(1) uvers: print kernel version.
+val(1) val: validate SCCS file.
+vi(1) vi: screen oriented (visual) display editor based on ex.
+vmstat(1) vmstat: report virtual memory statistics.
+w(1) w: who is on and what they are doing.
+wait(1) wait: await completion of process.
+wall(1) wall: write to all users.
+wc(1) wc: word count.
+what(1) what: identify SCCS files.
+whatis(1) whatis: describe what a command is.
+whereis(1) whereis: locate source, binary, and or manual for program.
+which(1) which: locate a program file including aliases and paths (csh only).
+who(1) who: who is on the system.
+whoami(1) whoami: print effective current user id.
+write(1) write: write to another user.
+xsend(1) xsend, xget, enroll: secret mail.
+yacc(1) yacc: yet another compiler-compiler.
+yes(1) yes: be repetitively affirmative.

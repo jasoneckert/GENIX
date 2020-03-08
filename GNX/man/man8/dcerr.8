@@ -1,0 +1,23 @@
+.ig
+	@(#)dcerr.8	1.5	10/28/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH DCERR 8
+.SH DCERR
+dcerr \- decipher disk errors
+.SH SYNOPSIS
+.B dcerr
+status
+.SH DESCRIPTION
+.I Dcerr
+decodes the
+.I status
+output by the kernel whenever a disk error is detected.
+.PP
+Disk errors prompt the kernel to type error messages on the console.
+The error messages convey the sense-data associated with the error.
+.I Dcerr
+may be used to decipher the sense-data and determine what type of error
+occurred.
+.SH SEE ALSO
+tcerr(8)

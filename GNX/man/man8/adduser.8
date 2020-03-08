@@ -1,0 +1,73 @@
+.ig
+	@(#)adduser.8	1.2	8/11/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH ADDUSER 8
+.SH NAME
+adduser \- procedure for adding new users
+.SH DESCRIPTION
+A new user must choose a login name, which must not already appear in
+.I /etc/passwd.
+An account can be added by editing a line into the passwd file; this must
+be done with the password file locked e.g. by using
+.IR vipw (8).
+.PP
+A new user is given a group and user id.
+User id's should be distinct across a system, since they
+are used to control access to files.
+Typically, users working on
+similar projects will be put in the same group.
+System staff is group \*(lq10\*(rq for historical
+reasons, and the super-user is in this group.
+.PP
+A skeletal account for a new user \*(lqernie\*(rq would look like:
+.IP
+ernie::235:20:& Kovacs,508E,7925,6428202:/mnt/grad/ernie:/bin/csh
+.PP
+The first field is the login name \*(lqernie\*(rq.  The next field is the
+encrypted password which is not given and must be initialized using
+.IR passwd (1).
+The next two fields are the user and group id's.
+The next field gives information about ernie's real name, office and office
+phone and home phone.
+This information is used by the
+.IR finger (1)
+program.
+From this information we can tell that ernie's real name is
+\*(lqErnie Kovacs\*(rq (the & here serves to repeat \*(lqernie\*(rq
+with appropriate capitalization), that his office is 508 Evans Hall,
+his extension is x2-7925, and this his home phone number is 642-8202.
+You can modify the
+.IR finger (1)
+program if necessary to allow different information to be encoded in
+this field.
+.PP
+The final two fields give a login directory and a login shell name.
+The login shell will default to \*(lq/bin/sh\*(rq if none is given.
+Most users choose \*(lq/bin/csh\*(rq so this is usually
+specified here.
+.PP
+It is useful to give new users some help in getting started, supplying
+them with a few skeletal files such as
+.I \&.profile
+if they use \*(lq/bin/sh\*(rq, or
+.I \&.cshrc
+and
+.I \&.login
+if they use \*(lq/bin/csh\*(rq.
+The directory
+\*(lq/usr/skel\*(rq contains skeletal definitions of such files.
+New users should be given copies of these files which, for instance,
+arrange to use
+.IR tset (1)
+automatically at each login.
+.SH FILES
+.ta 2i
+/etc/passwd	password file
+.br
+/usr/skel	skeletal login directory
+.SH SEE ALSO
+passwd(1), finger(1), chsh(1), chfn(1), passwd(5), vipw(8)
+.SH BUGS
+User information should be stored in its own data base separate from
+the password file.

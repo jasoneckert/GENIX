@@ -1,0 +1,34 @@
+.ig
+	@(#)halt.8	1.2	8/11/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH HALT 8
+.SH NAME
+halt \- stop the processor
+.SH SYNOPSIS
+.B /etc/halt
+[
+.B \-n
+]
+[
+.B \-q
+]
+[
+.B \-y
+]
+.SH DESCRIPTION
+.I Halt
+writes out sandbagged information to the disks and then stops
+the processor.  The machine does not reboot, even if the auto-reboot
+switch is set on the console.
+.PP
+The
+.B \-n
+option prevents the sync before stopping.  The
+.B \-q
+option causes a quick halt, no graceful shutdown is attempted.  The
+.B \-y
+option is needed if you are trying to halt the system from a dialup.
+.SH SEE ALSO
+reboot(8), shutdown(8)
+.SH BUGS

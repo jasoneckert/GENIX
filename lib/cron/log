@@ -1,0 +1,76 @@
+! *** cron started ***   pid = 44 Tue Apr 30 14:20:17 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 349 c Tue Apr 30 14:56:00 1985
+<  uucp 349 c Tue Apr 30 14:56:12 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 358 c Tue Apr 30 15:00:00 1985
+>  CMD: /usr/lib/sa/sa1 1200 3 &
+>  sys 359 c Tue Apr 30 15:00:00 1985
+<  sys 359 c Tue Apr 30 15:00:00 1985
+<  adm 358 c Tue Apr 30 15:00:12 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 417 c Tue Apr 30 15:56:00 1985
+<  uucp 417 c Tue Apr 30 15:56:03 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 422 c Tue Apr 30 16:00:00 1985
+>  CMD: /usr/lib/sa/sa1 1200 3 &
+>  sys 423 c Tue Apr 30 16:00:00 1985
+<  sys 423 c Tue Apr 30 16:00:01 1985
+<  adm 422 c Tue Apr 30 16:00:06 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 450 c Tue Apr 30 16:56:00 1985
+<  uucp 450 c Tue Apr 30 16:56:02 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 455 c Tue Apr 30 17:00:00 1985
+>  CMD: /usr/lib/sa/sa1 1200 3 &
+>  sys 456 c Tue Apr 30 17:00:00 1985
+<  sys 456 c Tue Apr 30 17:00:01 1985
+<  adm 455 c Tue Apr 30 17:00:05 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 471 c Tue Apr 30 17:56:00 1985
+<  uucp 471 c Tue Apr 30 17:56:02 1985
+>  CMD: /usr/lib/sa/sa1 &
+>  sys 476 c Tue Apr 30 18:00:00 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 477 c Tue Apr 30 18:00:00 1985
+<  sys 476 c Tue Apr 30 18:00:00 1985
+<  adm 477 c Tue Apr 30 18:00:04 1985
+>  CMD: /usr/lib/sa/sa2 -s 8:00 -e 18:01 -i 3600 -ubcwydaqvm &
+>  adm 492 c Tue Apr 30 18:05:00 1985
+<  adm 492 c Tue Apr 30 18:05:00 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 506 c Tue Apr 30 18:56:00 1985
+<  uucp 506 c Tue Apr 30 18:56:02 1985
+>  CMD: /usr/lib/sa/sa1 &
+>  sys 511 c Tue Apr 30 19:00:00 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 512 c Tue Apr 30 19:00:00 1985
+<  sys 511 c Tue Apr 30 19:00:00 1985
+<  adm 512 c Tue Apr 30 19:00:04 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 527 c Tue Apr 30 19:56:00 1985
+<  uucp 527 c Tue Apr 30 19:56:02 1985
+>  CMD: /usr/lib/sa/sa1 &
+>  sys 532 c Tue Apr 30 20:00:00 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 533 c Tue Apr 30 20:00:00 1985
+<  sys 532 c Tue Apr 30 20:00:00 1985
+<  adm 533 c Tue Apr 30 20:00:04 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 548 c Tue Apr 30 20:56:00 1985
+<  uucp 548 c Tue Apr 30 20:56:02 1985
+>  CMD: /usr/lib/sa/sa1 &
+>  sys 553 c Tue Apr 30 21:00:00 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 554 c Tue Apr 30 21:00:00 1985
+<  sys 553 c Tue Apr 30 21:00:00 1985
+<  adm 554 c Tue Apr 30 21:00:04 1985
+>  CMD: /usr/lib/uucp/uudemon.hr > /dev/null
+>  uucp 569 c Tue Apr 30 21:56:00 1985
+<  uucp 569 c Tue Apr 30 21:56:02 1985
+>  CMD: /usr/lib/sa/sa1 &
+>  sys 574 c Tue Apr 30 22:00:00 1985
+>  CMD: /usr/lib/acct/ckpacct
+>  adm 575 c Tue Apr 30 22:00:00 1985
+<  sys 574 c Tue Apr 30 22:00:00 1985
+<  adm 575 c Tue Apr 30 22:00:04 1985

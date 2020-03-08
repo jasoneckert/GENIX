@@ -1,0 +1,43 @@
+.ig
+	p.mac: version 1.3 of 11/29/83
+	
+
+	@(#)p.mac	1.3	(NSC)	11/29/83
+..
+.if t .nr PI .25i	\" paragraph indent
+.if n .nr NH 1	\" space after NH or SH heading
+.if t .nr NH .5v
+.nr t 5*33u
+.de UC
+\&\\$3\s-1\\$1\\s0\&\\$2
+..
+.de IT
+.if n .ul
+\&\\$3\f2\\$1\f1\^\&\\$2
+..
+.de UL
+.lg 0
+\%\&\\$3\f3\\$1\f1\&\\$2
+.lg 0
+..
+.de P1
+.DS I .5i
+.lg 0
+.if n .ta 5 10 15 20 25 30 35 40 45 50 55 60
+.if t .ta 1u*\\ntu 2u*\\ntu 3u*\\ntu 4u*\\ntu 5u*\\ntu 6u*\\ntu 7u*\\ntu 8u*\\ntu 9u*\\ntu 10u*\\ntu 11u*\\ntu 12u*\\ntu 13u*\\ntu 14u*\\ntu
+.lg 0
+..
+.de P2
+.DE
+.lg 0
+..
+.hy 14	\"2=not last lines; 4= no -xx; 8=no xx-
+.am SH
+.ft 1
+..
+.am NH
+.ft 1
+..
+.am TL
+.ft 1
+..

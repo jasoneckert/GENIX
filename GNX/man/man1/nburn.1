@@ -1,0 +1,79 @@
+.ig
+	@(#)nburn.1	1.5	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH NBURN 1
+.SH NAME
+nburn \- an EPROM burner
+.SH SYNOPSIS
+.B nburn
+[
+.B \-s
+] [ \f2number\fP [ \f2number\fP ] ] byte [ \f2file\fP ]
+.SH DESCRIPTION
+.I Nburn
+dumps the specified bytes of 
+.I file
+over the auxiliary port of a VT101-compatible 
+terminal to a Data I/O System 19 EPROM burner.
+.I File
+must contain a program in a.out format.  
+.I A.out 
+is the default file name.
+.PP
+Byte is either
+.B e
+or
+.BR o .
+The
+.BR e / o 
+option indicates that either even or odd bytes are to be dumped.
+.PP
+The first optional
+.I number
+specifies the offset into the text/data bytes where 
+.I nburn 
+should begin taking bytes.  The second optional
+.I number
+specifies the EPROM size.  The default size is 2, which is
+2048 bytes, for 2716 EPROMs.  Both optional 
+.I numbers
+are decimal multiples of 1024 (for example, 4 is 4096).
+.PP
+.B \-s
+option dumps the static base segment of 
+.I file.
+.PP
+Example:
+.PP
+.RS 5
+This example illustrates how to dump a 13K byte
+program to 2732 EPROMs.
+Since each 2732 holds 4096 bytes, the program will fit into
+four 2732 EPROMs.
+The following four commands burn the EPROMs:
+.PP
+.RS 5
+nburn \-s 0 4 e exfile
+
+nburn \-s 0 4 o exfile
+
+nburn \-s 8 4 e exfile
+
+nburn \-s 8 4 o exfile
+.RE
+.PP
+.I Nburn
+prints the test size and the data
+size, for the whole file.
+When
+.I Nburn
+completes the dump, it prints the number of bytes dumped
+and the checksum.
+.SH FILES
+a.out	default file
+.SH "SEE ALSO"
+monfix(1)
+.SH "CROSS-SUPPORT"
+In a cross-support environment, the default output file is
+.IR a16.out .

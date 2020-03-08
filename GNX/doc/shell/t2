@@ -1,0 +1,835 @@
+.ig
+	t2: version 1.2 of 11/29/83
+	
+
+	@(#)t2	1.2	(NSC)	11/29/83
+..
+.bp
+.SH
+2.0\ Shell\ procedures
+.LP
+The shell may be used to read and execute commands
+contained in a file.
+For example,
+.DS
+	sh file [ args \*(ZZ ]
+.DE
+calls the shell to read commands from \f2file.\fP
+Such a file is called a \f2command procedure\fP
+or \f2shell procedure.\fP
+Arguments may be supplied with the call
+and are referred to in \f2file\fP
+using the positional parameters
+\f3$1, $2, \*(ZZ\|.\f1
+For example, if the file \f2wg\fP contains
+.DS
+	who \*(VT grep $1
+.DE
+then
+.DS
+	sh wg fred
+.DE
+is equivalent to
+.DS
+	who \*(VT grep fred
+.DE
+.LP
+UNIX files have three independent attributes,
+\f2read,\fP \f2write\fP and \f2execute.\fP
+The UNIX command \f2chmod\fP (1) may be used
+to make a file executable.
+For example,
+.DS
+	chmod +x wg
+.DE
+will ensure that the file \f2wg\fP has execute status.
+Following this, the command
+.DS
+	wg fred
+.DE
+is equivalent to
+.DS
+	sh wg fred
+.DE
+This allows shell procedures and programs
+to be used interchangeably.
+In either case a new process is created to
+run the command.
+.LP
+As well as providing names for the positional
+parameters,
+the number of positional parameters in the call
+is available as \f3$#\|.\fP
+The name of the file being executed
+is available as \f3$0\|.\fP
+.LP
+A special shell parameter \f3$\*(ST\fP
+is used to substitute for all positional parameters
+except \f3$0\|.\fP
+A typical use of this is to provide
+some default arguments,
+as in,
+.DS
+	nroff \(miT450 \(mims $\*(ST
+.DE
+which simply prepends some arguments
+to those already given.
+.SH
+2.1\ Control\ flow\ -\ for
+.LP
+A frequent use of shell procedures is to loop
+through the arguments (\f3$1, $2, \*(ZZ\f1)
+executing commands once for each argument.
+An example of such a procedure is
+\f2tel\fP that searches the file
+\f3/usr/lib/telnos\f1
+that contains lines of the form
+.DS
+	\*(ZZ
+	fred mh0123
+	bert mh0789
+	\*(ZZ
+.DE
+The text of \f2tel\fP is
+.DS
+	for i
+	do grep $i /usr/lib/telnos; done
+.DE
+The command
+.DS
+	tel fred
+.DE
+prints those lines in \f3/usr/lib/telnos\f1
+that contain the string \f2fred\|.\fP
+.DS
+	tel fred bert
+.DE
+prints those lines containing \f2fred\fP
+followed by those for \f2bert.\fP
+.LP
+The \f3for\fP loop notation is recognized by the shell
+and has the general form
+.DS
+	\f3for\f1 \f2name\f1 \f3in\f1 \f2w1 w2 \*(ZZ\f1
+	\f3do\f1 \f2command-list\f1
+	\f3done\f1
+.DE
+A \f2command-list\fP is a sequence of one or more
+simple commands separated or terminated by a newline or semicolon.
+Furthermore, reserved words
+like \f3do\fP and \f3done\fP are only
+recognized following a newline or
+semicolon.
+\f2name\fP is a shell variable that is set
+to the words \f2w1 w2 \*(ZZ\f1 in turn each time the \f2command-list\fP
+following \f3do\fP
+is executed.
+If \f3in\f1 \f2w1 w2 \*(ZZ\f1
+is omitted then the loop
+is executed once for each positional parameter;
+that is, \f3in\f1 \f3$\*(ST\f1 is assumed.
+.LP
+Another example of the use of the \f3for\fP
+loop is the \f2create\fP command
+whose text is
+.DS
+	for i do >$i; done
+.DE
+The command
+.DS
+	create alpha beta
+.DE
+ensures that two empty files
+\f2alpha\fP and \f2beta\fP exist
+and are empty.
+The notation \f2>file\fP may be used on its
+own to create or clear the contents of a file.
+Notice also that a semicolon (or newline) is required before \f3done.\fP
+.SH
+2.2\ Control\ flow\ -\ case
+.LP
+A multiple way branch is provided for by the
+\f3case\fP notation.
+For example,
+.DS
+	case $# in
+	\*(Ca1)	cat \*(AP$1 ;;
+	\*(Ca2)	cat \*(AP$2 <$1 ;;
+	\*(Ca\*(ST)	echo \\ 'usage: append [ from ] to\\ ' ;;
+	esac
+.DE
+is an \f2append\fP command.
+When called
+with one argument as
+.DS
+	append file
+.DE
+\f3$#\fP is the string \f21\fP and
+the standard input is copied onto the
+end of \f2file\fP
+using the \f2cat\fP command.
+.DS
+	append file1 file2
+.DE
+appends the contents of \f2file1\fP
+onto \f2file2.\fP
+If the number of arguments supplied to
+\f2append\fP is other than 1 or 2
+then a message is printed indicating
+proper usage.
+.LP
+The general form of the \f3case\fP command
+is
+.DS
+	\f3case \f2word \f3in
+	\*(Ca\f2pattern\|\f3)\ \f2command-list\f3\|;;
+	\*(Ca\*(ZZ
+	\f3esac\f1
+.DE
+The shell attempts to match
+\f2word\f1 with each \f2pattern,\f1
+in the order in which the patterns
+appear.
+If a match is found the
+associated \f2command-list\fP is
+executed and execution
+of the \f3case\fP is complete.
+Since \*(ST is the pattern that matches any
+string it can be used for the default case.
+.LP
+A word of caution:
+no check is made to ensure that only
+one pattern matches
+the case argument.
+The first match found defines the set of commands
+to be executed.
+In the example below the commands following
+the second \*(ST will never be executed.
+.DS
+	case $# in
+	\*(Ca\*(ST) \*(ZZ ;;
+	\*(Ca\*(ST) \*(ZZ ;;
+	esac
+.DE
+.LP
+Another example of the use of the \f3case\fP
+construction is to distinguish
+between different forms
+of an argument.
+The following example is a fragment of a \f2cc\fP command.
+.DS
+	for i
+	do case $i in
+	\*(DC\(mi[ocs])	\*(ZZ ;;
+	\*(DC\(mi\*(ST)	echo \\ 'unknown flag $i\\ ' ;;
+	\*(DC\*(ST.c)	/lib/c0 $i \*(ZZ ;;
+	\*(DC\*(ST)	echo \\ 'unexpected argument $i\\ ' ;;
+	\*(DOesac
+	done
+.DE
+.LP
+To allow the same commands to be associated
+with more than one pattern
+the \f3case\fP command provides
+for alternative patterns
+separated by a \*(VT\|.
+For example,
+.DS
+	case $i in
+	\*(Ca\(mix\*(VT\(miy)	\*(ZZ
+	esac
+.DE
+is equivalent to
+.DS
+	case $i in
+	\*(Ca\(mi[xy])	\*(ZZ
+	esac
+.DE
+.LP
+The usual quoting conventions apply
+so that
+.DS
+	case $i in
+	\*(Ca\\\\?)	\*(ZZ
+.DE
+will match the character \f3?\|.\fP
+.SH
+2.3\ Here\ documents
+.LP
+The shell procedure \f2tel\fP
+in section 2.1 uses the file \f3/usr/lib/telnos\f1
+to supply the data
+for \f2grep.\fP
+An alternative is to include this
+data
+within the shell procedure as a \f2here\fP document, as in,
+.DS
+	for i
+	do grep $i \*(HE!
+	\*(DO\*(ZZ
+	\*(DOfred mh0123
+	\*(DObert mh0789
+	\*(DO\*(ZZ
+	!
+	done
+.DE
+In this example
+the shell takes the lines between \f3\*(HE!\f1 and \f3!\f1
+as the standard input for \f2grep.\fP
+The string \f3!\f1 is arbitrary, the document
+being terminated by a line that consists
+of the string following \*(HE\|.
+.LP
+Parameters are substituted in the document
+before it is made available to \f2grep\fP
+as illustrated by the following procedure
+called \f2edg\|.\fP
+.DS
+	ed $3 \*(HE%
+	g/$1/s//$2/g
+	w
+	%
+.DE
+The call
+.DS
+	edg string1 string2 file
+.DE
+is then equivalent to the command
+.DS
+	ed file \*(HE%
+	g/string1/s//string2/g
+	w
+	%
+.DE
+and changes all occurrences of \f2string1\fP
+in \f2file\fP to \f2string2\|.\fP
+Substitution can be prevented using \\
+to quote the special character \f3$\fP
+as in
+.DS
+	ed $3 \*(HE+
+	1,\\\\$s/$1/$2/g
+	w
+	+
+.DE
+(This version of \f2edg\fP is equivalent to
+the first except that \f2ed\fP will print
+a \f3?\f1 if there are no occurrences of
+the string \f3$1\|.\fP)
+Substitution within a \f2here\fP document
+may be prevented entirely by quoting
+the terminating string,
+for example,
+.DS
+	grep $i \*(HE\\\\#
+	\*(ZZ
+	#
+.DE
+The document is presented
+without modification to \f2grep.\fP
+If parameter substitution is not required
+in a \f2here\fP document this latter form
+is more efficient.
+.SH
+2.4\ Shell\ variables
+.LP
+The shell
+provides string-valued variables.
+Variable names begin with a letter
+and consist of letters, digits and
+underscores.
+Variables may be given values by writing, for example,
+.DS
+	user=fred\ box=m000\ acct=mh0000
+.DE
+which assigns values to the variables
+\f3user, box\fP and \f3acct.\fP
+A variable may be set to the null string
+by saying, for example,
+.DS
+	null=
+.DE
+The value of a variable is substituted
+by preceding its name with \f3$\|;\fP
+for example,
+.DS
+	echo $user
+.DE
+will echo \f2fred.\fP
+.LP
+Variables may be used interactively
+to provide abbreviations for frequently
+used strings.
+For example,
+.DS
+	b=/usr/fred/bin
+	mv pgm $b
+.DE
+will move the file \f2pgm\fP
+from the current directory to the directory \f3/usr/fred/bin\|.\f1
+A more general notation is available for parameter
+(or variable)
+substitution, as in,
+.DS
+	echo ${user}
+.DE
+which is equivalent to
+.DS
+	echo $user
+.DE
+and is used when the parameter name is
+followed by a letter or digit.
+For example,
+.DS
+	tmp=/tmp/ps
+	ps a >${tmp}a
+.DE
+will direct the output of \f2ps\f1
+to the file \f3/tmp/psa,\f1
+whereas,
+.DS
+	ps a >$tmpa
+.DE
+would cause the value of the variable \f3tmpa\fP
+to be substituted.
+.LP
+Except for \f3$?\fP the following
+are set initially by the shell.
+\f3$?\fP is set after executing each command.
+.RS
+.IP \f3$?\fP 8
+The exit status (return code)
+of the last command executed
+as a decimal string.
+Most commands return a zero exit status
+if they complete successfully,
+otherwise a non-zero exit status is returned.
+Testing the value of return codes is dealt with
+later under \f3if\fP and \f3while\fP commands.
+.IP \f3$#\fP 8
+The number of positional parameters
+(in decimal).
+Used, for example, in the \f2append\fP command
+to check the number of parameters.
+.IP \f3$$\fP 8
+The process number of this shell (in decimal).
+Since process numbers are unique among
+all existing processes, this string is
+frequently used to generate
+unique
+temporary file names.
+For example,
+.DS
+	ps a >/tmp/ps$$
+	\*(ZZ
+	rm /tmp/ps$$
+.DE
+.IP \f3$\|!\fP 8
+The process number of the last process
+run in the background (in decimal).
+.IP \f3$\(mi\fP 8
+The current shell flags, such as
+\f3\(mix\f1 and \f3\(miv\|.\f1
+.RE
+.LP
+Some variables have a special meaning to the
+shell and should be avoided for general
+use.
+.RS
+.IP \f3$\s-1MAIL\s0\fP 8
+When used interactively
+the shell looks at the file
+specified by this variable
+before it issues a prompt.
+If the specified file has been modified
+since it
+was last looked at the shell
+prints the message
+\f2you have mail\fP before prompting
+for the next command.
+This variable is typically set
+in the file \f3.profile,\fP
+in the user's login directory.
+For example,
+.DS
+	\s-1MAIL\s0=/usr/mail/fred
+.DE
+.IP \f3$\s-1HOME\s0\fP 8
+The default argument
+for the \f2cd\fP command.
+The current directory is used to resolve
+file name references that do not begin with
+a \f3/\|,\f1
+and is changed using the \f2cd\fP command.
+For example,
+.DS
+	cd /usr/fred/bin
+.DE
+makes the current directory \f3/usr/fred/bin\|.\f1
+.DS
+	cat wn
+.DE
+will print on the terminal the file \f2wn\fP
+in this directory.
+The command
+\f2cd\fP with no argument
+is equivalent to
+.DS
+	cd $\s-1HOME\s0
+.DE
+This variable is also typically set in the
+the user's login profile.
+.IP \f3$\s-1PATH\s0\fP 8
+A list of directories that contain commands (the \f2search path\f1\|).
+Each time a command is executed by the shell
+a list of directories is searched
+for an executable file.
+.ne 5
+If \f3$\s-1PATH\s0\fP is not set
+then the current directory,
+\f3/bin\fP, and \f3/usr/bin\fP are searched by default.
+.ne 5
+Otherwise \f3$\s-1PATH\s0\fP consists of directory
+names separated by \f3:\|.\fP
+For example,
+.DS
+	\s-1PATH\s0=\f3:\fP/usr/fred/bin\f3:\fP/bin\f3:\fP/usr/bin
+.DE
+specifies that the current directory
+(the null string before the first \f3:\fP\|),
+\f3/usr/fred/bin, /bin \f1and\fP /usr/bin\f1
+are to be searched in that order.
+In this way individual users
+can have their own `private' commands
+that are accessible independently
+of the current directory.
+If the command name contains a \f3/\f1 then this directory search
+is not used; a single attempt
+is made to execute the command.
+.IP \f3$\s-1PS1\s0\fP 8
+The primary shell prompt string, by default, `\f3$\ \f1'.
+.IP \f3$\s-1PS2\s0\fP 8
+The shell prompt when further input is needed,
+by default, `\f3>\ \f1'.
+.IP \f3$\s-1IFS\s0\fP 8
+The set of characters used by \f2blank
+interpretation\f1 (see section 3.4).
+.RE
+.SH
+2.5\ The\ test\ command
+.LP
+The \f2test\fP command, although not part of the shell,
+is intended for use by shell programs.
+For example,
+.DS
+	test \(mif file
+.DE
+returns zero exit status if \f2file\fP
+exists and non-zero exit status otherwise.
+In general \f2test\fP evaluates a predicate
+and returns the result as its exit status.
+Some of the more frequently used \f2test\fP
+arguments are given here, see \f2test\fP (1)
+for a complete specification.
+.DS
+	test s		true if the argument \f2s\fP is not the null string
+	test \(mif file	true if \f2file\fP exists
+	test \(mir file	true if \f2file\fP is readable
+	test \(miw file	true if \f2file\fP is writable
+	test \(mid file	true if \f2file\fP is a directory
+.DE
+.SH
+2.6\ Control\ flow\ -\ while
+.LP
+The actions of
+the \f3for\fP loop and the \f3case\fP
+branch are determined by data available to the shell.
+A \f3while\fP or \f3until\fP loop
+and an \f3if then else\fP branch
+are also provided whose
+actions are determined by the exit status
+returned by commands.
+A \f3while\fP loop has the general form
+.DS
+	\f3while\fP \f2command-list\*1\fP
+	\f3do\fP \f2command-list\*2\fP
+	\f3done\fP
+.DE
+.LP
+The value tested by the \f3while\fP command
+is the exit status of the last simple command
+following \f3while.\fP
+Each time round the loop
+\f2command-list\*1\fP is executed;
+if a zero exit status is returned then
+\f2command-list\*2\fP
+is executed;
+otherwise, the loop terminates.
+For example,
+.DS
+	while test $1
+	do \*(ZZ
+	\*(DOshift
+	done
+.DE
+is equivalent to
+.DS
+	for i
+	do \*(ZZ
+	done
+.DE
+\f2shift\fP is a shell command that
+renames the positional parameters
+\f3$2, $3, \*(ZZ\f1 as \f3$1, $2, \*(ZZ\f1
+and loses \f3$1\|.\fP
+.LP
+Another kind of use for the \f3while/until\fP
+loop is to wait until some
+external event occurs and then run
+some commands.
+In an \f3until\fP loop
+the termination condition is reversed.
+For example,
+.DS
+	until test \(mif file
+	do sleep 300; done
+	\f2commands\fP
+.DE
+will loop until \f2file\fP exists.
+Each time round the loop it waits for
+5 minutes before trying again.
+(Presumably another process
+will eventually create the file.)
+.SH
+2.7\ Control\ flow\ -\ if
+.LP
+Also available is a
+general conditional branch
+of the form,
+.DS
+	\f3if\fP \f2command-list
+	\f3then	\f2command-list
+	\f3else	\f2command-list
+	\f3fi\f1
+.DE
+that tests the value returned by the last simple command
+following \f3if.\fP
+.LP
+The \f3if\fP command may be used
+in conjunction with the \f2test\fP command
+to test for the existence of a file as in
+.DS
+	if test \(mif file
+	then	\f2process file\fP
+	else	\f2do something else\fP
+	fi
+.DE
+.LP
+An example of the use of \f3if, case\fP
+and \f3for\fP constructions is given in
+section 2.10\|.
+.LP
+A multiple test \f3if\fP command
+of the form
+.DS
+	if \*(ZZ
+	then	\*(ZZ
+	else	if \*(ZZ
+		then	\*(ZZ
+		else	if \*(ZZ
+			\*(ZZ
+			fi
+		fi
+	fi
+.DE
+may be written using an extension of the \f3if\fP
+notation as,
+.DS
+	if \*(ZZ
+	then	\*(ZZ
+	elif	\*(ZZ
+	then	\*(ZZ
+	elif	\*(ZZ
+	\*(ZZ
+	fi
+.DE
+.LP
+The following example is the \f2touch\fP command
+which changes the `last modified' time for a list
+of files.
+The command may be used in conjunction
+with \f2make\fP (1) to force recompilation of a list
+of files.
+.DS
+	flag=
+	for i
+	do case $i in
+	\*(DC\(mic)	flag=N ;;
+	\*(DC\*(ST)	if test \(mif $i
+	\*(DC	then	ln $i junk$$; rm junk$$
+	\*(DC	elif test $flag
+	\*(DC	then	echo file \\\\\ '$i\\\\\ ' does not exist
+	\*(DC	else	>$i
+	\*(DC	fi
+	\*(DO esac
+	done
+.DE
+The \f3\(mic\fP flag is used in this command to
+force subsequent files to be created if they do not already exist.
+Otherwise, if the file does not exist, an error message is printed.
+The shell variable \f2flag\fP
+is set to some non-null string if the \f3\(mic\fP
+argument is encountered.
+The commands
+.DS
+	ln \*(ZZ; rm \*(ZZ
+.DE
+make a link to the file and then remove it
+thus causing the last modified date to be updated.
+.LP
+The sequence
+.DS
+	if command1
+	then	command2
+	fi
+.DE
+may be written
+.DS
+	command1 && command2
+.DE
+Conversely,
+.DS
+	command1 \*(VT\*(VT command2
+.DE
+executes \f2command2\fP only if \f2command1\fP
+fails.
+In each case the value returned
+is that of the last simple command executed.
+.SH
+2.8\ Command\ grouping
+.LP
+Commands may be grouped in two ways,
+.DS
+	\f3{\f2 command-list\f3 ; }\f1
+.DE
+and
+.DS
+	\f3(\f2 command-list\f3 )\f1
+.DE
+.LP
+In the first \f2command-list\fP is simply executed.
+The second form executes \f2command-list\fP
+as a separate process.
+For example,
+.DS
+	(cd x; rm junk )
+.DE
+executes \f2rm junk\fP in the directory
+\f3x\fP without changing the current
+directory of the invoking shell.
+.LP
+The commands
+.DS
+	cd x; rm junk
+.DE
+have the same effect but leave the invoking
+shell in the directory \f3x.\fP
+.SH
+2.9\ Debugging\ shell\ procedures
+.LP
+The shell provides two tracing mechanisms
+to help when debugging shell procedures.
+The first is invoked within the procedure
+as
+.DS
+	set \(miv
+.DE
+(\f3v\fP for verbose) and causes lines of the
+procedure to be printed as they are read.
+It is useful to help isolate syntax errors.
+It may be invoked without modifying the procedure
+by saying
+.DS
+	sh \(miv proc \*(ZZ
+.DE
+where \f2proc\fP is the name of the shell procedure.
+This flag may be used in conjunction
+with the \f3\(min\fP flag which prevents
+execution of subsequent commands.
+(Note that saying \f2set \(min\fP at a terminal
+will render the terminal useless
+until an end-of-file is typed.)
+.LP
+The command
+.DS
+	set \(mix
+.DE
+will produce an execution
+trace.
+Following parameter substitution
+each command is printed as it is executed.
+(Try these at the terminal to see
+what effect they have.)
+Both flags may be turned off by saying
+.DS
+	set \(mi
+.DE
+and the current setting of the shell flags is available as \f3$\(mi\|.\f1
+.SH
+2.10\ The\ man\ command
+.LP
+The following is the \f2man\fP command
+which is used to print sections of the UNIX manual.
+It is called, for example, as
+.DS
+		man sh
+		man \(mit ed
+		man 2 fork
+.DE
+In the first the manual section for \f2sh\fP
+is printed.
+Since no section is specified, section 1 is used.
+The second example will typeset (\f3\(mit\fP option)
+the manual section for \f2ed.\fP
+The last prints the \f2fork\fP manual page
+from section 2.
+.sp 2
+.DS
+	cd /usr/man
+
+	: \ 'colon is the comment command\ '
+	: \ 'default is nroff ($N), section 1 ($s)\ '
+	N=n\ s=1
+
+	for i
+	do case $i in
+.sp .5
+	\*(DC[1\(mi9]\*(ST)	s=$i ;;
+.sp .5
+	\*(DC\(mit)	N=t ;;
+.sp .5
+	\*(DC\(min)	N=n ;;
+.sp .5
+	\*(DC\(mi\*(ST)	echo unknown flag \\\\\ '$i\\\\\ ' ;;
+.sp .5
+	\*(DC\*(ST)	if test \(mif man$s/$i.$s
+	\*(DC	then	${N}roff man0/${N}aa man$s/$i.$s
+	\*(DC	else	: \ 'look through all manual sections\ '
+	\*(DC		found=no
+	\*(DC		for j in 1 2 3 4 5 6 7 8 9
+	\*(DC		do if test \(mif man$j/$i.$j
+	\*(DC		\*(DOthen man $j $i
+	\*(DC		\*(DO\*(THfound=yes
+	\*(DC		\*(DOfi
+	\*(DC		done
+	\*(DC		case $found in
+	\*(DC		\*(Cano) echo \\ '$i: manual page not found\\ '
+	\*(DC		esac
+	\*(DC	fi
+	\*(DOesac
+	done
+.DE
+.ce
+.ft 3
+Figure 1. A version of the man command
+.ft 1

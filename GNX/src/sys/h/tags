@@ -1,0 +1,221 @@
+BADR	dcu.h	?^#define BADR(n)	((unsigned char *)(n))	/* byte add?
+BASEPRI	param.h	?^#define	BASEPRI(ps)	((ps.psr & INTPRI) != 0)$?
+BUSFAULTCODE	dcu.h	?^#define	BUSFAULTCODE(data)	(((data) & DCUSB_BUSFAU?
+CTLFAULTCODE	dcu.h	?^#define	CTLFAULTCODE(data)	(((data) & DCUSB_CTLFAU?
+CTRL	tty.h	?^#define	CTRL(c)	('c'&037)$?
+DCUD_DHS	dcu.h	?^#define	DCUD_DHS(drive,head,sector) (((drive)<<13)?
+DCUD_DRIVE	dcu.h	?^#define	DCUD_DRIVE(drive)	((drive)<<13)$?
+DCUD_ENABLE	dcu.h	?^#define	DCUD_ENABLE(bit)	((DCUC_ENABLE<<8)|((bit)<?
+GETB	../dev/dcu.c	?^#define	GETB(d,i) (((unsigned char *)(&d))[i])	/* ?
+INT	../dev/dcu.c	?^#define INT(d)	((int)(d))	/* make something an int?
+MAX	param.h	?^#define		MAX(a,b)	(((a)>(b))\? (a):(b))$?
+MIN	param.h	?^#  define	MIN(a,b)	(((a)<(b))\? (a):(b))$?
+MOD	psr.h	?^#define MOD(m)	m.mod$?
+Mmain	../sys/main.c	?^main()$?
+PSR	psr.h	?^#define	PSR(s)	s.psr$?
+SCCSID	param.h	?^#define	SCCSID(arg)$?
+STATUS0	dcu.h	?^#define	STATUS0(data)	(((data)>>2)&3)	/* macro to ?
+STATUS1	dcu.h	?^#define STATUS1(data)	((data)&3)	/* macro to get D?
+TTHIWAT	tty.h	?^#define	TTHIWAT(tp)	tthiwat[(tp)->t_ospeed&TTMASK]?
+TTLOWAT	tty.h	?^#define	TTLOWAT(tp)	ttlowat[(tp)->t_ospeed&TTMASK]?
+USERMODE	param.h	?^#define	USERMODE(ps)	((ps.psr & UMODE)==UMODE)$?
+VECTOR	../sys/icu.s	?^#define VECTOR(label).double	((label)-modbegin) sh?
+access	../sys/fio.c	?^access(ip, mode)$?
+alarm	../sys/sys4.c	?^alarm()$?
+alloc	../sys/alloc.c	?^alloc(dev)$?
+b_to_q	../sys/prim.c	?^b_to_q(cp, cc, q)$?
+badblock	../sys/alloc.c	?^badblock(fp, bn, dev)$?
+bawrite	../dev/bio.c	?^bawrite(bp)$?
+bcopy	../sys/subr.c	?^bcopy(from, to, count)$?
+bdwrite	../dev/bio.c	?^bdwrite(bp)$?
+bflush	../dev/bio.c	?^bflush(dev)$?
+binit	../sys/main.c	?^binit()$?
+bmap	../sys/subr.c	?^bmap(ip, bn, rwflg)$?
+bread	../dev/bio.c	?^bread(dev, blkno)$?
+brelse	../dev/bio.c	?^brelse(bp)$?
+btoc	param.h	?^#define btoc(s)	s$?
+bwrite	../dev/bio.c	?^bwrite(bp)$?
+canon	../dev/ttyold.c	?^canon(tp)$?
+chdir	../sys/sys4.c	?^chdir()$?
+chdirec	../sys/sys4.c	?^chdirec(ipp)$?
+chmod	../sys/sys4.c	?^chmod()$?
+chown	../sys/sys4.c	?^chown()$?
+chroot	../sys/sys4.c	?^chroot()$?
+cinit	../sys/prim.c	?^cinit()$?
+clkreld	../sys/machdep.c	?^clkreld()$?
+clkstart	../sys/machdep.c	?^clkstart()$?
+clock	../sys/clock.c	?^clock(psr)$?
+close	../sys/sys2.c	?^close()$?
+closef	../sys/fio.c	?^closef(fp)$?
+clrbuf	../dev/bio.c	?^clrbuf(bp)$?
+cnbuzz	../dev/cons.c	?^cnbuzz(tp)$?
+cnclose	../dev/cons.c	?^cnclose(dev,flag)$?
+cnioctl	../dev/cons.c	?^cnioctl(dev, cmd, addr, flag)$?
+cnopen	../dev/cons.c	?^cnopen(dev, flag)$?
+cnread	../dev/cons.c	?^cnread(dev)$?
+cnrint	../dev/cons.c	?^cnrint(dev)$?
+cnstart	../dev/cons.c	?^cnstart(tp)$?
+cnwrite	../dev/cons.c	?^cnwrite(dev)$?
+cnxint	../dev/cons.c	?^cnxint(dev)$?
+copyin	../sys/m16.s	?^;;	copyin(src,dst,cnt) char *src,*dst; int cnt;$?
+copyout	../sys/m16.s	?^;;	copyout(src,dst,cnt) char *src,*dst; int cnt;$?
+core	../sys/sig.c	?^core()$?
+cpass	../sys/subr.c	?^cpass()$?
+creat	../sys/sys2.c	?^creat()$?
+dbtofsb	param.h	?^#define dbtofsb(b)	((daddr_t)((daddr_t)(b)>>1))$?
+dcualloc	../dev/dcu.c	?^dcualloc(size)$?
+dcucommand	../dev/dcu.c	?^dcucommand(opcode, data)$?
+dcudump	../dev/dcu.c	?^dcudump(dev)			/* dump core after a system crash *?
+dcuecc	../dev/dcu.c	?^dcuecc(ecc, data)$?
+dcuhandleerror	../dev/dcu.c	?^dcuhandleerror(du)$?
+dcuintr	../dev/dcu.c	?^dcuintr()$?
+dcuopen	../dev/dcu.c	?^dcuopen()$?
+dcuqueueio	../dev/dcu.c	?^dcuqueueio(du)$?
+dcuread	../dev/dcu.c	?^dcuread(dev)			/* character read routine */$?
+dcustart	../dev/dcu.c	?^dcustart(du, skip)$?
+dcustrategy	../dev/dcu.c	?^dcustrategy(bp)$?
+dcuwait	../dev/dcu.c	?^dcuwait()$?
+dcuwrite	../dev/dcu.c	?^dcuwrite(dev)			/* character write routine */$?
+deverror	../sys/prf.c	?^deverror(bp, o1, o2)$?
+disksort	../sys/machdep.c	?^disksort(dp, bp)$?
+dkblock	../sys/machdep.c	?^dkblock(bp)$?
+dkunit	../sys/machdep.c	?^dkunit(bp)$?
+dumpproc	../dev/cons.c	?^dumpproc()$?
+dup	../sys/sys3.c	?^dup()$?
+exec	../sys/sys1.c	?^exec()$?
+exece	../sys/sys1.c	?^exece()$?
+exit	../sys/sys1.c	?^exit(rv)$?
+falloc	../sys/fio.c	?^falloc()$?
+flushtty	../dev/tty.c	?^flushtty(tp, rw)$?
+fork	../sys/sys1.c	?^fork()$?
+free	../sys/alloc.c	?^free(dev, bno)$?
+fsbtodb	param.h	?^#define fsbtodb(b)	((daddr_t)((daddr_t)(b)<<1))$?
+fstat	../sys/sys3.c	?^fstat()$?
+ftime	../sys/sys4.c	?^ftime()$?
+fubyte	../sys/m16.s	?^;;	fubyte(uad) char *uad;$?
+fuword	../sys/m16.s	?^;;	fuword(uad) int *uad;$?
+getblk	../dev/bio.c	?^getblk(dev, blkno)$?
+getc	../sys/prim.c	?^getc(p)$?
+geteblk	../dev/bio.c	?^geteblk()$?
+geterror	../dev/bio.c	?^geterror(bp)$?
+getf	../sys/fio.c	?^getf(f)$?
+getfs	../sys/alloc.c	?^getfs(dev)$?
+getgid	../sys/sys4.c	?^getgid()$?
+getmdev	../sys/sys3.c	?^getmdev()$?
+getpid	../sys/sys4.c	?^getpid()$?
+getuid	../sys/sys4.c	?^getuid()$?
+getxfile	../sys/sys1.c	?^getxfile(ip, nargc)$?
+gtime	../sys/sys4.c	?^gtime()$?
+ialloc	../sys/alloc.c	?^ialloc(dev)$?
+iexpand	../sys/iget.c	?^iexpand(ip, dp)$?
+ifree	../sys/alloc.c	?^ifree(dev, ino)$?
+iget	../sys/iget.c	?^iget(dev, ino)$?
+iinit	../sys/main.c	?^iinit()$?
+ioctl	../sys/ioctl.c	?^ioctl()$?
+iodone	../dev/bio.c	?^iodone(bp)$?
+iomove	../sys/rdwri.c	?^iomove(cp, n, flag)$?
+iowait	../dev/bio.c	?^iowait(bp)$?
+iput	../sys/iget.c	?^iput(ip)$?
+issig	../sys/sig.c	?^issig()$?
+itod	param.h	?^#define itod(x) ((daddr_t)((((unsigned)(x)+2*INOPB?
+itoo	param.h	?^#define itoo(x) ((int)(((x)+2*INOPB-1)%INOPB))$?
+itrunc	../sys/iget.c	?^itrunc(ip)$?
+iupdat	../sys/iget.c	?^iupdat(ip, ta, tm)$?
+kill	../sys/sys4.c	?^kill()$?
+link	../sys/sys2.c	?^link()$?
+major	types.h	?^#define	major(x)	((int)(((unsigned)(x)>>8)&0377))$?
+makedev	types.h	?^#define	makedev(x,y)	((dev_t)(((x)<<8) | (y)))$?
+maknode	../sys/iget.c	?^maknode(mode)$?
+minor	types.h	?^#define	minor(x)	((int)((x)&0377))$?
+mknod	../sys/sys2.c	?^mknod()$?
+mmread	../dev/mem.c	?^mmread(dev)$?
+mmwrite	../dev/mem.c	?^mmwrite(dev)$?
+namei	../sys/nami.c	?^namei(func, flag)$?
+newproc	../sys/slp.c	?^newproc()$?
+nice	../sys/sys4.c	?^nice()$?
+nodev	../sys/subr.c	?^nodev() { u.u_error = ENODEV; }$?
+nosys	../sys/trap.c	?^nosys() { u.u_error = 100; }$?
+notavail	../dev/bio.c	?^notavail(bp)$?
+nulldev	../sys/subr.c	?^nulldev() { }$?
+nulldev1	../sys/subr.c	?^nulldev1(arg) { }$?
+nullioctl	../sys/ioctl.c	?^nullioctl(tp, cmd, addr)$?
+nullsys	../sys/trap.c	?^nullsys() { }$?
+number	../sys/icu.s	?^addr	8(r0),r0	; normalize the trap number (add 8 t?
+open	../sys/sys2.c	?^open()$?
+open1	../sys/sys2.c	?^open1(ip, mode, trf)$?
+openi	../sys/fio.c	?^openi(ip, rw)$?
+owner	../sys/fio.c	?^owner()$?
+panic	../sys/prf.c	?^panic(s)$?
+passc	../sys/subr.c	?^passc(c)$?
+pause	../sys/sys4.c	?^pause()$?
+plock	../sys/iget.c	?^plock(ip)$?
+prdev	../sys/prf.c	?^prdev(str, dev)$?
+prele	../sys/iget.c	?^prele(ip)$?
+printf	../sys/prf.c	?^printf(fmt, x1)$?
+printn	../sys/prf.c	?^printn(n, b)$?
+printx	../sys/prf.c	?^printx(x)$?
+procstat	../dev/cons.c	?^procstat(pp)$?
+psig	../sys/sig.c	?^psig()$?
+psignal	../sys/sig.c	?^psignal(p, sig)$?
+putc	../sys/prim.c	?^putc(c, p)$?
+putchar	../dev/cons.c	?^putchar(c)$?
+rdwr	../sys/sys2.c	?^rdwr(mode)$?
+read	../sys/sys2.c	?^read()$?
+readi	../sys/rdwri.c	?^readi(ip)$?
+rett	../sys/m16.s	?^;;	is running with the changed ksp. A rett (return?
+rexit	../sys/sys1.c	?^rexit()$?
+saccess	../sys/sys2.c	?^saccess()$?
+save	../sys/m16.s	?^;;	save(u.{usav,ssav,qsav}) char *u.{usav,ssav,qsa?
+sbreak	../sys/sys1.c	?^sbreak()$?
+schar	../sys/nami.c	?^schar()$?
+seek	../sys/sys2.c	?^seek()$?
+sendsig	../sys/machdep.c	?^sendsig(funcadr, signo)$?
+setgid	../sys/sys4.c	?^setgid()$?
+setpri	../sys/slp.c	?^setpri(pp)$?
+setregs	../sys/sys1.c	?^setregs()$?
+setrun	../sys/slp.c	?^setrun(p)$?
+setuid	../sys/sys4.c	?^setuid()$?
+signal	../sys/sig.c	?^signal(pgrp, sig)$?
+sleep	../sys/slp.c	?^sleep(chan, pri)$?
+smount	../sys/sys3.c	?^smount()$?
+ssig	../sys/sys4.c	?^ssig()$?
+startup	../sys/machdep.c	?^startup() {$?
+stat	../sys/sys3.c	?^stat()$?
+stat1	../sys/sys3.c	?^stat1(ip, ub, pipeadj)$?
+stime	../sys/sys4.c	?^stime()$?
+subyte	../sys/m16.s	?^;;	subyte(uad,data) byte *uad,data;$?
+sumount	../sys/sys3.c	?^sumount()$?
+suser	../sys/fio.c	?^suser()$?
+suword	../sys/m16.s	?^;;	suword(uad,data) int *uad,data;$?
+swap	../dev/bio.c	?^swap(procid,rdflg)$?
+swtch	../sys/slp.c	?^swtch()$?
+sync	../sys/sys4.c	?^sync()$?
+timeout	../sys/clock.c	?^timeout(fun, arg, tim)$?
+times	../sys/sys4.c	?^times()$?
+tloop	../sys/iget.c	?^tloop(dev, bn, f1, f2)$?
+trap	../sys/icu.s	?^movqd	SWTCHTRAP-8,r0	; yep ... trap(SWTCH)$?
+ttioctl	../dev/tty.c	?^ttioctl(tp, com, addr, flag)$?
+ttread	../dev/ttyold.c	?^ttread(tp)$?
+ttrstrt	../dev/tty.c	?^ttrstrt(tp)$?
+ttstart	../dev/tty.c	?^ttstart(tp)$?
+ttwrite	../dev/ttyold.c	?^ttwrite(tp)$?
+ttyblock	../dev/tty.c	?^ttyblock(tp)$?
+ttychars	../dev/tty.c	?^ttychars(tp)$?
+ttyclose	../dev/tty.c	?^ttyclose(tp)$?
+ttyinput	../dev/ttyold.c	?^ttyinput(c, tp)$?
+ttyopen	../dev/ttyold.c	?^ttyopen(dev, tp)$?
+ttyoutput	../dev/ttyold.c	?^ttyoutput(c, tp)$?
+uchar	../sys/nami.c	?^uchar()$?
+ufalloc	../sys/fio.c	?^ufalloc()$?
+umask	../sys/sys4.c	?^umask()$?
+undint	../sys/machdep.c	?^undint(vector)$?
+unlink	../sys/sys4.c	?^unlink()$?
+update	../sys/alloc.c	?^update()$?
+usp	../sys/icu.s	?^movd	tos,r0		; restore usp (may have changed)$?
+utime	../sys/sys4.c	?^utime()$?
+wait	../sys/sys1.c	?^wait()$?
+wakeup	../sys/slp.c	?^wakeup(chan)$?
+wdir	../sys/iget.c	?^wdir(ip)$?
+wflushtty	../dev/tty.c	?^wflushtty(tp)$?
+write	../sys/sys2.c	?^write()$?
+writei	../sys/rdwri.c	?^writei(ip)$?

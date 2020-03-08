@@ -1,0 +1,15 @@
+.ig
+	template.0: version 1.2 of 3/4/83
+	Unix System Command Manual Page Source
+
+	@(#)template.0	1.2	(NSC)	3/4/83
+..
+.TH NAME SECTION
+.SH NAME
+.SH SYNOPSIS
+.SH DESCRIPTION
+.SH CROSS SUPPORT
+.SH FILES
+.SH SEE ALSO
+.SH DIAGNOSTICS
+.SH BUGS

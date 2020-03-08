@@ -1,0 +1,66 @@
+.ig
+	@(#)vspy.2v	1.2	10/27/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH VSPY 2V
+.SH NAME
+vspy \- set up mapping to physical memory
+.SH SYNOPSIS
+.nf
+.B vspy(virtaddr, physaddr, flag)
+.B char *virtaddr;
+.B char *physaddr;
+.fi
+.SH DESCRIPTION
+.I Vspy
+changes the mmu mapping for the current process to allow references directly
+to physical memory.  This capability allows user mode programs to communicate
+directly with the various peripherals of the system (such as a bitmapped
+graphics screen).
+.PP
+.I Virtaddr
+is the address in the process which is to be used to access the physical
+memory.
+.I Physaddr
+is the physical memory address to be accessed, or -1 to remove existing
+access to physical memory.
+.I Flag
+is 0 if only read access is desired, or 1 if both read and write access
+is desired.
+.PP
+Since the lowest mapping granularity for GENIX is one page (1024 bytes),
+the low order ten bits of the given addresses are ignored, so that the
+whole virtual page specified by
+.I virtaddr
+will map to the whole physical memory page specified by
+.I physaddr.
+Thus to reference a particular offset into the physical memory page, you
+must access the same offset into the virtual memory page.
+.PP
+The
+.I virtaddr
+specified does not have to lie within the data, text, or stack segment
+of the process, so that memory does not have to be allocated using
+.IR sbrk (2)
+before calling
+.I vspy.
+If the page specified by
+.I virtaddr
+already exists, that page is deleted.
+.IR Fork (2)
+will duplicate the physical mapping for the new process.  A successful
+.IR exec (2)
+or
+.IR exit (2)
+removes all existing physical mapping.  Only the super-user is allowed to 
+map physical memory arbitrarily.  However, certain physical memory addresses
+corresponding to "safe" devices (such as the graphics memory) may be
+mapped by anyone.
+.SH "SEE ALSO"
+vlock(2V)
+.SH DIAGNOSTICS
+Zero is returned if the call was successful. -1 is returned if any of the
+arguments are illegal or if the user is not privileged.
+.SH BUGS
+I/O cannot be done to pages mapped to physical memory.  Arguments to
+system calls cannot lie in such pages either.

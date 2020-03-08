@@ -1,0 +1,288 @@
+			    Unix Panic List
+			    ---------------
+"addrtocst"
+Addrtocst was given a physical page address which doesn't exist.  Software.
+
+"badallocpage"
+Allocpage was given invalid arguments.
+
+"badclearpte"
+Clearptetable (which clears all of an address space) was given bad arguments.
+
+"badcopypte"
+Copyptetable (used for fork) tried to copy an address space to itself.
+
+"badcopyu"
+Copyu was given a bad argument.  Software error.
+
+"badcstshare"
+Clearmap freed a memory page which was not in use.
+
+"baddownshare"
+Downshare was called with invalid arguments.
+
+"badmemswapout"
+Swapout tried to swap out a page not in memory.  Impossible; software error.
+
+"badnullpte"
+Pagein was called for a process which was not the current one.
+
+"badownunlock"
+A page table's lock count was inconsistent.
+
+"badpageforswap"
+Swapoutpages could not find the owning page table for a page to swap.
+
+"badpagein"
+Pagein found an invalid type of pte.
+
+"badpagein2"
+Pagein2 (which locates a page table) was given invalid arguments.
+
+"badpagein2pte"
+Pagein2 found an invalid type of pte.
+
+"badpagesswapout"
+Swapout tried to swap out a page not in memory.  Impossible; software error.
+
+"badphysadr"
+Physaddr was given invalid arguments.
+
+"badpteshare"
+Clearptetable freed a page table page, which was not in use.
+
+"badscanmap"
+Scanmap was called with bad arguments.  Software error.
+
+"badscanpagein"
+Scanmap could not find the page table for a page of address space.
+
+"badsptshare"
+Downshare tried to decrement a share counter for a page below zero.
+
+"badsupabort"
+A supervisor mode abort occurred at an instruction whose opcode or
+arguments is not one which can be handled.
+
+"badsupabortpc"
+A supervisor mode abort occurred at an illegal pc.
+
+"badswappage"
+Swapfree tried to free an invalid page of the swapping space.
+
+"badswtchu"
+Swtchu was given a new process number which is out of range.
+
+"badsysnullpte"
+Pagein was called for a kernel address which was not for the U. areas.
+
+"badunlock"
+Unlockpage tried to lock a nonexistent memory page, or one which was not locked.
+
+"badunlockmempage"
+Unlockmem found that a page to unlock was not a memory page.
+
+"badupshare"
+Upshare was called with invalid arguments.
+
+"badxattach"
+Xattach (for reading in text segments for exec) was given invalid arguments.
+
+"blkdev"
+Impossible block device type (in internal getblk routine of buffered
+i/o system). Definite software error.
+
+"clearbadpte"
+Clearmap found an invalid type of pte.
+
+"copybadpte"
+Copyptetable found an invalid type of pte.
+
+"dcubadblkcnt"
+Disk asked to transfer negative (or zero) number of blocks. Software error.
+
+"dcubadcmd1"
+Disk thinks it got a bad command (immediate status bits).
+Hardware/software.
+
+"dcubadcmd2"
+Disk thinks it got a bad command (sense bits).  Hardware/software.
+
+"dcubadmem"
+Disk finds a bad page address when building page map for physical i/o.
+Software error.
+
+"dcuidle"
+Disk controller interrupted, saying it was idle when it should have been busy.
+Hardware error.
+
+"dcunoburst"
+Disk would not accept DMA burst size initialization.
+Definite hardware error.
+
+"dcunostorage"
+Disk driver could not allocate some page aligned memory. Never happens.
+
+"dcunotidle"
+Disk controller not idle when it should be.  Hardware error.
+
+"dcunounits"
+Disk controller cannot find any drives.  Definite hardware error.
+
+"dcunullunit"
+Disk interrupted, said it was not idle, but it should have been.
+Hardware.
+
+"dcutimeout"
+Disk timed out during initialization sequence.  Definite hardware error.
+
+"devtab"
+Impossible. The block device's data structure address is 0. Possible corrupt
+table, or silly software error.
+
+"fillnotfile"
+Pagein was called for a "fill from file" page which was not for a file.
+
+"freebadowner"
+Freepage found that the owning page for a data page was not a page table page.
+
+"freebadowner2"
+Freepage found that the owning page for a page table was not a page table page.
+
+"freebadpagetype"
+Freepage tried to free an invalid type of page.
+
+"freebadpte1"
+Clearptetable found an invalid type of pte.
+
+"freepageisnt"
+Allocpage found a free page which was not really free.
+
+"freeswaptwice"
+Swapfree tried to free a page of the swapping space which was alread free.
+
+"freeusedpage"
+Freepage tried to free a page which was not freeable.
+
+"iinit"
+Can't read the initial root super block.
+
+"ioccom canq"
+On transition from cbreak mode to other modes, the canonical char queue has
+not been flushed. Never happens.
+
+"IO err in swap"
+Pageio got a disk error tring to read or write a page.
+
+"nestedswap"
+Pageio found that its buffer to use for paging was already in use.
+
+"nofreepages"
+Allocpage could not create a free memory page, even by trying to swap.
+
+"no imt"
+Accessing a mounted filesystem the system finds it has lost the mount table
+entry. Impossible, but has been seen.
+
+"nopagepte"
+Freepage could not find the owning page table for a page.
+
+"no procs"
+System ran out of process slots even after it checked first.
+This has never been seen.
+
+"NOROOTDIR"
+When system boots, it can't find a root inode -- Did you make a filesystem?
+
+"nosharepte"
+Xunshare could not find all the users of a text page.
+
+"noswappage"
+Swapoutpages could not find any memory page which could be swapped.
+
+"noswapspace"
+Swapalloc could not allocate a page of the swap area.
+
+"pagein err for u."
+Couldn't page in a page of u.  Hardware/software.
+
+"physiolock"
+When system attempted raw i/o it could not lock in a user address space page.
+Software error.
+
+"remque"
+Remque tried to remove a process from the run queue which wasn't on it.
+Software error.
+
+"setbadpte"
+Setmap tried to set an invalid type of pte.
+
+"setmapnopagein"
+Setmap (which sets new pte entryes) could not page in a page table.
+
+"setrq"
+Setrq was asked to put a nonrunnable or unloaded process on the run queue.
+Software error.
+
+"setrun"
+Setrun called with a process already runnable or which can't possibly
+be runnable.  Software error.
+
+"sleep"
+Sleep was called with a channel of zero or for a process which can't
+be eligible for sleeping.  Software error.
+
+"swaplockpage"
+Swappage was asked to swap a page which was locked.  Software error.
+
+"swtch"
+Swtch tried to context switch to a nonrunnable or unloaded process.
+Software error.
+
+"swtchu not locked"
+u. area was being mapped to pages which were not locked.
+Software error.
+
+"swtchu swapped out"
+u. area was being mapped to pages not in memory.  Software error.
+
+"stray interrupt"
+Interrupt from nowhere discernable --- currently not possible.
+
+"supervisorabort"
+An illegal page fault in supervisor mode occurred.  Hardware/software.
+
+"swapout"
+Swapout tried to swap out the current process or a process not in memory.
+Software error.
+
+"Timeout"
+Out of timeout structures (They are not being used now, so you shouldn't see this)
+
+"trap"
+Random "impossible" trap, usually from kernel mode. Trap type and other goodies
+are printed out.
+
+"trylockfile"
+Xpagein was given invalid arguments.
+
+"tryunlockfile"
+Xunlock was given invalid arguments.
+
+"ttyrub"
+Tryed to crt delete a character of unkown (e.g. out of subrange) type.
+Never happens.
+
+"unknownabort"
+Aborttrap found unknown mmu msr status for an abort.
+
+"unlock err for u."
+Couldn't find the physical address for a u. page.
+
+"wakeup"
+Wakeup called with a process on the run queue or not sleeping or stopped.
+Software error.
+
+"xpagein"
+Xpagein couldn't page in a page of text.  Hardware/software.
+

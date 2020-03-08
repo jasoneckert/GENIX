@@ -1,0 +1,32 @@
+.ig
+	@(#)su1.1	1.4	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH SU1 1
+.SH NAME
+su1 \- substitute user id for one command
+.SH SYNOPSIS
+.B su1
+[ -userid ] command [ arg ... ]
+.SH DESCRIPTION
+.I Su1
+demands the password of the specified
+.I userid,
+and if it is given,
+changes to that 
+.I userid
+and executes the specified command without changing
+the current directory or user environment.  The
+new user ID stays in force until the command exits.
+.PP
+If no 
+.I userid
+is specified, `root' is assumed.
+.SH "SEE ALSO"
+su(1)
+.SH BUGS
+Local administrative rules cause restrictions to
+be placed on who can
+.I su1
+to `root', even with the root password.
+These rules vary from site to site.

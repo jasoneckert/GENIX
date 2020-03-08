@@ -1,0 +1,164 @@
+.ig
+	@(#)tc.4	1.5	7/6/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH TC 4
+.SH NAME
+tc \- Streaming tape controller interface
+.SH DESCRIPTION
+The files
+.I "tc0, ntc0, tc8, rtc0, nrtc0, rtc8"
+refer to the streaming tape drive of the NS16000 hardware.  A streaming
+tape interface is not a standard magnetic tape interface.  There are some
+fundamental differences between the two, but the kernel tries to make the
+differences as small as possible for the non-raw device.  Therefore many
+tape programs can use the streaming tape with minimal changes.
+.PP
+The following describes the differences between the streaming tape and a
+standard magnetic tape.  Normal tapes can read and write arbitrarily sized
+records, but the streaming tape can only read and write (multiple) records
+which are 512 bytes in length (one page).  Furthermore, the starting address
+for the I/O must be a multiple of 512 (i.e., it must be page-aligned).  Normal
+tapes can be backspaced (allowing the rereading of data already passed over,
+and allowing the end of tape to be indicated by writing two file marks, and
+then backspacing over one of them).  But the streaming tape cannot backspace
+(thus repositioning backwards is only possible by doing a rewind and skipping
+forwards, and the end of tape contains only a single file mark).  Finally,
+normal tapes can begin writing at any point on the tape (destroying any old
+data which existed past that point).  But the streaming tape can only write
+at the beginning or end of tape.  Any attempt to do I/O which does not meet
+the above restrictions will return an EIO error.
+.PP
+For raw tape IO, the above restrictions will probably require that existing
+programs be changed before they will work.  In particular, the page-alignment
+requirement must be met.  (For example, this problem was solved for dump and
+restor by allocating page-aligned buffers, doing I/O into them, and then
+copying the data between them and the "real" buffer area that the rest of
+the program used).
+.PP
+For non-raw I/O, the multiple of 512 bytes and the page-alignment requirements
+are automatically met, and no changes are required to the program.  This is
+because the kernel does the I/O into its own page-aligned buffer which is
+1024 bytes in length, and then copies the data between the buffer and the
+user's memory.  Thus the only effect to the program will be that a file
+written to the tape will be padded with null characters so that it is a
+multiple of 1024 bytes in size.  Programs reading the file back then should
+either know how to compute the "real" size of the file, or else be able to
+ignore the extra nulls.
+.PP
+The streaming tape device was meant to be fed data at a rapid rate, and has
+internal buffering to help keep the tape moving.  If data is not supplied
+quickly enough, the tape is stopped.  Then on the next data transfer, it is
+backspaced a record, and the I/O is performed after skipping that record.
+(Yes, the DRIVE knows how to do backspacing, but the software cannot tell it
+to do so!!)  The UNIX kernel is not able to keep supplying the tape with
+data fast enough, thus the tape speed is effectively slow.  It helps to do
+raw I/O with huge buffers (up to 40K bytes), since such a buffer is done in one
+contiguous transfer (so the backspacing is done only every 80 pages, instead
+of every other page).  The raw device must be used for such large transfers,
+since the non-raw device breaks up all I/O requests into 1024 byte chunks.
+Since records on the tape are all 512 bytes, such large buffer sizes are
+invisible to other programs.  (For example, one program can write data with 5K
+buffers, and another can read it with 10K buffers).
+.PP
+The tape cartridges used for the streaming tape hold over 20 million bytes
+(enough to do a backup of a whole disk on the NS16000 system).  There exist
+several tape functions which have no counterparts in standard tapes.  These
+are the retension and the erase functions.   The erase function reads an
+entire tape and erases it.  The retension function just reads the entire
+tape.  These are used to help prevent data errors on the tape.  Tapes should
+be erased before writing on them the first time, or if they have been
+giving many I/O errors.  Retensioning relieves the tension variations caused
+by starting and stopping the tape, and thus makes the tape read more reliably.
+.PP
+Instead of a standard write-ring which allows writing on tapes, the tape
+cartridge contains a recessed switch.  When it is pointing to "SAFE", the
+tape is write-locked.  Otherwise, it is writable.
+.PP
+The following definitions are from <sys/mtio.h>:
+.PP
+.nf
+/* mag tape io control commands */
+#define MTIOCTOP	(('m'<<8)|1)	/* do a mag tape op */
+#define MTIOCGET	(('m'<<8)|2)	/* get mag tape status */
+#define	MTIOCZERO	(('m'<<8)|10)	/* clear tape status (non-standard) */
+
+/* structure for MTIOCTOP - mag tape op command */
+struct	mtop	{
+	short	mt_op;		/* operations defined below */
+	daddr_t	mt_count;	/* how many of them */
+};
+
+/* operations */
+#define MTWEOF	0	/* write an end-of-file record */
+#define MTFSF	1	/* forward space file */
+#define MTBSF	2	/* backward space file */
+#define MTFSR	3	/* forward space record */
+#define MTBSR	4	/* backward space record */
+#define MTREW	5	/* rewind */
+#define MTOFFL	6	/* rewind and put the drive offline */
+#define MTNOP	7	/* no operation, sets status only */
+			/* the following are non-standard functions */
+#define	MTRETEN	100	/* retension tape */
+#define	MTERASE	101	/* erase whole tape */
+#define	MTDISPL	102	/* change display indicator */
+
+/* structure for MTIOCGET - mag tape get status command */
+
+struct	mtget	{
+	short	mt_type;	/* type of magtape device */
+/* the following two registers are grossly device dependent */
+	short	mt_dsreg;	/* ``drive status'' register */
+	short	mt_erreg;	/* ``error'' register */
+/* end device-dependent registers */
+	short	mt_resid;	/* residual count */
+/* the following two are not yet implemented */
+	daddr_t	mt_fileno;	/* file number of current position */
+	daddr_t	mt_blkno;	/* block number of current position */
+/* end not yet implemented */
+/* the following are non-standard totals (only cleared by MTIOCZERO) */
+	long	mt_skips;	/* files skipped */
+	long	mt_reads;	/* blocks successfully read */
+	long	mt_writes;	/* blocks successfully written */
+	long	mt_readerrors;	/* unrecoverable read errors */
+	long	mt_writeerrors;	/* unrecoverable write errors */
+	long	mt_retries;	/* retries performed (read and write) */
+};
+
+/*
+ * Constants for mt_type byte
+ */
+#define MT_ISTS		01
+#define MT_ISHT		02
+#define MT_ISTM		03
+#define	MT_ITCD		04	/* MESA TCD tape stream device */
+.fi
+.ft R
+.PP
+.I "tc0"
+and
+.I "rtc0"
+are rewound when closed; the others are not.  The tape device names which
+contain the letter "r" are raw devices; the others are non-raw devices.
+Each
+.I read
+or
+.I write
+call reads or writes the next record on the tape.
+During a read, the record size is passed
+back as the number of bytes read, provided it is no greater
+than the buffer size.
+A zero byte count is returned when a tape mark is read,
+but another read will fetch the first record of the
+new tape file.
+Attempts to read beyond the end of tape return an ENXIO error code.
+When a file open for writing is closed, a single end-of file is written.
+.SH FILES
+/dev/tc?,
+/dev/rtc?,
+/dev/ntc?
+/dev/nrtc?
+.SH "SEE ALSO"
+mt(1), tar(1), tp(1)
+.SH BUGS
+Reading to end of tape causes problems.

@@ -1,0 +1,77 @@
+.ig
+	@(#)macros	1.2	11/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.\" this is the uncommented version.  The commented one is in "macros.coms"
+.ie t .ds _ \d\(mi\u
+.el .ds _ _
+.ds , ,\ 
+.ds y (y\*,x) co-ordinates
+.ds db database
+.ds f \\f3
+.ds tc \*f/etc/termcap\fP
+.ds Es This returns ERR if it would cause the screen to scroll illegally.
+.ds Nm This has no associated \*(lq\f3mv\fP\*(rq command.
+.ie t .ds m \f3\s-2\(dg\s+2\fP
+.el .ds m [*]
+.hy WINDOW
+.he ''\*(Ln''
+.fo ''\- % \-''
+.de Un
+.b
+\s-2\\$2UNIX\\$1\s+2
+.ft
+..
+.de Ds
+.sp
+.lp
+.ev 1
+.nf
+.ft 2
+.in 0
+.di Df
+..
+.de De
+.di
+.ne \n(dn+2
+.Df
+.ev
+.ip
+..
+.de Fd
+.br
+\&\\$4
+.fi
+.b
+\&\\$1(\\$2)
+.ft
+\&\\$3
+.br
+.nf
+..
+.de Vn
+\&\\$3\c
+.i "\\$1" \\$2
+..
+.de Fn
+\&\\$3\c
+.i "\\$1(\\$4)" \\$2
+..
+.de Bq
+\&\*(lq\f3\\$1\f1\*(rq
+..
+.de $0
+.(x
+.in \\n(Xs
+\\*($n \\$1
+.)x
+..
+.de $1
+.nr Xs 0
+..
+.de $2
+.nr Xs 3
+..
+.de $3
+.nr Xs 6
+..

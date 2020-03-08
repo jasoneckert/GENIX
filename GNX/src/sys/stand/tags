@@ -1,0 +1,217 @@
+BADR	dcusaio.c	?^#define BADR(n) ((unsigned char *)(n))	/* byte add?
+BIC	restor.c	?^#define	BIC(i,w)	(MWORD(w,i) &= ~MBIT(i))$?
+BIS	restor.c	?^#define	BIS(i,w)	(MWORD(w,i) |=  MBIT(i))$?
+BIT	restor.c	?^#define	BIT(i,w)	(MWORD(w,i) & MBIT(i))$?
+DCUD_DHS	dcusaio.c	?^#define	DCUD_DHS(drive,head,sector) (((drive)<<13)?
+DCUD_DRIVE	dcusaio.c	?^#define	DCUD_DRIVE(drive)	((drive)<<13)$?
+DCUD_ENABLE	dcusaio.c	?^#define	DCUD_ENABLE(bit)	((DCUC_ENABLE<<8)|((bit)<?
+DCUD_FORMAT	dcusaio.c	?^#define	DCUD_FORMAT(drive,head,uploz,uplonz) \\$?
+DCUD_SETBURST	dcusaio.c	?^#define	DCUD_SETBURST(burst,interleave) (((interle?
+DD	dcusize.c	?^#define	DD(name, s_t, t_c, c_u, ploz, plonz, pt) \\?
+GETB	dcusaio.c	?^#define	GETB(d,i) (((unsigned char *)(&d))[i])	/* ?
+HASH	dcutest.c	?^#define HASH(seed)	(((seed) * 1103515245 + 12345) ?
+MBIT	restor.c	?^#define	MBIT(i)	(1<<((unsigned)(i-1)%MLEN))$?
+MWORD	restor.c	?^#define	MWORD(m,i) (m[(unsigned)(i-1)/MLEN])$?
+Mboot	boot.c	?^main()$?
+Mcat	cat.c	?^main()$?
+Mcopy	copy.c	?^main()$?
+Mdcutest	dcutest.c	?^main()$?
+Mdiskcopy	diskcopy.c	?^main()$?
+Micheck	icheck.c	?^main(argc, argv)$?
+Mls	ls.c	?^main()$?
+Mmkfs	mkfs.c	?^main(argc, argv)$?
+Mrestor	restor.c	?^main(argc, argv)$?
+STATUS0	dcusaio.c	?^#define	STATUS0(data)	(((data)>>2)&3)	/* macro to ?
+WADR	tcusaio.c	?^#define	WADR(n)	((unsigned short *)(n))	/* word ad?
+_stop	sys.c	?^_stop(s)$?
+advancesector	dcutest.c	?^advancesector()$?
+alloc	dcutest.c	?^alloc(size)$?
+assert	rs232.c	?^assert(x) /* epascal leftovers */$?
+atol	atol.c	?^atol(p)$?
+autoconfig	dcusaio.c	?^autoconfig(unit)$?
+badblk	mkfs.c	?^badblk(bno)$?
+badcmd	dcutest.c	?^badcmd(str)$?
+balloc	restor.c	?^balloc()$?
+beep	rs232.c	?^beep(x) /* epascal leftovers */$?
+bflist	mkfs.c	?^bflist()$?
+bfree	icheck.c	?^bfree(bno)$?
+bitout	dcutest.c	?^bitout(string, data)$?
+bmap	restor.c	?^bmap(iaddr, bn)$?
+bread	icheck.c	?^bread(bno, buf, cnt)$?
+bwrite	icheck.c	?^bwrite(bno, buf)$?
+cfile	mkfs.c	?^cfile(par)$?
+check	icheck.c	?^check(file)$?
+checki	rs232.c	?^checki() /* epascal check input */$?
+checknum	dcutest.c	?^checknum(cmd, ch)$?
+checksum	restor.c	?^checksum(b)$?
+checktype	restor.c	?^checktype(b, t)$?
+checkvol	restor.c	?^checkvol(b, t)$?
+chk	icheck.c	?^chk(bno, s)$?
+clearbuf	restor.c	?^clearbuf(cp)$?
+clearcounts	dcutest.c	?^clearcounts()$?
+close	sys.c	?^close(fdesc)$?
+clri	restor.c	?^clri(ip)$?
+cmdinit	dcutest.c	?^cmdinit()$?
+compare	dcutest.c	?^compare(addr1, addr2, iosize)$?
+configure	dcusaio.c	?^configure(unit)$?
+copyunix	boot.c	?^copyunix(howto, io)$?
+dcopen	dc.c	?^dcopen(io)$?
+dcstrategy	dc.c	?^dcstrategy(io,func)$?
+dcucommand	dcusaio.c	?^dcucommand(opcode, data)$?
+devclose	conf.c	?^devclose(io)$?
+devopen	conf.c	?^devopen(io)$?
+devread	conf.c	?^devread(io)$?
+devwrite	conf.c	?^devwrite(io)$?
+dieclose	ie.c	?^dieclose(io)$?
+dieopen	ie.c	?^dieopen (io)$?
+diestrategy	ie.c	?^diestrategy(io,func)$?
+direq	restor.c	?^direq(s1, s2)$?
+diskread	icheck.c	?^diskread(bno, buf, cnt)$?
+dlook	sys.c	?^dlook(s, io)$?
+docommand	dcutest.c	?^docommand()$?
+dodiskio	dcusaio.c	?^dodiskio(writeflag, unit, sector, count, address)$?
+doformat	dcusaio.c	?^doformat(unit, cylinder, track)$?
+dohelp	dcutest.c	?^dohelp()$?
+dointerleave	dcusaio.c	?^dointerleave(value)$?
+doio	dcutest.c	?^doio(writeflag, sector, iosize, address)$?
+doit	restor.c	?^doit(command, argc, argv)$?
+done	restor.c	?^done()$?
+doretension	tcusaio.c	?^doretension()$?
+dorewind	tcusaio.c	?^dorewind()$?
+doseek	dcusaio.c	?^doseek(unit, cylinder)$?
+doselftest	dcusaio.c	?^doselftest()$?
+doskipfile	tcusaio.c	?^doskipfile()$?
+dostatus	dcutest.c	?^dostatus()$?
+dotapeio	tcusaio.c	?^dotapeio(writeflag, count, address)$?
+dowritemark	tcusaio.c	?^dowritemark()$?
+dread	restor.c	?^dread(bno, buf, cnt)$?
+dumpiocb	dcutest.c	?^dumpiocb(io)$?
+dumplog	dcutest.c	?^dumplog()$?
+dumppage	dcutest.c	?^dumppage(address, sector)$?
+dumppartitions	dcutest.c	?^dumppartitions(unit)$?
+dumpsense	dcutest.c	?^dumpsense(data)$?
+dumptypes	dcutest.c	?^dumptypes()$?
+dumpunits	dcutest.c	?^dumpunits()$?
+dumpvalues	dcutest.c	?^dumpvalues()$?
+duped	icheck.c	?^duped(bno)$?
+dwrite	restor.c	?^dwrite(bno, b)$?
+entry	mkfs.c	?^entry(inum, str, adbc, db, aibc, ib)$?
+fdisksize	sys.c	?^fdisksize(fdesc)$?
+fill	dcutest.c	?^fill(addr, iosize, seed)$?
+find	sys.c	?^find(path, file)$?
+flsh	restor.c	?^flsh()$?
+flsht	restor.c	?^flsht()$?
+format	dcutest.c	?^format(lowcyl, highcyl)$?
+formattrack	dcutest.c	?^formattrack(unit, cyl, trk, reterror)$?
+getc	sys.c	?^getc(fdesc)$?
+getch	mkfs.c	?^getch()$?
+getchar	rs232.c	?^getchar()$?
+getdino	restor.c	?^getdino(inum, b)$?
+getent	restor.c	?^getent(bf)$?
+getfile	restor.c	?^getfile(n, f1, f2, size)$?
+gethead	restor.c	?^gethead(buf)$?
+getnum	mkfs.c	?^getnum()$?
+gets	gets.c	?^gets(buf)$?
+getstr	mkfs.c	?^getstr()$?
+gmode	mkfs.c	?^gmode(c, s, m0, m1, m2, m3)$?
+ibread	ieeio.c	?^ibread(xib,slen)$?
+ibwrite	ieeio.c	?^ibwrite(xib,slen)$?
+ieclose	ieeio.c	?^ieclose(fildes)$?
+iecreat	ieeio.c	?^iecreat(name,mode)$?
+ieexit	ieeio.c	?^ieexit()$?
+ieinit	ieeio.c	?^ieinit()$?
+ielseek	ieeio.c	?^ielseek(fildes,offset,whence)$?
+ieopen	ieeio.c	?^ieopen(name,mode)$?
+ieread	ieeio.c	?^ieread(fildes,buffer,nbytes)$?
+iereset	ieeio.c	?^iereset()$?
+ieretry	ieeio.c	?^ieretry()$?
+iesetwaddr	ieeio.c	?^iesetwaddr(theaddr)$?
+iespy	ieeio.c	?^iespy() {$?
+iesrq	ieeio.c	?^iesrq() $?
+iewrite	ieeio.c	?^iewrite(fildes,buffer,nbytes)$?
+inblock	ieeio.c	?^inblock(buffer,nbytes)$?
+inittcunit	tcusaio.c	?^inittcunit()$?
+initunit	dcusaio.c	?^initunit(unit)$?
+iput	mkfs.c	?^iput(ip, aibc, ib)$?
+ishead	restor.c	?^ishead(buf)$?
+itrunc	restor.c	?^itrunc(ip)$?
+l3tol	l3tol.c	?^l3tol(lp, cp, n)$?
+logcmp	dcutest.c	?^logcmp(e1, e2)$?
+logerror	dcutest.c	?^logerror(sector, status, type)$?
+ls	ls.c	?^ls(io)$?
+lseek	sys.c	?^lseek(fdesc, addr, ptr)$?
+ltol3	ltol3.c	?^ltol3(cp, lp, n)$?
+makefree	icheck.c	?^makefree()$?
+match	sys.c	?^match(s1,s2)$?
+min	icheck.c	?^#define min(x,y) (((x)<(y))\?(x):(y))$?
+more	dcutest.c	?^more()$?
+movebuf	icheck.c	?^movebuf(dest, src, len)$?
+mseek	restor.c	?^mseek(pt)$?
+newblk	mkfs.c	?^newblk(adbc, db, aibc, ib)$?
+null	restor.c	?^null() {;}$?
+nullsys	conf.c	?^nullsys(io)$?
+open	sys.c	?^open(str, how)$?
+openi	sys.c	?^openi(n,io)$?
+optdummy	dcusaio.c	?^optdummy() {}$?
+outblock	ieeio.c	?^outblock(buffer,nbytes)$?
+pass1	icheck.c	?^pass1(ip)$?
+printf	prf.c	?^printf(fmt, x1)$?
+printn	prf.c	?^printn(n, b)$?
+printx	prf.c	?^printx(x)$?
+psearch	restor.c	?^psearch(n)$?
+putchar	rs232.c	?^putchar(c)$?
+putdino	restor.c	?^putdino(inum, b)$?
+putdir	restor.c	?^putdir(b)$?
+putent	restor.c	?^putent(cp)$?
+qs1	qsort.c	?^qs1(a, l)$?
+qsexc	qsort.c	?^qsexc(i, j)$?
+qsort	qsort.c	?^qsort(a, n, es, fc)$?
+qstexc	qsort.c	?^qstexc(i, j, k)$?
+random	dcutest.c	?^random(range)$?
+rdfs	mkfs.c	?^rdfs(bno, bf)$?
+read	sys.c	?^read(fdesc, buf, count)$?
+readbackup	dcutest.c	?^readbackup()$?
+readbits	restor.c	?^readbits(m)$?
+readc	restor.c	?^readc()$?
+readchar	dcutest.c	?^readchar()$?
+readcheck	dcutest.c	?^readcheck()$?
+readhdr	restor.c	?^readhdr(b)$?
+readhex	dcutest.c	?^readhex()$?
+readinteger	dcutest.c	?^readinteger()$?
+readnumber	dcutest.c	?^readnumber(defval)$?
+readsectornumber	dcutest.c	?^readsectornumber(defval)$?
+readtape	restor.c	?^readtape(b)$?
+realdiskio	dcusaio.c	?^realdiskio(opcode, unit, disksector, count, addr)$?
+reconfigure	dcutest.c	?^reconfigure(unit)$?
+resetaddr	ieeio.c	?^resetaddr(theaddr)$?
+resetparameters	dcutest.c	?^resetparameters()$?
+rstrfile	restor.c	?^rstrfile(b, s)$?
+rstrskip	restor.c	?^rstrskip(b, s)$?
+rtransfer	ieeio.c	?^rtransfer(ibt)$?
+sbmap	sys.c	?^sbmap(io, bn)$?
+search	restor.c	?^search(inum, cp)$?
+setbounds	dcutest.c	?^setbounds(low, high)$?
+setploz	dcutest.c	?^setploz(unit, ploz, plonz)$?
+setunit	dcutest.c	?^setunit(unit)$?
+setxy	rs232.c	?^setxy(x,y) /* epascal leftovers */$?
+sget	rs232.c	?^sget()$?
+signal	fake.c	?^signal() {$?
+skip	restor.c	?^skip()$?
+sput	rs232.c	?^sput(c)$?
+stdio	rs232.c	?^stdio() /* epascal leftovers */$?
+strcpy	strcpy.c	?^strcpy(s1, s2)$?
+tcclose	tc.c	?^tcclose(io)$?
+tcopen	tc.c	?^tcopen(io)$?
+tcstrategy	tc.c	?^tcstrategy(io,func)$?
+tcucommand	tcusaio.c	?^tcucommand(opcode)$?
+tcudoio	tcusaio.c	?^tcudoio(opcode, opdata, argcount, argptr)$?
+tcudummy	tcusaio.c	?^tcudummy() {}$?
+tcuwait	tcusaio.c	?^tcuwait()$?
+tloop	restor.c	?^tloop(bn, f1, f2)$?
+trap	sys.c	?^trap(ps)$?
+typeprompt	dcutest.c	?^typeprompt()$?
+write	sys.c	?^write(fdesc, buf, count)$?
+writec	restor.c	?^writec(c)$?
+writeheader	dcutest.c	?^writeheader(unit)$?
+wtfs	mkfs.c	?^wtfs(bno, bf)$?
+xtrfile	restor.c	?^xtrfile(b, size)$?

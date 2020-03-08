@@ -1,0 +1,552 @@
+.ig
+	@(#)dbmon	1.5	9/23/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.he "'Dbmon Reference''%'"
+.nr sf 3
+.de $0
+.(x
+\\$2	\\$1
+.)x
+..
+.tp
+.sp 3i
+.sz 12
+.(l C
+\f3Dbmon Reference Manual
+.sp 1.5i
+September, 1983\fP
+.)l
+.bp
+.sz 8
+.sh 1 "Introduction"
+.lp
+This document describes National Semiconductor's monitor, \f2dbmon\fP.
+\f2Dbmon\fP is designed to be used in a NS16000\s4\uTM\d\s0\-based
+microcomputer.
+.(f
+G\s-2ENIX\s0, and NS16000
+are trademarks of National Semiconductor Corporation.
+.)f
+It is tailored for use in remote debugging of the microcomputer
+with \f2ddt\fP(1) running on a host system.
+(\f2Ddt\fP is available as part of the \s-2GENIX\s0\s4\uTM\d\s0
+Cross-Support package for
+a VAX\**
+running \s-2UNIX\s0\**,
+.(f
+\** VAX is a trademark of Digital Equipment Corporation
+.)f
+.(f
+\** U\s-2NIX\s0 is a trademark of Bell Laboratories.
+.)f
+or with \s-2GENIX\s0 running on an NS16000 based
+system.)
+.sp
+In addition to running with \f2ddt\fP, \f2dbmon\fP can also be used
+directly either from a terminal connected to the target system or from
+a terminal connected to the host, but with the program \f2cu16\fP(1)
+.(f
+G\s-2ENIX\s0 was derived from 4.1bsd which was developed at the
+University of California at Berkeley.
+.)f
+.(f
+The information in this document is for reference only and is subject
+to change without notice.
+.)f
+(see also: GENIX Cross-Support Software for an NS16000-based System)
+managing the serial line between the host and the target
+system.
+Since the monitor commands are tailored for use with \f2ddt\fP, some
+of the commands may be inconvenient when entered directly by the
+user.
+.sp
+A typical application of the monitor would be in a DB16000 board
+connected to a VAX by a serial line.
+Information specific to this application is included in this document.
+For this application, \f2dbmon\fP replaces the monitor supplied with
+the DB16000.
+It provides functions for debugging similar 
+to those supplied by other DB16000 monitors.
+Except for loading and executing programs, \f2dbmon\fP
+does not provide operating system functions.
+.sh 1 "Notation Conventions"
+.lp
+Certain characters are specified symbolically in this document:
+.(b
+$    = escape
+<cr> = return
+<lf> = line feed (control/j)
+<bs> = backspace
+.)b
+.sh 1 "Configuration"
+.lp
+\f2Dbmon\fP's actions may depend upon the setting of 
+hardware configuration
+switches on the target board.
+The symbol \f2options\fP in the monitor source listing file
+\f2rom.S\fP is used to store the address of the location the monitor checks to
+determine the state of the option switches.
+.lp
+The \*(lqset\*(rq position of a switch is the 
+logical 1 or true position.
+.lp
+Switch\ 2 is the only one significant switch on the DB16000 board. 
+If set,
+typed characters will be echoed,
+and an <lf> will be echoed after each <cr>.
+If not set, characters are not echoed.
+.lp
+Both \f2ddt\fP and \f2cu16\fP require that switch\ 2 be set.
+.lp
+Switch\ 2 is set if the switch is in the
+\*(lqopen\*(rq or \*(lqoff\*(rq position.
+(Switch\ 2 is one of the subswitches of switch\ 3, the baud rate/
+configuration switch.)
+.sh 1 "Running Mode"
+.lp
+The monitor runs in supervisor mode.  
+By default, a user program loaded with \f2dbmon\fP
+starts in supervisor mode, though with the stack pointer
+set to SP1 (user stack pointer).
+However, the program may be started in user mode by first 
+changing the setting of the
+PSR with the command \*(lqcpsr=0b00\*(rq.
+.sh 1 "Command Input Protocol"
+.lp
+The monitor reads lines up to a <cr>. Commands are not
+executed until the <cr> is typed.  <lf> characters are ignored.
+.sp
+The backspace character may be used to delete previously typed input.
+The escape key will abort commands at any time.
+It will also discard any
+input and terminate a control/q wait.
+.sp
+All numeric quantities
+are entered in hex.
+Spaces may be inserted before any number.
+.sp
+Commands and hex numbers may be typed in upper or lower case.
+.lp
+The monitor's output may be suspended with control/s and resumed with
+control/q.
+.sh 1 "Memory Organization"
+.lp
+\f2Dbmon\fP requires no RAM except for space on the interrupt stack.
+The interrupt stack begins at 64k on the DB16000.
+.lp
+A program which moves the interrupt stack may
+still reenter \f2dbmon\fP;
+it does not matter where the stack is in RAM when the monitor is entered.
+.sp 1
+.(b
+.TS
+box center tab(/);
+cf3 s s s
+c|c|c|c
+l|l|l|n.
+Initial Memory Organization
+System/Area/Low/High
+_
+DB16000/Interrupt Stack/~ 63.8k/64k
+DB16000/User Stack/N.A./60k
+.TE
+.)b
+.sp 1
+The monitor runs in supervisor mode
+and always uses the interrupt stack. A program can run in
+either mode with either stack.
+There are two reasonable stack configurations for the monitor
+and program:
+.np
+Program uses SP1 and separate memory locations are reserved for each stack.
+.np
+Program uses SP0 (program and monitor run on the same stack).
+.lp
+In the first case, the program must avoid the memory used by the
+interrupt stack, because those locations will be overwritten when
+the monitor is entered.
+.lp
+In the second case, the program can allocate memory anywhere;
+however, if the program fails because its stack is not in RAM,
+the monitor will also fail.
+.lp
+The first case is \f2dbmon's\fP initial organization.
+Specify \*(lqcps=0\*(rq to change to case
+two. 
+.ns
+.sh 1 "\f2Dbmon\fP Commands"
+.lp
+In the following command descriptions,
+lower-case letters represent literal character input and
+upper-case letters are used to indicate parameters,
+while either case is actually allowed in the command.
+.lp
+The commands groups are as follows:
+.ip \(bu
+memory and register print commands
+.ip \(bu
+memory and register change commands
+.ip \(bu
+read and write MMU registers commands
+.ip \(bu
+set configuration register command
+.ip \(bu
+group data commands, e.g., move, fill and load blocks of memory
+.ip \(bu
+program execution control commands
+.ip \(bu
+additional commands
+.ip \(bu
+test commands
+.ip \(bu
+reserved commands
+.lp
+Note:  The print and change virtual-memory commands require an
+NS16082 MMU chip.
+.sh 2 "Print Commands"
+.lp
+The contents of
+memory and the registers may be printed with the following commands:
+.nr aa \w'l A DDDDDDCCbw'
+.(b
+.ta \n(aau+(2n)
+\f3all	\fP- Print all the registers.
+\f3ppsr	\fP- Print the processor status register.
+\f3psb	\fP- Print the static base register.
+\f3pis	\fP- Print the interrupt stack pointer (SP0).
+\f3pmod	\fP- Print the mod register.
+\f3pfp	\fP- Print the frame pointer.
+\f3pus	\fP- Print the user stack pointer (SP1).
+\f3psp	\fP- Print the user stack pointer (SP1).
+	\ \ Note: \f3pus\fP and \f3psp\fP are functionally identical.
+\f3pintbase	\fP- Print the interrupt base register.
+\f3prN	\fP- Print general register N.
+\f3ppc	\fP- Print the program counter.
+\f3pmbA	\fP- Print one byte of memory at address A.
+\f3pmwA	\fP- Print one word of memory at address A.
+\f3pmdA	\fP- Print one double-word of memory at address A.
+\f3pvbA	\fP- Print one byte of memory at virtual address A.
+\f3pvwA	\fP- Print one word of memory at virtual address A.
+\f3pvdA	\fP- Print one double-word of memory at virtual 
+	\ \ address A.
+.)b
+.ns
+.lp
+Note that the \*(lq\f3p\fP\*(rq commands are constructed in the following way:
+the letter \f3p\fP followed by a register name, e.g., \f3fp\fP or \f3r1\fP
+or\f3 m\fP for
+physical memory, or \f3v\fP for virtual memory.  The \f3m\fP or \f3v\fP
+is then followed
+by a 
+.b b
+,
+.b w
+,or 
+.b d
+for byte, word or double-word and then the address of
+interest.
+.lp
+All register names may be abbreviated to two characters, e.g.,
+.b in 
+for
+.b intbase.
+.sh 2 "Change Commands"
+.lp
+Memory and registers may be changed with the following commands:
+.(b
+.ta \n(aau+(2n)
+\f3cpsr=V	\fP- Change the processor status register to value V.
+\f3cmod=V	\fP- Change the mod register to value V.
+\f3cfp=V	\fP- Change the frame pointer to value V.
+\f3cus=V	\fP- Change the user stack pointer (SP1) to value V.
+\f3csp=V	\fP- Change the user stack pointer (SP1) to value V.
+	\ \ Note: \f3cus\fP and \f3csp\fP are functionally identical.
+\f3cintbase=V	\fP- Change the interrupt base register to value V.
+\f3crN=V	\fP- Change general register N to value V.
+\f3cpc=V	\fP- Change the program counter to value V.
+\f3cmbA=V	\fP- Change one byte of memory at address A to value V.
+\f3cmwA=V	\fP- Change one word of memory at address A to value V.
+\f3cmdA=V	\fP- Change one double-word of memory at address A
+	\ \ to value V.
+\f3cvbA=V	\fP- Change one byte of memory at virtual address A 
+	\ \ to value V.
+\f3cvwA=V	\fP- Change one word of memory at virtual address A 
+	\ \ to value V.
+\f3cvdA=V	\fP- Change one double-word of memory at virtual 
+	\ \ address A to value V.
+.)b
+Note that the \*(lq\f3c\fP\*(rq commands are constructed in the same manner
+as the \*(lq\f3p\fP\*(rq commands.
+.lp
+All register names may be abbreviated to two characters, e.g.,
+\*(lq\f3mo\fP\*(rq
+for \*(lq\f3mod\fP\*(rq.
+.sp
+There is no change register command for the interrupt stack
+or static base registers. The interrupt stack pointer can be changed
+with a supervisor mode program; the static base register can be changed
+by altering the module entry selected by the mod register.
+.lp
+.ns
+.sh 2 "MMU Commands"
+.lp
+The MMU registers are read from, and written to, with:
+.(b
+.ta \n(aau+(2n)
+\f3wN=V	\fP- Write value V to MMU register N.
+\f3rN	\fP- Read (and print) MMU register N
+	  (the registers and the correspnding value of N: 
+	  bpr0=0 bpr1=1 pf0=4 pf1=5 sc=8 msr=a bcnt=b 
+	  ptb0=c ptb1=d eia=f)
+.)b
+.ns
+.sh 2 "Configuration Register Command"
+.lp
+The configuration can be changed with the \*(lq\f3x\fP\*(rq command:
+.(b
+.ta \n(aau+(2n)
+\f3xV	\fP- execute a setcfg instruction for configuration V
+	  (icu=1 fpu=2 mmu=4)
+.)b
+.ns
+.ne 10
+.sh 2 "Data Commands"
+.lp
+.(b
+.ta \n(aau+(2n)
+\f3m A1 A2 N	\fP- Move N bytes from A1 to A2.
+\f3m A1 A2 N [bwd]	\fP- Move N bytes, words, or double-words from A1 to A2.
+\f3f A1 A2 DD	\fP- Fill memory from A1 to A2 with data byte DD.
+\f3f A1 A2 V [bwd]	\fP- Fill memory from A1 to A2 with byte, word, or 
+	\ \ double-word value V.
+.)b
+.(b I F
+.in +\n(aau+(4n)
+.ta \n(aau+(2n)
+.ti 4n
+\f3d\ A1\ N\fP	-
+Dump (print) \f3N\fP bytes of memory starting at \f3A1\fP. The format
+for the output
+of this command 
+is the same as the format for input to the load command.
+.sp
+Note:  Although
+the data is printed in 8-digit groups, these groups are not
+double-words, as the order of the bytes is from the least
+significant to the most significant which is the reverse of the order
+for double-words.
+.)b
+.(b I F
+.in +\n(aau+(4n)
+.ta \n(aau+(2n)
+.ti 4n
+\f3l A DDDDDDCC\fP	-
+Load bytes DD... starting at address A. Bytes are represented 
+by pairs of hex digits, up to 16 data bytes (32 hex characters) per line.
+The line is terminated by a check sum
+byte, which is the 2-digit hex representation
+of the 8-bit sum of the data bytes on the line. If the
+transmitted checksum does not match the computed checksum,
+the message \f3E CRC\fP is printed with the value of the
+computed checksum. 
+.)b
+.(b I F
+.in +\n(aau+(4n)
+.ta \n(aau+(2n)
+.ti 4n
+\f3image\fP	-
+Start the binary image loader. The image loader reads
+a header, data bytes, and then a 1-byte checksum from
+the serial line. The header consists of a 32-bit starting
+address and a 32-bit length value. These parameters are sent
+as 8-bit bytes, least significant byte first. The length
+parameter specifies the number of data bytes, to be transferred
+as 8-bit binary bytes.  The check sum is also transferred as an 8-bit byte.
+<Esc>, <bs>, and control/s have no
+special meaning in this mode.
+.sp
+If \*(lq\f3i\fP\*(rq is typed from the keyboard,
+the DB16000 will probably need to be reset.
+Entering
+ten null bytes for an address, length, and checksum of zero
+may prevent the need for resetting the board, but only if the terminal
+uses even parity.
+.)b
+.in 0
+.sh 2 "Program Execution Commands"
+.lp
+.(b
+\f3s	\fP- Single-step:  execute the instruction at the 
+	\ \ current pc.
+.B2
+\f3g	\fP- Start the program (with the current pc).
+.B2
+\f3q	\fP- Do a nonsequential fetch step, using NS16082 MMU.
+.)b
+.sh 2 "Additional Commands"
+.lp
+.(b
+\f3v A1 L	\fP- Compute and print the 32-bit checksum of the \f3L\fP
+	\ \ bytes beginning at address \f3A1\fP
+.B2
+\f3! 	\fP- Ignore the remainder of a line.  Useful for
+	\ \ comments when \f2dbmon\fP commands are 
+	\ \ stored in a file.
+.)b
+.sh 2 "Test Commands"
+.lp
+.(b
+\f3t1 	\fP- Run test 1. This test probes the RAM configuration 
+	\ \ at every 4k interval, up to 2^20 bytes.  The test 
+	\ \ reports the first and last address of available 
+	\ \ memory and possibly the last address checked.
+.B2
+\f3t2 A N	\fP- Run test 2 starting at address A for N bytes. 
+	\ \ This test runs the memory diagnostics described
+	\ \ in Section 9.
+.)b
+.sh 1 "NS16082 MMU Dependencies"
+.lp
+There are two versions of \f2dbmon\fP supplied in PROM.
+The first version, \f2dbmon1\fP, is for use in systems with an NS16082
+MMU;
+the second version, \f2dbmon2\fP, is for use in systems without an MMU.
+.sp
+The monitor program source file, \f3rom.S\fP, contains the source for the
+version which uses the MMU.
+The \f3rom.S\fP file can be modified to produce a custom monitor.
+If the custom monitor is not to be dependent on an MMU,
+a search for the name \f3NOMMU\fP in the source file will find
+comments indicating lines which need to be deleted for non-MMU systems.
+Do not use
+the commands \f3pv[b,w,d], cv[b,v,d], q, r#,\fP and \f3w#\fP
+when running a monitor built without those source lines.
+These commands use the MMU slave instructions and will cause an
+undefined trap
+in a program modified for no MMU.
+.sh 1 "Memory Testing"
+.lp
+The \*(lq\f3t2\fP\*(rq command starts test two, 
+the memory test sequence.
+Eight
+subtests are run in sequence; the sequence
+is restarted
+after the last subtest.
+The tests destroy the original contents of the addresses checked.
+The memory test itself uses no RAM;
+however, if a failure is found, RAM
+locations on the stack are used temporarily by
+the formatted output routines.
+If an error occurs and the stack is within the memory range being
+checked, spurious
+errors may be reported in addition to any actual errors.
+The first
+error reported will always be a real error.
+.sh 2 "Test Patterns"
+.lp
+Each of the subtests cycles through seven patterns (see Table 1).
+.sp 2
+.ce
+Table 1.  Memory Test Patterns In Hexidecimal
+.sp
+.TS
+box center tab(/);
+c|c|c
+n|l|l.
+No./Pattern/Function
+_
+1./00000000/all zeros
+2./ffffffff/all ones
+3./aaaaaaaa/adjacent bits different
+4./55555555/adjacent bits different
+5./11224488/a different high in each byte
+6./eeddbb77/a different low in each byte
+7./39a7c736/miscellaneous bits
+.TE
+.sh 2 "Test Sequence"
+.lp
+Each subtest prints its name as it starts
+(see Table 2).
+.sp 2
+.ce
+Table 2.  Memory Tests
+.sp
+.TS
+box center tab(/);
+c|c|c|c
+n|l|l|l.
+No./Name/Context/Test
+_
+1./parity/words/parity(address) xor pattern
+2./addr ->/double-words/address xor pattern, low to high
+3./addr <-/double-words/address xor pattern, high to low
+4./doubles/double-words/pattern
+5./e. words/even words/pattern
+6./e. bytes/even bytes/pattern
+7./load/doubles/high transfer rate
+.TE
+.ne 14
+.sh 2 "Test Failures"
+.lp
+When a test fails, a message is printed with the following format:
+.(b
+\f3
+Failure(=addr=xor=test=mem)=AAAA=XXXX=TTTT=MMMM
+\fP
+.)b
+.ip "\f3AAAA\fP"
+- address containing incorrect data.
+.ip "\f3XXXX\fP"
+- pattern used to provide the current test variation.
+.ip "\f3TTTT\fP"
+- expected contents of memory.
+.ip "\f3MMMM\fP"
+- actual contents of memory.
+.sh 2 "Memory Test 1: Address Parity"
+.lp
+This test computes even parity for each word address. The parity bit
+is then extended to form 16 bits of zeros or ones; and the
+exclusive-or of this value and the current pattern is written to
+the word.
+.lp
+The words are checked on a second pass.
+.sh 2 "Memory Test 2: Increasing Addresses"
+.lp
+For each double-word address, this test writes the exclusive-or
+of the pattern and the address to the double-word. The
+addresses are written to in increasing order from the base address.
+They are checked on a
+second pass.
+.sh 2 "Memory Test 3: Decreasing Addresses"
+.lp
+This test is similar to Memory Test 2, but the addresses are written
+to
+in decreasing order of address, starting from the base address.
+The addresses are checked, in increasing order, on a second pass.
+.sh 2 "Memory Test 4: Double Words"
+.lp
+Test 4 writes each pattern into each double-word.
+.sh 2 "Memory Test 5: Even Words"
+.lp
+The lower word of each pattern is written to each even word.
+.sh 2 "Memory Test 6: Even Bytes"
+.lp
+The lower byte of each pattern is written to each even byte.
+.sh 2 "Memory Test 7: Load"
+.lp
+A sequence of double-word string moves are generated in order
+to test the memory system with a constant high transfer rate.
+This test uses memory parity hardware to detect errors.
+If the target board does not have memory parity hardware, the test is
+not useful.
+.hx 
+.bp
+.sp 6
+.(l C
+Dbmon Reference Manual
+.)l
+.sp 1.5i
+.tl ''Table of Contents''
+.sp 4
+.xp

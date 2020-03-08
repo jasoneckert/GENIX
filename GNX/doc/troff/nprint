@@ -1,0 +1,7 @@
+nroff   $* m.mac m0 > troff.lpr
+tbl m0a | nroff   $* m.mac - >> troff.lpr
+tbl m[1234] | nroff   $* m.mac - >> troff.lpr
+nroff   $* m.mac m5 >> troff.lpr
+nroff   $* m.mac table1 >> troff.lpr
+nroff   $* m.mac table2 >> troff.lpr
+nroff  $* m.mac add >> troff.lpr

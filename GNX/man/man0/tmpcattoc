@@ -1,0 +1,341 @@
+admin(1) admin: create and administer SCCS files.
+ar(1) ar: archive and library maintainer.
+asm(1) asm: Mesa NS16000 assembler.
+at(1) at: execute commands at a later time.
+basename(1) basename: strip filename affixes.
+bc(1) bc: arbitrary-precision arithmetic language.
+bdiff(1) bdiff: big diff.
+cal(1) cal: print calendar.
+calendar(1) calendar: reminder service.
+cat(1) cat: catenate and print.
+cb(1) cb: C program beautifier.
+cd(1) cd: change working directory.
+cdc(1) cdc: change the delta commentary of an \*(S) delta.
+checknr(1) checknr: check nroff/troff files.
+chfn(1) chfn: change full name of user.
+chghist(1) chghist: change the history entry of an SCCS delta.
+chmod(1) chmod: change mode.
+chsh(1) chsh: change default login shell.
+clear(1) clear: clear terminal screen.
+cmp(1) cmp: compare two files.
+col(1) col: filter reverse line feeds.
+colcrt(1) colcrt: filter nroff output for CRT previewing.
+colrm(1) colrm: remove columns from a file.
+comb(1) comb: combine SCCS deltas.
+comm(1) comm: select or reject lines common to two sorted files.
+compact(1) compact, uncompact, ccat: compress and uncompress files, and cat them.
+cp(1) cp: copy.
+crypt(1) crypt: encode/decode.
+csh(1) csh: a shell (command interpreter) with C-like syntax.
+ctags(1) ctags: create a tags file.
+date(1) date: print and set the date.
+dc(1) dc: desk calculator.
+dd(1) dd: convert and copy a file.
+delta(1) delta: make a delta (change) to an \*(S) file.
+df(1) df: disk free.
+diction(1) diction,explain: print wordy sentences; thesaurus for diction.
+diff(1) diff: differential file and directory comparator.
+diff3(1) diff3: 3-way differential file comparison.
+du(1) du: summarize disk usage.
+echo(1) echo: echo arguments.
+ed(1) ed: text editor.
+eqn(1) eqn, neqn, checkeq: typeset mathematics.
+ex(1) ex, edit: text editor.
+expand(1) expand, unexpand: expand tabs to spaces, and vice versa.
+expr(1) expr: evaluate arguments as an expression.
+file(1) file: determine file type.
+find(1) find: find files.
+finger(1) finger: user information lookup program.
+fold(1) fold: fold long lines for finite width output device.
+get(1) get: get a version of an SCCS file.
+gets(1) gets: get a string from standard input.
+getv(1) getv: copy files from Vax to Mesa.
+grep(1) grep, egrep, fgrep: search a file for a pattern.
+head(1) head: give first few lines.
+intro(1) intro: introduction to commands.
+kill(1) kill: terminate a process with extreme prejudice.
+lastcomm(1) lastcomm: show last commands executed in reverse order.
+leave(1) leave: remind you when you have to leave.
+lex(1) lex: generator of lexical analysis programs.
+ln(1) ln: make links.
+lock(1) lock: reserve a terminal.
+login(1) login: sign on.
+look(1) look: find lines in a sorted list.
+lpr(1) lpr, lprm, lpq, print: line printer spooler.
+ls(1) ls: list contents of directory.
+m4(1) m4: macro processor.
+make(1) make: maintain program groups.
+meld(1) meld: MESA link editor.
+mesg(1) mesg: permit or deny messages.
+mkdir(1) mkdir: make a directory.
+mkstr(1) mkstr: create an error message file by massaging C source.
+mnm(1) mnm: dump Mesa a.out file.
+more(1) more, page: file perusal filter for crt viewing.
+mt(1) mt: Magnetic tape manipulating program.
+mv(1) mv: move or rename files.
+nasm(1) nasm: Mesa NS16000 assembler.
+newgrp(1) newgrp: log in to a new group.
+nmcc(1) nmcc: C compiler.
+nmeld(1) nmeld: MESA link editor.
+nmpc(1) nmpc: New Mesa Pascal Compiler..
+nnm(1) mnm: dump Mesa a.out file.
+num(1) num: number lines.
+oasm(1) oasm: Mesa NS16000 assembler.
+od(1) od: octal dump.
+op1(1) op1: C level 1 optimizer.
+passwd(1) passwd: change login password.
+pr(1) pr: print file.
+print(1) print: pr to the line printer.
+printenv(1) printenv: print out the environment.
+prs(1) prs: print an \*(S) file.
+prt(1) prt \(em print \*(S) file.
+ps(1) ps: process status.
+ptx(1) ptx: permuted index.
+putv(1) putv: copy files from Mesa to Vax.
+pwd(1) pwd: working directory name.
+remind(1) remind: date book.
+reset(1) reset: reset the teletype bits to a sensible state.
+rev(1) rev: reverse lines of a file.
+rewind(1) rewind: rewind tape drive.
+rm(1) rm, rmdir: remove (unlink) files.
+rmdel(1) rmdel: remove a delta from an SCCS file.
+sact(1) sact: print current SCCS file editing activity.
+sccs(1) sccs: front end for the .SM SCCS subsystem.
+sccsdiff(1) sccsdiff: compare two versions of an SCCS file.
+sccshelp(1) sccshelp: ask for help about SCCS-related commands.
+sed(1) sed: stream editor.
+see(1) see: see what a file has in it.
+sh(1) sh, for, case, if, while, \fB:\fP, \fB.\fP, break, continue, cd, eval, exec, exit, export, login, newgrp, read, readonly, set, shift, times, trap, umask, wait: command language.
+size(1) size: size of an object file.
+sleep(1) sleep: suspend execution for an interval.
+soelim(1) soelim: eliminate \&.so's from nroff input.
+sort(1) sort: sort or merge files.
+split(1) split: split a file into pieces.
+strings(1) strings: find the printable strings in a object, or other binary, file.
+strip(1) strip: remove symbols and relocation bits.
+stty(1) stty: set terminal options.
+style(1) style: analyze surface characteristics of a document.
+su(1) su: substitute user id temporarily.
+sum(1) sum: sum and count blocks in a file.
+tail(1) tail: deliver the last part of a file.
+tar(1) tar: tape archiver.
+tbl(1) tbl: format tables for nroff or troff.
+tee(1) tee: pipe fitting.
+test(1) test: condition command.
+time(1) time: time a command.
+touch(1) touch: update date last modified of a file.
+tr(1) tr: translate characters.
+troff(1) troff, nroff: text formatting and typesetting.
+true(1) true, false: provide truth values.
+tset(1) tset: set terminal modes.
+tsort(1) tsort: topological sort.
+tty(1) tty: get terminal name.
+ul(1) ul: do underlining.
+unget(1) unget: undo a previous get of an SCCS file.
+uniq(1) uniq: report repeated lines in a file.
+users(1) users: compact list of users who are on the system.
+uvers(1) uvers: print kernel version.
+val(1) val: validate SCCS file.
+vc(1) vc: version control.
+vi(1) vi: screen oriented (visual) display editor based on ex.
+w(1) w: who is on and what they are doing.
+wait(1) wait: await completion of process.
+wall(1) wall: write to all users.
+wc(1) wc: word count.
+what(1) what: identify SCCS files.
+whereis(1) whereis: locate source, binary, and or manual for program.
+which(1) which: locate a program file including aliases and paths (\fIcsh\fR only).
+who(1) who: who is on the system.
+whoami(1) whoami: print effective current user id.
+write(1) write: write to another user.
+xasm(1) xasm: Mesa NS16000 assembler.
+yes(1) yes: be repetitively affirmative.
+access(2) access: determine accessibility of file.
+alarm(2) alarm: schedule signal after specified time.
+brk(2) brk, sbrk, break: change core allocation.
+chdir(2) chdir: change current working directory.
+chmod(2) chmod: change mode of file.
+chown(2) chown: change owner and group of a file.
+close(2) close: close a file.
+creat(2) creat: create a new file.
+dup(2) dup, dup2: duplicate an open file descriptor.
+exec(2) execl, execv, execle, execve, execlp, execvp, exec, exece, environ: execute a file.
+exit(2) exit: terminate process.
+fork(2) fork: spawn new process.
+getpid(2) getpid: get process identification.
+getuid(2) getuid, getgid, geteuid, getegid: get user and group identity.
+intro(2) intro, errno: introduction to system calls and error numbers.
+ioctl(2) ioctl, stty, gtty: control device.
+kill(2) kill: send signal to a process.
+killpg(2j) killpg: send signal to a process or a process group.
+link(2) link: link to a file.
+lseek(2) lseek, tell: move read/write pointer.
+mknod(2) mknod: make a directory or a special file.
+mount(2) mount, umount: mount or remove file system.
+nice(2) nice: set program priority.
+open(2) open: open for reading or writing.
+pause(2) pause: stop until signal.
+ptrace(2) ptrace: process trace.
+read(2) read: read from file.
+setpgrp(2j) setpgrp, getpgrp: set/get process group.
+setuid(2) setuid, setgid: set user and group ID.
+signal(2) signal: catch or ignore signals.
+sigsys(2j) sigsys: catch or ignore signals.
+stat(2) stat, fstat: get file status.
+stime(2) stime: set time.
+sync(2) sync: update super-block.
+syscall(2) syscall: indirect system call.
+time(2) time, ftime: get date and time.
+times(2) times: get process times.
+umask(2) umask: set file creation mode mask.
+unlink(2) unlink: remove directory entry.
+utime(2) utime: set file times.
+vlock(2) vlock: lock process pages into memory.
+vspy(2) vspy: set up mapping to physical memory.
+wait(2) wait: wait for process to terminate.
+wait3(2j) wait3: wait for process to terminate.
+write(2) write: write on a file.
+atof(3) atof, atoi, atol: convert ASCII to numbers.
+crypt(3) crypt, setkey, encrypt: DES encryption.
+ctime(3) ctime, localtime, gmtime, asctime, timezone: convert date and time to ASCII.
+ctype(3) isalpha, isupper, islower, isdigit, isalnum, isspace, ispunct, isprint, iscntrl, isascii: character classification.
+fclose(3S) fclose, fflush: close or flush a stream.
+fopen(3S) fopen, freopen, fdopen: open a stream.
+fread(3S) fread, fwrite: buffered binary input/output.
+fseek(3S) fseek, ftell, rewind: reposition a stream.
+getc(3S) getc, getchar, fgetc, getw: get character or word from stream.
+getenv(3) getenv: value for environment name.
+getgrent(3) getgrent, getgrgid, getgrnam, setgrent, endgrent: get group file entry.
+getlogin(3) getlogin: get login name.
+getpass(3) getpass: read a password.
+getpw(3) getpw: get name from uid.
+getpwent(3) getpwent, getpwuid, getpwnam, setpwent, endpwent: get password file entry.
+gets(3S) gets, fgets: get a string from a stream.
+intro(3) intro: introduction to library functions.
+jobs(3j) jobs: summary of job control facilities.
+l3tol(3) l3tol, ltol3: convert between 3-byte integers and long integers.
+malloc(3) malloc, free, realloc, calloc: main memory allocator.
+mktemp(3) mktemp: make a unique file name.
+nlist(3) nlist: get entries from name list.
+perror(3) perror, sys_errlist, sys_nerr: system error messages.
+printf(3) printf, fprintf, sprintf: formatted output conversion.
+putc(3S) putc, putchar, fputc, putw: put character or word on a stream.
+puts(3S) puts, fputs: put a string on a stream.
+qsort(3) qsort: quicker sort.
+rand(3) rand, srand: random number generator.
+regex(3) re_comp, re_exec: regular expression handler.
+scanf(3S) scanf, fscanf, sscanf: formatted input conversion.
+setbuf(3S) setbuf: assign buffering to a stream.
+setjmp(3) setjmp, longjmp: non-local goto.
+sigset(3) sigset, signal, sighold, sigignore, sigrelse, sigpause: manage signals.
+sleep(3) sleep: suspend execution for interval.
+stdio(3S) stdio: standard buffered input/output package.
+string(3) strcat, strncat, strcmp, strncmp, strcpy, strncpy, strlen, index, rindex: string operations.
+swab(3) swab: swap bytes.
+system(3) system: issue a shell command.
+termcap(3) tgetent, tgetnum, tgetflag, tgetstr, tgoto, tputs: terminal independent operation routines.
+termcp(3) tgetent, tgetnum, tgetflag, tgetstr, tgoto, tputs: terminal independent operation routines.
+ttyname(3) ttyname, isatty, ttyslot: find name of a terminal.
+ungetc(3S) ungetc: push character back into input stream.
+mem(4) mem, kmem: main memory.
+newtty(4) newtty: summary of the ``new'' tty driver.
+null(4) null: data sink.
+tty(4) tty: general terminal interface.
+a.out(5) a.out: assembler and link editor output.
+ar(5) ar: archive (library) file format.
+dir(5) dir: format of directories.
+filsys(5) filsys, flblk, ino: format of file system volume.
+fstab(5) fstab: static information about the filesystems.
+group(5) group: group file.
+mtab(5) mtab: mounted file system table.
+passwd(5) passwd: password file.
+sccsfile(5) sccsfile: format of \*(S) file.
+stab(5) stab - symbol table format.
+termcap(5) termcap: terminal capability data base.
+ttys(5) ttys: terminal initialization data.
+ttytype(5) ttytype: data base of terminal types by port.
+utmp(5) utmp, wtmp: login records.
+wtmp(5) wtmp: user login history.
+backgammon(6) backgammon: the game.
+banner(6) banner: print large banner on printer.
+fish(6) fish: play ``Go Fish''.
+hangman(6) hangman: Computer version of the game hangman.
+number(6) number: convert Arabic numerals to English.
+quiz(6) quiz: test your knowledge.
+ascii(7) ascii: map of ASCII character set.
+hier(7) hier: file system hierarchy.
+man(7) man: macros to typeset manual.
+me(7) me: macros for formatting papers.
+ms(7) ms: macros for formatting manuscripts.
+term(7) terminals: conventional names.
+chown(8) chown, chgrp: change owner or group.
+clri(8) clri: clear i-node.
+cron(8) cron: clock daemon.
+dcheck(8) dcheck: file system directory consistency check.
+dump(8) dump: incremental file system dump.
+dumpdir(8) dumpdir: print the names of files on a dump tape.
+fsck(8) fsck: file system consistency check and interactive repair.
+icheck(8) icheck: file system storage consistency check.
+init(8) init: process control initialization.
+mkfs(8) mkfs: construct a file system.
+mknod(8) mknod: build special file.
+mount(8) mount, umount: mount and dismount file system.
+ncheck(8) ncheck: generate names from i-numbers.
+quot(8) quot: summarize file system ownership.
+restor(8) restor: incremental file system restore.
+sync(8) sync: update the super block.
+update(8) update: periodically update the super block.
+csh(1) alias: shell macros.
+csh(1) bg: place job in background.
+csh(1) break: exit while/foreach loop.
+csh(1) breaksw: exit from switch.
+csh(1) case: selector in switch.
+csh(1) cd: change directory.
+csh(1) chdir: change directory.
+csh(1) continue: cycle in loop.
+csh(1) default: catchall clause in switch.
+csh(1) echo: echo arguments.
+csh(1) else: alternative commands.
+csh(1) end: terminate loop.
+csh(1) endif: terminate conditional.
+csh(1) endsw: terminate switch.
+csh(1) eval: re-evaluate shell data.
+csh(1) exec: overlay shell with specified command.
+csh(1) exit: leave shell.
+csh(1) fg: bring job into foreground.
+csh(1) foreach: loop over list of names.
+csh(1) glob: filename expand argument list.
+csh(1) goto: command transfer.
+csh(1) hashstat: print command hashing statistics.
+csh(1) history: print history event list.
+csh(1) if: conditional statement.
+csh(1) jobs: print current job list.
+csh(1) kill: kill jobs and processes.
+csh(1) limit: alter per-process resource limitations.
+csh(1) login: login new user.
+csh(1) logout: end session.
+csh(1) nice: run low priority process.
+csh(1) nohup: run command immune to hangups.
+csh(1) notify: request immediate notification.
+csh(1) onintr: process interrupts in command scripts.
+csh(1) popd: pop shell directory stack.
+csh(1) pushd: push shell directory stack.
+csh(1) rehash: recompute command hash table.
+csh(1) repeat: execute command repeatedly.
+csh(1) set: change value of shell variable.
+csh(1) setenv: set variable in environment.
+csh(1) shift: manipulate argument list.
+csh(1) source: read commands from file.
+csh(1) stop: halt a job or process.
+csh(1) suspend: suspend a shell, resuming its superior.
+csh(1) switch: multi-way command branch.
+csh(1) time: time command.
+csh(1) umask: change or display file creation mask.
+csh(1) unalias: remove aliases.
+csh(1) unhash: discard command hash table.
+csh(1) unlimit: remove resource limitiations.
+csh(1) unsetenv: remove environment variables.
+csh(1) unset: discard shell variables.
+csh(1) wait: wait for background processes to complete.
+csh(1) while: repeat commands conditionally.
+csh(1) @: arithmetic on shell variables.

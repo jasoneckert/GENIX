@@ -1,0 +1,207 @@
+.ig
+	@(#)cref.1	1.2	9/16/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH CREF 1
+.SH NAME
+cref \- make cross-reference listing
+.SH SYNOPSIS
+.B cref
+[
+.B \-acilnostux123
+] files
+.SH DESCRIPTION
+.I Cref\^
+makes a cross-reference listing
+of assembler or C programs;
+.I files\^
+are searched for symbols
+in the appropriate syntax.
+.PP
+The output report is in four columns:
+.PP
+.PD 0
+.RS
+.TP 4
+1.
+symbol;
+.TP
+2.
+file name;
+.TP
+3.
+see below;
+.TP
+4.
+text as it appears in the file.
+.RE
+.PD
+.PP
+.I Cref\^
+uses either an
+.I ignore\^
+file or an
+.I only\^
+file.
+If the
+.B \-i
+option is given, the next
+argument is taken to be an
+.I ignore\^
+file; if the
+.B \-o
+option is given, the next
+argument is taken to be
+an
+.I only\^
+file.
+.I Ignore\^
+and
+.I only\^
+files are lists of symbols separated by new-lines.
+All symbols in an
+.I ignore\^
+file
+are ignored in columns 1 and 3 of the output.
+If an
+.I only\^
+file is given, only symbols in that
+file will appear in column 1.
+Only one of these options may be given;
+the default setting
+is
+.B \-i
+using the default ignore file (see
+.SM
+.I FILES\^
+below).
+Assembler pre-defined symbols or
+C
+keywords are ignored.
+.PP
+The
+.B \-s
+option causes current symbols to be
+put in column 3.
+In the assembler, the current symbol
+is the most recent name symbol;
+in C, the current function name.
+The
+.B \-l
+option causes the line number within the file
+to be put in column 3.
+.PP
+The
+.B \-t
+option causes the next available argument
+to be used as the name
+of the intermediate
+file (instead of
+the temporary file
+.BR /tmp/crt??\^ ).
+This file is created and
+is
+.I not\^
+removed at the end of the process.
+.PP
+The
+.I cref\^
+options are:
+.PP
+.PD 0
+.RS
+.TP 4
+.B a
+assembler format (default)
+.TP
+.B c
+C format input
+.TP
+.B i
+use an
+.I ignore\^
+file (see above)
+.TP
+.B l
+put line number in column 3 (instead of current symbol)
+.TP
+.B n
+omit column 4 (no context)
+.TP
+.B o
+use an
+.I only\^
+file (see above)
+.TP
+.B s
+current symbol in column 3 (default)
+.TP
+.B t
+user-supplied temporary file
+.TP
+.B u
+print only symbols that occur exactly once
+.TP
+.B x
+print only
+C
+external symbols
+.TP
+.B 1
+sort output on column 1 (default)
+.TP
+.B 2
+sort output on column 2
+.TP
+.B 3
+sort output on column 3.
+.RE
+.PD
+.SH FILES
+.PD 0
+.TP 1.5i
+/tmp/crt??
+temporaries
+.TP
+/usr/lib/cref/aign
+default assembler
+.I ignore\^
+file
+.TP
+/usr/lib/cref/atab
+grammar table for assembler files
+.TP
+/usr/lib/cref/cign
+default C
+.I ignore\^
+file
+.TP
+/usr/lib/cref/ctab
+grammar table for C files
+.TP
+/usr/lib/cref/crpost
+post-processor
+.TP
+/usr/lib/cref/upost
+post-processor for
+.B \-u
+option
+.PD
+.SH SEE ALSO
+as(1),
+cc(1),
+sort(1),
+xref(1).
+.SH BUGS
+.I Cref\^
+inserts an
+.SM ASCII
+.SM
+.B DEL
+character into the intermediate file
+after the eighth character of each name that is eight or more
+characters long in the source file.
+.I Cref\^
+only considers the first eight characters of an identifier to be significant.
+Only VAX or PDP-11 assembly language is supported,  not NS16000 assembly
+language.

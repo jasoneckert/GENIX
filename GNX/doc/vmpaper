@@ -1,0 +1,591 @@
+.ig
+	vmpaper: version 1.12 of 11/22/83
+	Paper for July 83 Unicom
+
+	@(#)vmpaper	1.12	(NSC)	11/22/83
+..
+.RP
+.TL
+Virtual Memory Management in the \s-2GENIX\s0\s4\uTM\d\s0 Operating System*
+.AU
+Laura Neff
+.AI
+Microcomputer Systems Division
+National Semiconductor Corporation
+Santa Clara, California
+.AB
+.PP
+We have recently ported \s-2UNIX\s0\s4\uTM\d\s0
+to an NS16032-based system.
+The port is based on 4.1bsd
+.UX
+and is called the
+\s-2GENIX\s0 operating system.
+.FS
+GENIX and NS16000 are Trademarks of National 
+Semiconductor Corporation.
+.FE
+.FS
+VAX is a trademark of Digital Equipment Corporation
+.FE
+.FS
+* This is an updated version of a paper given at the USENIX conference
+in Toronto, July, 1983.
+.FE
+We discarded most of the 4.1bsd virtual memory support code
+and developed our own, in order to support
+the virtual memory architecture
+provided by the NS16082 Memory Management Unit.
+.PP
+A \s-2GENIX\s0 process has a virtual address space of up to 16 megabytes and
+is mapped by a 2-level hierarchy of page tables.
+Both process pages and
+second-level page tables can be paged out of, and faulted into,
+memory.
+.PP
+The kernel's address space is mapped
+with its own set of page tables.
+Because the user and kernel page tables have the same structure,
+the kernel manages its own address space
+with the same algorithms it uses to manage user address spaces.
+.PP
+Sharing of text is done by mapping executable files.
+When a file is executed for the first time,
+the kernel creates a file map for it using level 1 and 2 page tables.
+The process's page table etries (PTEs) are
+then set up using the file's map
+as a template.
+.AE
+.NH 1
+Introduction
+.PP
+We recently ported
+.UX
+to a NS16000\s4\uTM\d\|\s0 family\(embased system.
+Our system, an 8-user timesharing system, uses the NS16032 CPU.
+The NS16082 Memory Management Unit provides hardware support
+for demand-paged virtual memory management.  Floating-point support,
+timing, and interrupt control are provided by other NS16000-family chips.
+Much of our system, which we call
+the \s-2GENIX\s0 operating system,
+is a fairly straight port of
+the Berkeley 4.1bsd system.
+The virtual memory code, however, was rewritten to take advantage
+of the architecture provided by the NS16082 MMU.
+.NH 1
+Hardware Architecture
+.PP
+The architecture implemented by the NS16082 provides two 24-bit address spaces,
+one for kernel mode and one for user mode.
+The two address spaces are independently mapped,
+and the mapping registers for each use physical addresses.
+Our system uses a 2-level page table scheme,
+and our page tables
+have hardware-maintained reference and modified bits.
+The hardware page size is 512 bytes.
+.PP
+The page table scheme has two levels.  The Page Table Base register for
+user mode contains the address in physical memory of the level 1 page table.
+This table, which is two pages long, contains 256 page table entries (PTEs).
+Each PTE in this table controls access to a 128-page range
+of the user's address space by defining the mapping of a level 2 page table
+for that range.  The level 2 page table, which contains 128 entries,
+defines the mapping for the 128 individual pages in the appropriate range
+of address space.
+The maximum address space is 16 megabytes.
+.PP
+The supervisor (kernel) space is mapped using an identical scheme.
+It has its own Page Table Base register which points to its own level 1
+page table, which in turn maps the kernel's level 2 tables
+and address space pages.
+The MMU automatically references the user's or the kernel's map,
+as appropriate, based on the current processor status and instruction.
+.PP
+A PTE contains a valid bit, 2 bits of protection, a reference
+bit, a modify bit, 2 software reserved bits, and a memory address.
+If the valid bit is not set then the memory address is not used by the MMU,
+and its contents can be arbitrarily used by software.
+The reference bit and modify bit are maintained by the
+MMU, and may also be set or cleared explicitly by the kernel.
+The PTE format is the same for both level 1 and level 2 page
+tables, with the one exception that the modify bit is not maintained
+for level 1 PTEs.
+.PP
+Virtual addresses are translated to physical addresses by the MMU as follows.
+A virtual address consists of three pieces: a level 1 index, a level 2 index,
+and a page offset.  To translate a virtual address to a physical one,
+the MMU uses the appropriate page table base register to find the level 1 page
+table for the process.  The level 1 index indicates which entry in this
+table contains the mapping information for the level 2 page table.
+If the valid bit is off in this entry, or if the protection level indicates
+an invalid access,
+then the MMU generates a page fault trap, which is handled by the kernel.
+Otherwise the page number in the PTE indicates the physical
+page containing the level 2 page table.
+.PP
+The level 2 index is now used as an index into this second page table to
+pick out the entry for the physical page which contains the specified
+virtual address.  Once again, the valid bit and the protection level are
+checked, and the kernel receives a trap if all is not well.  Otherwise
+the page number is extracted from the level 2 PTE.
+The physical address consists of this page number concatenated with the
+offset from the original virtual address.
+.PP
+Unless an exception is generated,
+the entire translation is done on the MMU chip.  Because a reference
+to a single virtual address results in three memory references
+(one each for 2 page tables, plus the final memory location),
+the MMU also maintains a 32-entry cache containing mapping information
+for the last 32 physical pages referenced.  This considerably decreases
+the number of physical memory references required, as in most cases,
+the required translation information can be found in the cache.
+In practice, our cache hit rate is about 98 percent.
+.NH 1
+Page Table Entry Types
+.PP
+The two software-definable bits in the PTE allow the kernel to
+define up to eight types of PTEs, four for valid pages
+(virtual pages which exist in physical memory) and four for invalid pages.
+The most basic valid PTE type is the MEM\(emtype, which simply
+maps a page of virtual address space to a page of physical memory.
+The LOCK type is similar, but indicates to the software that this page of
+virtual address space should not be paged out.  This type is used by the
+kernel for most of its data, and by the
+\f2vlock\f1(2V) system.
+.PP
+The third and final valid entry type we have defined is the SPY type,
+which maps a virtual page to a specific physical page.
+Unlike the MEM\(emtype, which maps a virtual address to whatever page the
+kernel chooses, a SPY page maps
+a virtual page to a specific physical address of interest to the process.
+This is typically used within the kernel to map device registers (which
+occupy specific known physical addresses) into the kernel's virtual address
+space.  The \f2vspy\f1(2v) system call
+allows user processes  to do the same thing
+for a restricted range of physical locations.
+.PP
+We have defined four different PTE types for invalid pages.
+The NULL entry type indicates a page which has never been mapped by the user.
+The DISK entry type indicates that the page resides on the disk.
+The entry contains the disk location of the data for the page, and a flag
+indicating whether the page is in the swapping space, or is in a file page.
+The IOP entry contains a physical memory address, and indicates that I/O is in
+progress, so the page is in the process of being paged out or in.
+Finally, the SPT entry contains a pointer to a PTE in another page
+table which contains the mapping information for the virtual page.
+It can be thought of as an ``indirect'' PTE.
+It is used for shared files.
+.NH 1
+Typical Page Maps
+.PP
+The first pages of a typical user process consist of executable code
+and are protected read-only.
+If the user attempts to execute an instruction which writes
+into one of these pages, the protection level in the appropriate PTE
+will be violated and the process will trap to the kernel.
+Following the read-only code is the data for the process.  This is protected
+read-write.
+Following the data is typically a large gap of address space.
+The user's stack is located near the end of the address space.
+Like the data, it can be both read and written.
+When setting up the stack during an \f2exec\f1(2) call,
+the kernel reserves an unmapped page at the top of the stack to
+allow stack underruns to be detected.
+It then maps enough pages of stack to hold the exec arguments
+and the environment.  As the program executes, the stack is automatically
+extended as necessary via the page fault handler.
+.PP
+Notice that a full complement of level 2 page tables is not necessary.
+A level 2 page table needs to be created only when pages in its range exist
+in the address space.  Otherwise the corresponding level 1 PTE
+is null.
+Notice also that our page maps simulate the traditional 
+.UX
+text, data,
+and stack segments.  In our implementation, the text is always filled out to
+the next page boundary.
+This allows the final page of text to be write-protected.
+The data then begins on a new page which is user writable.
+.PP
+The kernel map is larger and more complex.  The entire kernel
+address space is protected against any access by user-mode processes.
+The kernel code is also protected against writing by the kernel itself.
+The kernel address space includes all kernel code,
+the remainder of physical memory,
+the device registers, and space for a number of data structures allocated
+at runtime.
+.PP
+The first of these data structures is space for the level 1 page tables.
+The kernel's level 1 page table is first, followed by the level 1 page
+tables for the user processes.
+Finally there are several level 1 page tables for mapping executable files.
+The level 1 page tables are kept in memory at all times.
+.PP
+The kernel's treatment of the \f2user\f1 data structure (u.) is simplified
+by its ability to page out, and handle page faults on, its own address space.
+The user data structures are allocated as a single long array in
+the kernel virtual address space.
+The array is page-aligned, and each structure is an even number of pages long.
+Since only the current process' u. area  needs to be accessible to the
+kernel, most of this array can be paged.  The kernel locks into memory
+only the structure in this array that holds the user data for the current
+process.
+A separate structure for the \f2current\f1 u. area is also allocated in
+virtual address space.  This is the structure that the kernel actually
+references when it reads from, or writes to, the u. for the current process.
+It is mapped onto the same physical memory that holds the array entry
+for the current process.
+.PP
+To context switch from one user to another, the kernel touches the pages
+in the user array for the appropriate process.  This guarantees 
+that the pages are in memory.  The new user
+area is then locked into memory.  The mapping for the current u. area is
+then changed to match the mapping for this newly locked structure.
+The previous context u. area is then unlocked, so that its memory can be
+paged out if necessary.
+.PP
+Our device registers are accessed using the address translation facilities
+provided by the MMU.
+On our system hardware, the device registers have been assigned memory 
+locations
+that are sparse, yet cover a wide range of addresses.  If we mapped
+these physical device addresses onto identical virtual addresses,
+we would in several cases have to create a level 2 page table 
+that would contain
+pointers to only a few pages of device memory.  Instead, we map many of
+our device registers onto virtual addresses within a single 64K range of
+memory, and therefore save quite a few pages of memory, because the extra
+level 2 page tables do not need to be created.
+Naturally, this translation needs to be done with some care, because
+when the kernel begins execution, MMU translation is not being done.
+Any devices that are accessed before the MMU is enabled are mapped
+with virtual addresses equal to physical addresses, so that the kernel
+can drive those devices whether or not virtual memory is being used.
+.NH 1
+Shared Files
+.PP
+In this implementation, we use page tables to describe the address spaces
+of processes.  We also use page tables to map executable files and to
+facilitate sharing code when multiple processes run the same program.
+When a file is executed for the first time, the kernel allocates a level 1 page table for it and sets up a page map for the file.  Each page of the file
+is initially mapped using the DISK PTE type to point to the file page on disk.
+When a page of the file is referenced later, it is read in from the disk
+into memory, and the PTE is changed into the MEM\(emtype.  When necessary,
+the kernel can change MEM pointers back to the original DISK pointers in order
+to free up memory pages.
+.PP
+Once the file map has been created, the process' map is set up.
+For those file pages that are in memory and which are 
+read-only, MEM\(emtype PTEs are used to
+point to the same physical pages as the file uses.
+Other pages of the file are mapped using SPT PTEs, which
+contain the file map and file page number.  Text pages are mapped read-only,
+and data pages are mapped read-write.  Later, when the
+process accesses an SPT\(emtype page, it generates a page trap.
+The kernel resolves the trap by reading in the indicated file page into memory
+and updating the file map.  Then, if the process page is read-only, the memory
+page is shared using a MEM\(emtype PTE.  Otherwise,
+the kernel copies the original
+data from the file page into a new page for the exclusive use of the process.
+This copying occurs for both read and write references, and is known as
+copy-on-reference.
+.PP
+When subsequent processes execute the same file, their maps are set up
+in the same way.  Therefore, the read-only text of the program is shared
+among all processes using it, and the data is copied, so that each process
+gets a private copy when it is first accessed.
+.PP
+Each time a process shares an executable file, a share count for the file's
+map is incremented.  The file remains mapped and available for sharing
+until its share count is reduced to zero \f2and\f1 its page table is needed
+by a new file being executed by some process.  This means that the overhead
+of executing a frequently-used program is reduced, because its map and its
+text and data pages are likely to remain in memory, even if it is rarely
+executed by two processes simultaneously.
+.PP
+If a large number of different programs are simultaneously executing, the
+shared text table could become full.  In this case, the process map is set up to
+point directly to the text data on the disk, and memory sharing does not occur
+for that process.
+.NH 1
+Page Fault Traps
+.PP
+When a process, whether the kernel or a user process, attempts to access
+a virtual address that does not exist in physical memory,
+the MMU generates a page fault trap and the kernel's page fault handler
+is invoked.
+The MMU provides two status registers which contain information about
+the attempted access.
+The Memory Management Status register contains status about the trap.
+The Error/Invalidate Address register contains the virtual address that
+generated the page fault.
+It also indicates whether the address is in the user or kernel address space.
+Aside from some checks on the legality of the attempted reference,
+a page fault from the kernel address space is processed in
+the same way as a fault from the user address space.
+.PP
+Traps generated by a protection violation, such as a program attempting
+to write over its own code, are detected by a protection error status
+bit in the status register, and are simply resolved by generating a
+bus error signal for the process.  Therefore, most of the page fault
+handling code deals with the case of a legal access to a virtual address
+not in physical memory.
+.PP
+To handle a page fault, the kernel finds the PTE
+for the appropriate virtual page
+and checks to make sure the attempted access is legal.
+If so, the kernel allocates a page of physical memory for the process
+and, if appropriate, reads data into the page.
+It then updates the process' page map and returns from the trap.
+Upon return from the trap, the CPU restarts the instruction that
+generated the trap, and process execution continues.
+.PP
+As described four software-defined invalid PTE
+types defined are in this system, and the page fault handling is
+different for each of them.
+.PP
+If the PTE is a NULL entry, the virtual page has never been
+mapped for the process and is being accessed for the first time.
+There are two valid situations in which this might occur \(em an extension
+of the stack, and a first reference to a page in the user's uninitialized
+data area (BSS).  The kernel checks for these two cases and generates
+a bus error signal if the conditions are not met.  Otherwise the kernel
+allocates a page of zeroed memory for the user, updates the process page map,
+and returns.
+.PP
+If the PTE is a DISK entry, the entry gives the location
+on the disk of the process page.  The location can belong to the swap space,
+or belong to a text file.  To satisfy the page fault, the kernel allocates
+a memory page, changes the PTE for the page to the IOP type, and then
+starts I/O to read the disk page into the memory page.  If appropriate, I/O is
+also started on the next process page in order to pre-page it.  The kernel
+then sleeps waiting for the I/O on the first page to complete.  When complete,
+the PTE type is changed to the MEM\(emtype and the process can continue.  The
+pre-paged page is not waited for.
+.PP
+An SPT\(emtype PTE means that the virtual page is a page of a shared file.
+The SPT entry gives an index, which indicates which of a number of shared files
+is to be used, and a page number in that file.  The kernel then refers to
+the page map for the shared file, retrieving the PTE for the 
+page number indicated by the SPT.  If the file PTE indicates
+a valid page, the user's PTE is changed to map to it and
+the user is restarted.  Otherwise, the page for the file is validated,
+typically by paging it in, using the same algorithms we describe
+in this document for validating user process pages.
+Once the file page has been brought into memory and the
+file map updated, the user PTE is updated to match the file
+map.
+.PP
+The final invalid PTE is the IOP entry.
+The IOP entry indicates that the data for the virtual page is in the
+process of being paged out or in, and therefore the process must wait for
+the I/O to complete.  The kernel first tries to start I/O on
+the next process page in order to pre-page it.  Then the kernel sleeps waiting
+for I/O to complete.  When complete, the swap routine changes the PTE type
+(into the MEM\(emtype if the page was being read, and into the DISK type if the
+page was being written), and wakes the process.  The process then reexamines
+the PTE type, and acts appropriately.
+.NH 1
+Page Allocation
+.NH 2
+Free Memory Management
+.PP
+Free memory management on this system is very simple.
+Because our architecture is paged, we never have to worry about
+allocating physically contiguous memory pages.
+We have two linked lists of pages, one for pages which are
+known to be zeroed, and the other for dirty pages.
+When pages are freed, they are added to the linked list of dirty pages.
+The kernel idle loop removes pages from the ``dirty'' list,
+zeroes them, and adds
+them to the zeroed list.
+.PP
+Memory pages are allocated from one of these two free lists, depending on
+whether or not the kernel needs a zeroed page.
+For example, if the kernel is allocating a page into which it is going to
+read data from some file,
+it is fine to use a ``dirty'' page,
+because any old data will be immediately overwritten.
+However, if memory is being allocated for something such as a user's stack,
+the kernel tries to get a zeroed page.
+Obviously, if the appropriate free list is empty,
+the kernel tries the other and, if necessary,
+zeroes the page at the time of allocation.
+.PP
+The hardware page size is 512 bytes.  However, the \s-2GENIX\s0
+operating system
+creates the impression
+that virtual memory uses a 1024 byte page size.  This is done by treating
+each pair of PTEs as a single entry.  This increases performance,
+makes it easy to allocate level 1 page tables, and allows efficient paging from 
+text files.
+.NH 2
+Page Replacement Algorithm
+.PP
+When physical memory is required to resolve a page fault and none is
+available, memory must be freed by paging out a page.
+The page replacement algorithm is responsible for choosing a page
+to remove from memory and updating the page map of the process or processes
+using that page.
+The algorithm cycles through a structure called the \f2core status table\f1,
+which contains an element for every page of physical memory.  Based on the
+owning page table and page number of a page of memory, the algorithm
+finds the PTE that maps this page.
+If the reference bit is on, indicating that the page has been touched
+recently, the algorithm clears the bit before moving on to the next page.
+This means that if the page is not referenced again by the time the algorithm
+cycles through memory and rechecks this page, the page replacement
+scheme will give the page a high priority for being swapped.
+.PP
+There are other factors that the algorithm uses in choosing a good page
+to remove from memory.  The core status table indicates if a page is
+being shared by more than one process \(em i.e., if it is a code page
+from a file being executed by more than one process.  Other things
+being equal, the page replacement algorithm tries to avoid paging out
+such pages.  The core status table also indicates if a page is locked
+into memory and therefore should not be paged out.  This most often applies
+to pages allocated to level 1 page tables, which cannot be arbitrarily
+paged out, and to level 2 page tables.  In our system, a level 2 page table
+is locked into memory and therefore not paged as long as any of its
+PTEs are valid.
+This means that if a page of process space exists in physical memory,
+the page table that points to it also exists in physical memory.
+However, once all of the pages mapped by a level 2 page table have been
+swapped, the page table is unlocked and is free to be chosen by
+the page replacement algorithm to be paged out.
+.PP
+If the page chosen by the page replacement algorithm has not been previously
+written to disk, space on the paging area is reserved for it.
+Then the kernel updates the map of the process that was using the page,
+so that subsequent accesses will be invalid.
+The page is then written
+to disk and becomes available for another use.
+.PP
+The page replacement algorithm also checks the modify bit in the
+PTE for the physical memory page being written to disk.
+If the modify bit indicates that the page has not been changed
+since the page was last written to disk,
+then the disk copy of the page is still correct, and it is unnecessary
+to write the page again.  In particular, shared text pages do not have to
+be written back out.
+.PP
+If the page chosen was a page from an executable file being
+shared by one or more processes, then the map for the executable file
+must be updated, and the maps for all the processes using the page
+must also be updated in a consistent manner.
+This is done by finding all the page table pointers in the process' maps
+which point to the shared page, and changing them all to SPT entries which
+point into the page map for the file.
+The page is then written to disk, and the file map is updated.
+.PP
+When the paging rate exceeds a certain threshold, or when free memory
+has been low for some number of seconds, the swapping process frees
+a number of pages at once by swapping a process.
+The swapping process scans the page map of the chosen process and writes
+the unlocked pages of that process to disk.  It uses the same algorithms
+for updating the process map and allocating space in the paging area as
+are used by the page replacement algorithm.
+.NH 1
+System Calls
+.PP
+We ported most of the virtual memory-related system calls present in the
+Berkeley 4.1 distribution.  This included
+\f2vfork\f1, \f2vhangup\f1, \f2vlimit\f1,
+\f2vread\f1, \f2vtimes\f1, and \f2vwrite\f1.
+We changed some of the fields of the \f2vtimes\f1 call,
+because of the differences between the VAX implementation and ours.
+Currently, our \f2vread\f1 and \f2vwrite\f1 calls are
+simulated with the \f2read\f1 and \f2write\f1 calls.
+.PP
+We wrote three new system calls to take advantage of features
+easily available in our implementation.
+.PP
+The \f2vlock\f1 call is used to lock (or unlock) a specified page of
+a privileged process into physical memory.
+Its call is:
+.sp 1
+.ce
+vlock(lockflag, virtual_address);
+.sp 1
+This call is useful for time-critical applications.
+.PP
+The \f2vspy\f1 system call is used to map a specific page of physical memory
+into the invoking process' virtual address space.
+The format of this call is:
+.sp 1
+.ce
+vspy(virtual_address, physical_address, read_write_flag);
+.sp 1
+The kernel allows a  small subset of physical memory (typically the device
+registers of a user-assignable device) to be mapped by any user.
+Most physical memory, however, can be mapped only by a super-user process.
+.PP
+This call was extremely useful while we were integrating new hardware and
+controller boards into our system.  The usual method for integrating the
+software into a system would be to write a new device driver, build a
+new kernel containing the driver, and then debug the hardware and the
+software in kernel mode.  The \f2vspy\f1 call allowed us to write the
+device driver and embed it in a user mode program.
+The program would map the device registers into its address space and
+then run through a test suite by writing and reading the device registers
+as appropriate.  This allowed us to find the major problems in the
+device hardware and microcode, as well as in the software device driver
+algorithms, without the hassle of reconfiguring and rebuilding the kernel
+and debugging in kernel mode.
+Once the hardware and software algorithms were checked out in user mode,
+we would cannibalize
+the program and integrate its driver into the kernel.
+This would typically leave only interrupt- and timing-related problems
+to be debugged in the kernel.
+.PP
+The third system call we implemented is the \f2vmap\f1 call.  It, too,
+is a privileged call and is used to map (or copy) a page of another
+process' address space into the current address space.  Its format is:
+.sp 1
+.ce
+vmap(function, this_process_address, other_process_address, pid);
+.sp 1
+This call is used by \f2ps\f1 and \f2w\f1 to map the beginning of a process'
+stack to find the command arguments for that process.
+.NH 1
+Other Changes To 4.1 \s-2UNIX\s0
+.PP
+We made several changes to the 4.1 scheduling and swapping algorithms
+for our system.
+When memory is low and the scheduler decides to remove an entire
+process from memory, we first check for shared files that are still
+in memory but are not in use.  These shared files are always swapped
+before any user processes are swapped.  We also made changes to allow
+a process to be ``partially swapped'' if memory conditions warrant it.
+This prevents a large program from being completely removed from memory
+just because some small program like \f2cron\f1 needs to be swapped in.
+.PP
+Our \f2sbrk\f1 call does not allocate memory or swapping space at the time
+it is invoked.  The kernel simply updates the data size of the process.
+The memory is allocated and the process map is updated
+when the kernel processes the page faults that occur when
+process tries to access the new data area.
+.NH 1
+Future Extensions
+.PP
+One measure of the quality of a piece of code is how easily it can
+be extended to provide new features.
+It has been quite gratifying to us to note that the memory management
+features provided in 4.2BSD will be straightforward extensions to our own port.
+The \f2getpagesize\f1, \f2mmap\f1, \f2mremap\f1, \f2munmap\f1, \f2mincore\f1
+and other calls will be easy (in many cases, trivial)
+extensions to our design.
+.PP
+We currently simulate the \f2vread\f1 and \f2vwrite\f1 calls with
+\f2read\f1 and \f2write\f1.  It is possible to extend the
+file maps, which we now use only for sharing texts, so that they
+can be used for reading and writing arbitrary files.
+This is an area we hope to explore in a future release of our software.
+.PP
+Our \f2vmap\f1 call is a limited first implementation of inter-process
+shared memory, but it is useful mainly for privileged processes.
+We hope to extend this call to make it more useful for communication between
+arbitrary processes.
+.PP
+Finally, we look forward to supporting the increased address space which
+will be available with the future CPU and support chips.

@@ -1,0 +1,78 @@
+.ig
+	@(#)what.1	1.5	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.tr ~"
+.ds S) "\s-1SCCS\s0
+.TH WHAT 1
+.SH NAME
+what \- identify \s-1SCCS\s0 files
+.SH SYNOPSIS
+.B what
+[-f] files
+.SH DESCRIPTION
+.I What\^
+searches the given files for all occurrences
+of the pattern that
+.IR get (1)
+substitutes for %\&Z% (this is
+\fB@(#)\fR
+at this printing)
+and prints out what follows until the
+first
+.BR ~ ,
+.BR > ,
+new-line,
+.BR \e ,
+or null character.  If the -f option is given, only the first such
+pattern is printed for each file.  Otherwise, all such patterns are found.
+For example, if the C program in file \fBf.c\fR contains
+.PP
+.RS 5
+char ident[] = "\|@(#)identification information\|";
+.RE
+.PP
+and \fBf.c\fR is compiled to yield \fBf.o\fR and \fBa.out\fR,
+then the command
+.PP
+.RS 5
+what\|
+.RB f . c\|
+.RB f . o\|
+.RB a . out
+.RE
+.PP
+will print
+.PP
+.RS 5
+.TP 8
+f\fB.\fRc:
+.br
+identification information
+.TP 8
+f\fB.\fRo:
+.br
+identification information
+.TP 8
+a\fB.\fRout:
+.br
+identification information
+.RE
+.PP
+.I What\^
+is intended to be used in conjunction with the \*(S) command
+.IR get (1),
+which automatically inserts identifying information,
+but it can also be used where the information is inserted manually.
+.SH SEE ALSO
+get(1), sccs(1), sccshelp(1).
+.SH DIAGNOSTICS
+Use
+.IR sccshelp (1)
+for explanations.
+.SH BUGS
+It's possible that an unintended occurrence of the pattern
+.B @(#)
+could be
+found just by chance, but this causes no harm in nearly all cases.
+.tr ~~

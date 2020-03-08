@@ -1,0 +1,33 @@
+.ig
+	@(#)syscall.2	1.2	6/30/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH SYSCALL 2
+.SH NAME
+syscall \- indirect system call
+.SH SYNOPSIS
+.nf
+.BR "syscall(number, arg, ...)" 
+.fi
+.SH DESCRIPTION
+.I Syscall
+performs the system call whose assembly language
+interface has the specified
+.I number,
+and further arguments
+.IR arg .
+.PP
+The r0 value of the system call is returned.
+.SH DIAGNOSTICS
+When the F-bit is set,
+.I syscall
+returns \-1 and sets the
+external variable 
+.I errno
+(see
+.IR intro (2)).
+.SH BUGS
+There is no way to simulate system calls
+such as
+.IR pipe (2),
+which return values in register r1.

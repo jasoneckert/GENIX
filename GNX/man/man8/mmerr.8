@@ -1,0 +1,25 @@
+.ig
+	@(#)mmerr.8	1.4	10/28/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH MMERR 8
+.SH MMERR
+mmerr \- decipher MMU status register
+.SH SYNOPSIS
+.I mmerr
+hex-data
+.SH DESCRIPTION
+.I Mmerr
+describes the fields in the MMU status register
+.RI ( msr ).
+Some panic conditions cause the kernel to print the contents of the
+.I msr
+on the console.
+Pass the contents of the 
+.I msr
+as an argument to 
+.I mmerr
+to
+find out what kind of error occurred.
+.SH "SEE ALSO"
+dcerr(8), tcerr(8)

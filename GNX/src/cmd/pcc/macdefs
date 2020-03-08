@@ -1,0 +1,106 @@
+/*
+ * macdefs: version 5.1 of 9/8/83
+ * 
+ *
+ * @(#)macdefs	5.1	(National Semiconductor)	9/8/83
+ */
+
+/* jima 7/28/82: BUFSTDERR turned off for debugging */
+/* JZ  definition of TRUST removed since the code was wrong for char and short registers */
+/* jima 9/13/82: INSSBUG defined for inss bug (rev F cpu) */
+/* JZ 12/1/82: Removed definition of INSSBUG since rev G chip should fix this
+               Added definition of MEMRMWOK since that seems fixed now.*/
+/* JZ 4/23/83: Added definition of MAXBVAR and MINBVAR for register FLOATS
+	       will need to be changed when 2 registers are temps */
+/*  JZ 5/6/83: Added FCONFMT and DCONFMT for floating point style constants */
+# define makecc(val,i)  lastcon = (lastcon<<8)|((val<<24)>>24);  
+
+/*  unused option box:
+ *    -DASSTRINGS -DSTABDOT -DLCOMM -DTRUST_REG_CHAR_AND_REG_SHORT
+ *    -DUHARD would cause unsigned arithmetic to call functions
+ *  ...the latter being changed to simply TRUST
+ */
+/* The following and SBUG should be defined if a rev F cpu is in use or
+   the rev G cpu turns out not to have fixed the inss extss and s instruction
+   bugs*/
+/* # define INSSBUG  /* inss instruction bugs - see table.c (jima) */
+# define MEMRMWOK   /* Fixed by hardware kludge seems to work fine*/
+# define FLEXNAMES     /* arbitrary-length identifiers */
+/* NOBUF FOR DEBUGGING # define BUFSTDERR  DEBUG */
+/* # define TRUST */ /*JZ  We should not trust */
+# define DOASSERTS
+
+# define  ARGINIT 96 
+# define  AUTOINIT 0 
+# define  SZCHAR 8
+# define  SZINT 32
+# define  SZFLOAT 32
+# define  SZDOUBLE 64
+# define  SZLONG 32
+# define  SZSHORT 16
+# define SZPOINT 32
+# define ALCHAR 8
+# define ALINT 32
+# define ALFLOAT 32
+# define ALDOUBLE 32
+# define ALLONG 32
+# define ALSHORT 16
+# define ALPOINT 32
+# define ALSTRUCT 8
+# define  ALSTACK 32 
+
+/*	size in which constants are converted */
+/*	should be long if feasable */
+
+# define CONSZ long
+# define CONFMT "%ld"
+# define FCONFMT "f'%08x"	/* FLOAT constant format for printing */
+# define DCONFMT "l'%08x%08x"	/* DOUBLE constant format for printing */
+
+/*	size in which offsets are kept
+/*	should be large enough to cover address space in bits
+*/
+
+# define OFFSZ long
+
+/* 	character set macro */
+
+# define  CCTRANS(x) x
+
+/*	maximum and minimum register variables */
+
+# define MAXRVAR 11
+# define MINRVAR 7
+# define MAXBVAR 6
+# define MINBVAR 6
+
+	/* various standard pieces of code are used */
+# define STDPRTREE
+# define LABFMT "L%d"
+
+/* show stack grows negatively */
+#define BACKAUTO
+#define BACKTEMP
+
+/* show field hardware support on 16k */
+#define FIELDOPS
+
+/* bytes are numbered from right to left */
+#define RTOLBYTES
+
+/* we want prtree included */
+# define STDPRTREE
+# ifndef FORT
+# define ONEPASS
+#endif
+
+# define ENUMSIZE(high,low) INT
+
+
+# define ADDROREG
+# define FIXDEF(p) outstab(p)
+# define FIXARG(p) fixarg(p)
+
+#ifndef FP
+#define FP 12	/* duplicated from mac2defs */
+#endif

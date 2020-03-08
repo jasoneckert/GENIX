@@ -1,0 +1,17 @@
+
+#! /bin/sh
+
+# :rofix: version 5.1 of 9/8/83
+# 
+#
+# @(#):rofix	5.1 (NSC) 9/8/83
+
+# This modifies rodata.s so everything is in sharable program space, not data
+# space.  However, since chip bugs prevent virtual memory in code, this is not
+# done yet.  (jima 7/30/82)
+# enabled 7/22/83 JZ
+ed $1 <<!
+g/^[ 	]*\.static/s//.program/
+w
+q
+!

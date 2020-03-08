@@ -1,0 +1,26 @@
+.ig
+	@(#)burn.1	1.2	6/29/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH BURN 1
+.SH NAME
+burn \- run for an interval
+.SH SYNOPSIS
+.B burn
+time
+.SH DESCRIPTION
+.I Burn
+loops for an elapsed time of
+.I time
+seconds.
+It is useful to generate a load on the system.
+If
+.I time
+is not specified
+.I burn
+will run until killed.
+.SH "SEE ALSO"
+sleep(1)
+.SH BUGS
+.I Time
+must be less than 2147483647 seconds.

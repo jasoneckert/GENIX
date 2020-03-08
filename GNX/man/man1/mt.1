@@ -1,0 +1,65 @@
+.ig
+	@(#)mt.1	1.5	11/2/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH MT 1
+.UC 4
+.SH NAME
+mt \- Magnetic tape manipulating program
+.SH SYNOPSIS
+.B mt
+[
+.B \-t
+.I tapename
+]
+.I command
+[
+.I count
+]
+.SH DESCRIPTION
+.PP
+.I Mt
+is used to give commands to the tape drive.  If a tape name is not
+specified, /dev/nrtc0 is used.  If a count is not specified, 1 is assumed.
+.PP
+Here are the commands:
+.in +.5i
+.BR eof "	write"
+.I count
+end-of-file marks
+.br
+.BR fsf "	space forward"
+.I count
+files
+.br
+.BR fsr "	space forward"
+.I count
+records
+.br
+.BR bsf "	space backward"
+.I count
+files
+.br
+.BR bsr "	space backward"
+.I count
+records
+.br
+.BR rew "	rewind tape"
+.br
+.BR offl "	rewind tape and go offline
+.in -.5i
+.BR retension "	retension tape"
+.br
+.BR erase "	erase entire tape"
+.br
+.BR display "	set unit display to"
+.I value
+.SH FILES
+.DT
+/dev/tc*	Magnetic tape interface
+.br
+/dev/rtc*	Raw magnetic tape interface
+.SH SEE ALSO
+tc(4), dd(1)
+.SH BUGS
+The tape unit cannot skip records, backspace files or records, or go offline.

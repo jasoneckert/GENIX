@@ -1,0 +1,78 @@
+ln boot.c aboot.c
+nmcc -c -O -I/v/mesaux/usr/include -I. -DJUSTASK aboot.c
+rm -f aboot.c
+nmcc -c -O -I/v/mesaux/usr/include -I. atol.c
+nasm  -o bootsrt0.o bootsrt0.s
+nmcc -c -O -I/v/mesaux/usr/include -I. conf.c
+nmcc -c -O -I/v/mesaux/usr/include -I. dc.c
+nmcc -c -O -I/v/mesaux/usr/include -I. dcusaio.c
+nmcc -c -O -I/v/mesaux/usr/include -I. dcusize.c
+nmcc -c -O -I/v/mesaux/usr/include -I. fake.c
+nmcc -c -O -I/v/mesaux/usr/include -I. gets.c
+nmcc -c -O -I/v/mesaux/usr/include -I. ie.c
+nmcc -c -O -I/v/mesaux/usr/include -I. -w -DSTANDALONE ieeio.c
+nasm  -o iomove.o iomove.s
+nmcc -c -O -I/v/mesaux/usr/include -I. l3tol.c
+nmcc -c -O -I/v/mesaux/usr/include -I. ltol3.c
+nmcc -c -O -I/v/mesaux/usr/include -I. prf.c
+nasm  -o rtt.o rtt.s
+nasm  -o setjmp.o setjmp.s
+nasm  -o ss.o ss.s
+nmcc -c -O -I/v/mesaux/usr/include -I. strcpy.c
+nmcc -c -O -I/v/mesaux/usr/include -I. sys.c
+nmcc -c -O -I/v/mesaux/usr/include -I. tc.c
+nmcc -c -O -I/v/mesaux/usr/include -I. tcusaio.c
+nmcc -c -O -I/v/mesaux/usr/include -I. qsort.c
+nmcc -c -O -I/v/mesaux/usr/include -I. rs232.c
+ar cr libsa.a atol.o bootsrt0.o conf.o dc.o dcusaio.o dcusize.o  fake.o gets.o ie.o ieeio.o iomove.o l3tol.o ltol3.o prf.o rtt.o setjmp.o ss.o strcpy.o sys.o tc.o tcusaio.o qsort.o rs232.o
+nranlib libsa.a
+rm -f aboot.x
+nmeld -p -e _nrentry -T 0e000 -o aboot.x aboot.o libsa.a
+chmod 770 aboot.x
+nmcc -c -O -I/v/mesaux/usr/include -I. boot.c
+rm -f boot.x
+nmeld -p -e _nrentry -T 0e000 -o boot.x boot.o libsa.a
+chmod 770 boot.x
+nmcc -c -O -I/v/mesaux/usr/include -I. cat.c
+rm -f cat.x
+nmeld -e realstart -o cat.x cat.o libsa.a
+chmod 770 cat.x
+nmcc -c -O -I/v/mesaux/usr/include -I. copy.c
+rm -f copy.x
+nmeld -o copy.x -e realstart copy.o libsa.a
+chmod 770 copy.x
+nmcc -c -O -I/v/mesaux/usr/include -I. dcutest.c
+rm -f dcutest.x
+nmeld -o dcutest.x -e realstart dcutest.o libsa.a
+chmod 770 dcutest.x
+ln boot.c eboot.c
+nmcc -c -O -I/v/mesaux/usr/include -I. -DEBOOT eboot.c
+rm -f eboot.c
+nasm  -o ebootsrt0.o ebootsrt0.s
+rm -f eboot.x
+nmeld -p -e _nrentry -T 0e000 -o eboot.x eboot.o ebootsrt0.o libsa.a
+monfix eboot.x
+mod at e030
+sb at 10994
+entry at e330
+chmod 770 eboot.x
+nmcc -c -O -I/v/mesaux/usr/include -I. -DSTANDALONE icheck.c
+rm -f icheck.x
+nmeld -e realstart -o icheck.x icheck.o libsa.a
+chmod 770 icheck.x
+nmcc -c -O -I/v/mesaux/usr/include -I. ls.c
+rm -f ls.x
+nmeld -e realstart -o ls.x ls.o libsa.a
+chmod 770 ls.x
+nmcc -c -O -I/v/mesaux/usr/include -I. -DSTANDALONE mkfs.c
+rm -f mkfs.x
+nmeld -e realstart -o mkfs.x mkfs.o libsa.a
+chmod 770 mkfs.x
+nmcc -c -O -I/v/mesaux/usr/include -I. -DSTANDALONE mkpt.c
+rm -f mkpt.x
+nmeld -e realstart -o mkpt.x mkpt.o libsa.a
+chmod 770 mkpt.x
+nmcc -c -O -I/v/mesaux/usr/include -I. -w -DSTANDALONE restor.c
+rm -f restor.x
+nmeld -e realstart -o restor.x restor.o libsa.a
+chmod 770 restor.x

@@ -1,0 +1,1399 @@
+.ig
+	implement: version 1.8 of 11/29/83
+	
+
+	@(#)implement	1.8	(NSC)	11/29/83
+..
+.de P1
+.DS
+..
+.de P2
+.DE
+..
+.de UL
+.lg 0
+.if n .ul
+\%\&\\$3\f3\\$1\f1\&\\$2
+.lg 0
+..
+.de UC
+\&\\$3\s-1\\$1\\s0\&\\$2
+..
+.de IT
+.lg 0
+.if n .ul
+\%\&\\$3\f2\\$1\f1\&\\$2
+.lg 0
+..
+.de SP
+.sp \\$1
+..
+.hw device
+.hw un-known
+.TL
+UNIX Implementation
+.AU "MH 2C-523" 2394
+K. Thompson
+.AI
+.MH
+.sp
+\f2\s-2Revised for GENIX by\s0\fP
+Laura Neff
+.AB
+This paper describes in high-level terms the
+implementation of the resident
+.UX
+kernel.
+This discussion is broken into three parts.
+The first part describes
+how the
+.UX
+system views processes, users, and programs.
+The second part describes the I/O system.
+The last part describes the
+.UX
+file system.
+.AE
+.NH
+INTRODUCTION
+.PP
+The
+.UX
+kernel consists of about 19,000
+lines of C code and about 2100 lines of assembly code.
+The assembly code can be further broken down into
+300 lines included for
+the sake of efficiency
+(they could have been written in C)
+and 1800 lines to perform hardware
+functions not possible in C.
+.PP
+This code represents 5 to 10 percent of what has
+been lumped into the broad expression
+``the
+.UX
+operating system.''
+The kernel is the only
+.UX
+code that
+cannot be substituted by a user to his or her
+own liking.
+For this reason,
+the kernel should impose
+as few restrictions on the user
+as possible.
+This does not mean to allow the user
+a million options to do the same thing.
+Rather, it means to allow only one way to
+do one thing,
+but have that way be the least-common divisor
+of all the options that might have been provided.
+.PP
+What is or is not implemented in the kernel
+represents both a great responsibility and a great power.
+It is a soap-box platform on
+``the way things should be done.''
+Even so, if
+``the way'' is too radical,
+no one will follow it.
+Every important decision was weighed
+carefully.
+In some places,
+simplicity has been substituted for efficiency.
+Complex algorithms are used only if
+their complexity can be localized.
+.NH
+PROCESS CONTROL
+.PP
+In the
+.UX
+system,
+a user executes programs in an
+environment called a user process.
+When a system function is required,
+the user process calls the system
+as a subroutine.
+At some point in this call,
+there is a distinct switch of environments.
+After this,
+the process is said to be a system process.
+In the normal definition of processes,
+the user and system processes are different
+phases of the same process
+(they never execute simultaneously).
+For protection,
+each system process has its own stack.
+.PP
+A user process consists of
+a text area,
+a data area,
+and a stack.
+The text area contains the code being executed
+by the process.
+The system protects it against writing by the user.
+This memory may be shared
+with other processes executing the same code.
+The data area and the stack
+may be both read and written
+by the user process.
+They are strictly private to that process.
+As far as possible,
+the system does not use the user's
+data area or stack
+to hold system data.
+In particular,
+there are no I/O buffers in the
+user address space.
+.PP
+The data area and the stack may both be expanded.
+The stack is automatically extended as necessary
+by the system
+as a result of memory faults.
+The data area is grown
+(or shrunk)
+only by explicit user requests.
+The contents of newly allocated memory
+is initialized to zero.
+.PP
+The system contains several data structures
+that are associated with a process.
+.PP
+The user table has one entry per process.
+It contains all
+the data about the process
+that the system needs only when the
+process is active.
+Examples of the kind of data contained
+in the user table are:
+saved central processor registers,
+open file descriptors,
+accounting information,
+scratch data area,
+and the stack for the system phase
+of the process.
+The system user table is not
+addressable from the user process
+and is therefore protected.
+A process's user table entry may be paged out
+when the process is not active.
+.PP
+There is a process table with
+one entry per process.
+This entry contains all the data
+needed by the system when the process
+is
+.IT not
+active.
+Examples are
+the process's name
+and scheduling information.
+The process table entry is allocated
+when the process is created, and freed
+when the process terminates.
+This process entry is always directly
+addressable by the kernel.
+.PP
+Last,
+the special pages table
+keeps track of all the page tables in use.
+The name of this structure is misleading \(hy
+it is not a page table; rather it contains information about page tables.
+.PP
+Figure 1 shows the relationships
+between the various process control
+data.
+In a sense,
+the process table is the
+definition of all processes,
+because
+all the data associated with a process
+may be accessed
+starting from the process table entry.
+.KS
+.sp 2.44i
+.sp 2v
+.ce
+Fig. 1\(emProcess control data structure.
+.KE
+.NH 2
+Page tables
+.PP
+Each process has an entry in the special pages table which
+contains
+the address of the level 1 page table for the process.
+Memory for the level 1 page tables is allocated at system startup,
+and these page tables remain in physical memory at all times.
+.PP
+Each of the 256 page table entries
+in a level 1 page table describes the location of a level 2 page table for a
+128-page section of a process's virtual address space.
+Thus the architecture allows a total user virtual address space of
+256 x 128 pages (of 512 bytes each), or 16777216 bytes (16MB).
+Since most user processes use only a fraction of this address space,
+usually only a few level 2 page tables need to be created.
+Memory for level 2 page tables is allocated by the system as needed.
+Unlike level 1 page tables,
+level 2 page tables need not exist in physical memory at all times,
+and the system may write them to the swapping space if necessary.
+Therefore, an entry in a level 1 page table may indicate
+that the corresponding level 2 page table is in memory
+(giving its physical memory address), is on the swapping space
+(giving its disk address),
+or does not exist at all
+(if that 128-page portion of the user's virtual address space
+does not exist).
+.PP
+Each entry in a level 2 page table describes a page of the user's
+virtual address space.
+It may give the physical address of a page in memory,
+a disk address of a page on the swapping space, or it may indicate
+that the page does not exist in the address space.
+As an optimization,
+to avoid large numbers of page faults on level 2 pages tables,
+the system keeps a level 2 page table
+in memory
+as long as any of its entries point to pages in
+physical memory.
+In other words,
+if a page of a process's virtual address space exists in physical
+memory,
+then the page table that points to it
+will also exist in physical memory.
+.PP
+Most of the level 1 page tables are used to map user processes.
+When two or more processes are running the same program,
+it is desirable to keep only one copy
+of the code in memory,
+to be shared by all processes executing it.
+This is implemented by mapping the code file.
+Several level 1 page tables are reserved for this purpose.
+.PP
+Mapping code files allows them to be easily shared
+by all processes executing that same code.
+When the file is first executed by a process,
+a level 1 page table is allocated for the file,
+the contents of the file are read into memory,
+and the level 1 and 2 page tables are set up
+to describe the file's memory.
+Then the process's page tables are set up.
+For those pages which are read-only,
+the process's page table entries point to the same physical pages
+into which the file was read.
+The writable data is mapped using page table entries that point
+to the file's page table entry for the data,
+without marking the page valid for the process.
+When the process attempts to access the data,
+the system receives a page fault trap.
+The system resolves the trap by finding the data page
+in the file's map, copying it into a new page for the process,
+and then changing the process's map to point to the new page.
+In other words,
+the data part of the executable file is copied into
+new physical pages for the private use of the process,
+but only when the data is referenced by the process.
+.PP
+If some other process executes the same file,
+it is mapped like the first process.
+The read-only part is shared,
+with the user process using the same physical pages
+as indicated by the file's page tables,
+and the data is mapped such that it will be copied when referenced.
+The work of mapping the file
+and reading it into memory does not need to be done again,
+and memory usage is optimized,
+because a single copy of the read-only code is used
+by multiple processes.
+.PP
+Each time a process shares a code file, a share count for the file's
+map is incremented.
+The file remains mapped and available for sharing
+until its share count is reduced to zero
+and its page table is needed
+by a new file being executed by some process.
+This means that the overhead
+of executing a frequently-used program is reduced,
+because its map is likely to remain available
+even if that program is rarely executed by two processes simultaneously.
+.PP
+If a process executes a program that is not already mapped,
+and if all the level 1 page tables reserved for files are in use,
+then the system does not map the file.
+The code and data are read from the file directly into the
+process's address space as private pages,
+and the file is not shared.
+.NH 2
+Process creation and program execution
+.PP
+Processes are created by the system primitive
+.UL fork .
+The newly created process (child) is a copy of the original process (parent).
+There is no detectable sharing of primary memory between the two processes.
+(Of course,
+if the parent process was executing from
+a shared code file,
+the child will share that file.)
+Copies of all writable data areas
+are made for the child process.
+Files that were open before the
+.UL fork
+are
+truly shared after the
+.UL fork .
+The processes are informed as to their part in the
+relationship to
+allow them to select their own
+(usually non-identical)
+destiny.
+The parent may
+.UL wait
+for the termination of
+any of its children,
+or may
+.UL wait3
+for children to terminate or to stop.
+.PP
+A process may
+.UL exec
+a file.
+This consists of exchanging the current text and data
+of the process for new text and data
+specified in the file.
+The old code and data are lost.
+Doing an
+.UL exec
+does
+.IT not
+change processes;
+the process that did the
+.UL exec
+persists,
+but
+after the
+.UL exec
+it is executing a different program.
+Files that were open
+before the
+.UL exec
+remain open after the
+.UL exec .
+.PP
+If a program,
+say the first pass of a compiler,
+wishes to overlay itself with another program,
+say the second pass,
+then it simply
+.UL exec s
+the second program.
+This is analogous
+to a ``goto.''
+If a program wishes to regain control
+after
+.UL exec ing
+a second program,
+it should
+.UL fork
+a child process,
+have the child
+.UL exec
+the second program, and
+have the parent
+.UL wait
+for the child.
+This is analogous to a ``call.''
+Breaking up the call into a binding followed by
+a transfer is similar to the subroutine linkage in
+SL-5.
+.[
+griswold hanson sl5 overview
+.]
+.PP
+The effort of copying the parent's writable data
+is wasted
+if the child immediately replaces (or destroys)
+its address space
+by using the
+.UL exec
+(or
+.UL exit )
+system primitive.
+In this case,
+the parent can avoid the copying overhead
+by using
+.UL vfork ,
+rather than
+.UL fork ,
+to create the process.
+After a
+.UL vfork ,
+the child shares the entire address space
+of its parent,
+including the writable data,
+and the parent is suspended
+until the child
+.UL exec s
+or
+.UL exit s.
+The child must be careful
+to not corrupt the data
+of the parent before it
+.UL exec s
+or
+.UL exit s.
+.NH 2
+Memory management
+.PP
+When the system is booted,
+the kernel determines the amount
+of physical memory available
+and sets up an array called the core status table.
+This array consists of a structure for every page of physical memory.
+The kernel builds two ``free lists''
+which are threaded through this structure \(em
+a linked list of pages not in use and whose contents are unknown,
+and a linked list of pages not in use
+and known to be zeroed.
+Initially, all unused pages are put on the first list.
+The kernel uses its idle time, when no user processes are runnable,
+for zeroing pages on the first list and moving them to the second list.
+.PP
+Memory pages are allocated from one of these two free lists,
+depending on whether or not the kernel needs a zeroed page.
+For example,
+if the kernel is allocating a page into which it is going
+to read data from some file,
+it is fine to use a ``dirty'' page,
+since any old data will be immediately overwritten.
+However, if memory is being allocated for something like
+a user's stack,
+the kernel tries to get a zeroed page.
+Obviously, if the appropriate free list is empty,
+the kernel tries the other and, if necessary,
+zeroes the page at the time of allocation.
+.PP
+When pages are freed, they are simply added to the linked list of dirty pages.
+No attempt is made to allocate
+contiguous memory pages
+or to group pages together as they are freed.
+In a paged environment,
+the system does not require physically contiguous pages
+when multiple pages are allocated.
+(One exception occurs during system initialization, when the kernel
+is allocating memory for the level 1 page tables.
+This memory allocation is done differently; it is done before
+the free lists have even been set up.)
+.PP
+When the kernel needs a free memory page and both linked lists are empty,
+it must free some page already in use.
+Pages are freed using two distinct
+but related algorithms \(em
+paging of individual pages,
+and swapping of entire processes.
+.PP
+A page is paged out when the kernel needs a free physical memory page
+and none are available.
+The kernel scans the core status table, looking for physical memory
+pages that are eligible to be paged out.
+(Pages may be locked in memory for a number of reasons,
+such as I/O in progress to that page.)
+An eligible page is then rated to see how ``good''
+a page it is to page out.
+The kernel tries to avoid paging pages which have been recently referenced,
+or which belong to code files being shared by multiple processes.
+When a satisfactory page has been found,
+it is written to the disk and becomes available for its new use.
+.PP
+When the paging rate exceeds a given threshold, or when free memory
+has been low for some number of seconds,
+a separate process in the kernel,
+the swapping process,
+frees a number of pages at once by swapping an entire process.
+Instead of scanning the core status table looking for pages to swap,
+it scans the process table,
+and chooses a process to remove from memory.
+The swapping process then writes every unlocked page
+of that process out to disk,
+until a reasonable amount of memory is free.
+Processes that are waiting for slow events
+(i.e., not currently running or waiting for disk I/O)
+are swapped first,
+by age in memory,
+and with larger processes swapped first.
+The other processes are examined by the same age algorithm,
+but are not taken out until they are at least of some age.
+This adds hysteresis to the swapping
+and prevents total thrashing.
+.PP
+The paging and swapping algorithms use different methods
+to choose which page(s) to remove from memory,
+but otherwise they share much code.
+Pages removed from memory
+are written to a partition of the disk
+called the ``swapping space''
+(even if the paging algorithm is doing the writing).
+Swapping space is allocated for a page of physical memory
+at the time it is first chosen to be written to the disk
+(by either the paging algorithm or the swapper).
+The total size of the swapping space is defined when the kernel is built.
+.PP
+When a page is written to the disk,
+the page tables for the appropriate process
+are changed to indicate that this page of the process's virtual address
+space is no longer in memory,
+and to store its location on the swapping space.
+If the page was being shared,
+then the page tables for every process are checked,
+and the map for any
+process sharing that physical page is changed
+to indicate that the page is no longer in memory.
+.PP
+Both the paging and swapping algorithms check the modify bit in the
+page table entry corresponding to the physical memory page chosen
+to be written to disk.
+If the modify bit indicates that the page has not been changed,
+and if the page's core status table entry indicates that
+it has been previously written to the disk,
+then the disk copy of the page is still correct, and it is not necessary
+to write the page again.
+Therefore, in some cases,
+a page of physical memory can be paged out (or swapped)
+without any disk I/O taking place.
+.PP
+The swapping process is scheduled every second,
+and swaps out processes if memory is low
+and the paging rate is high.
+If, on the other hand, memory is free,
+then it swaps processes into memory.
+It examines the process table
+looking for a process that is swapped out and is ready to run.
+From the swapping space, it reads any process data that must be locked.
+The remainder of the process is faulted in as it runs.
+.PP
+The kernel receives a page fault trap
+when a process attempts to access
+a page of its address space that does not exist in physical memory.
+Assuming the kernel determines that the attempted access was valid,
+the kernel allocates a page of free physical memory
+(perhaps by paging out some other page),
+reads the page from the swapping space into that page,
+updates the user's page map,
+and restarts the user.
+In some cases,
+such as the extension of a stack,
+the user is creating a new page of virtual address space
+and it is not necessary for the kernel to read from the swapping space;
+the kernel simply allocates a zeroed page.
+.NH 2
+Synchronization and scheduling
+.PP
+Process synchronization is accomplished by having processes
+wait for events.
+Events are represented by arbitrary integers.
+By convention,
+events are chosen to be addresses of
+tables associated with those events.
+For example, a process that is waiting for
+any of its children to terminate will wait
+for an event that is the address of
+its own process table entry.
+When a process terminates,
+it signals the event represented by
+its parent's process table entry.
+Signaling an event on which no process
+is waiting has no effect.
+Similarly,
+signaling an event on which many processes
+are waiting will wake all of them up.
+This differs considerably from
+Dijkstra's P and V
+synchronization operations,
+.[
+dijkstra sequential processes 1968
+.]
+in that
+no memory is associated with events.
+Thus there need be no allocation of events
+prior to their use.
+Events exist simply by being used.
+.PP
+On the negative side,
+because there is no memory associated with events,
+no notion of ``how much''
+can be signaled via the event mechanism.
+For example,
+processes that want memory might
+wait on an event associated with
+memory allocation.
+When any amount of memory becomes available,
+the event would be signaled.
+All the competing processes would then wake
+up to fight over the new memory.
+(In reality,
+the swapping process is the only process
+that waits for primary memory to become available.)
+.PP
+If an event occurs
+between the time a process decides
+to wait for that event and the
+time that process enters the wait state,
+then
+the process will wait on an event that has
+already happened (and may never happen again).
+This race condition happens because there is no memory associated with
+the event to indicate that the event has occurred;
+the only action of an event is to change a set of processes
+from wait state to run state.
+This problem is relieved largely
+by the fact that process switching can
+only occur in the kernel by explicit calls
+to the event-wait mechanism.
+If the event in question is signaled by another
+process,
+then there is no problem.
+But if the event is signaled by a hardware
+interrupt,
+then special care must be taken,
+such as disabling interrupts while the event is being checked.
+These synchronization races pose the biggest
+problem when
+.UX
+is adapted to multiple-processor configurations.
+.[
+hawley meyer multiprocessing unix
+.]
+.PP
+The event-wait code in the kernel
+is like a co-routine linkage.
+At any time,
+all but one of the processes has called event-wait.
+The remaining process is the one currently executing.
+When it calls event-wait,
+a process whose event has been signaled
+is selected and that process
+returns from its call to event-wait.
+.PP
+Which of the runable processes is to run next?
+Associated with each process is a priority.
+The priority of a system process is assigned by the code
+issuing the wait on an event.
+This is roughly equivalent to the response
+that one would expect on such an event.
+Disk events have high priority,
+terminal events are low,
+and time-of-day events are very low.
+(From observation,
+the difference in system process priorities
+has little or no performance impact.)
+All user-process priorities are lower than the
+lowest system priority.
+User-process priorities are assigned
+by an algorithm based on the
+recent ratio of the amount of compute time to real time consumed
+by the process.
+A process that has used a lot of
+compute time in the last real-time
+unit is assigned a low user priority.
+Because interactive processes are characterized
+by low ratios of compute to real time,
+interactive response is maintained without any
+special arrangements.
+.PP
+The scheduling algorithm simply picks
+the process with the highest priority,
+thus
+picking all system processes first and
+user processes second.
+The compute-to-real-time ratio is updated
+every second.
+Thus,
+all other things being equal,
+looping user processes will be
+scheduled round-robin with a
+1-second quantum.
+A high-priority process waking up will
+preempt a running, low-priority process.
+The scheduling algorithm has a very desirable
+negative feedback character.
+If a process uses its high priority
+to hog the computer,
+its priority will drop.
+At the same time, if a low-priority
+process is ignored for a long time,
+its priority will rise.
+.NH
+I/O SYSTEM
+.PP
+The I/O system
+is broken into two completely separate systems:
+the block I/O system and the character I/O system.
+In retrospect,
+the names should have been ``structured I/O''
+and ``unstructured I/O,'' respectively;
+while the term ``block I/O'' has some meaning,
+``character I/O'' is a complete misnomer.
+.PP
+Devices are characterized by a major device number,
+a minor device number, and
+a class (block or character).
+For each class,
+there is an array of entry points into the device drivers.
+The major device number is used to index the array
+when calling the code for a particular device driver.
+The minor device number is passed to the
+device driver as an argument.
+The minor number has no significance other
+than that attributed to it by the driver.
+Usually,
+the driver uses the minor number to access
+one of several identical physical devices.
+.PP
+The use of the array of entry points
+(configuration table)
+as the only connection between the
+system code and the device drivers is
+very important.
+Early versions of the system had a much
+less formal connection with the drivers,
+so that it was extremely hard to handcraft
+differently configured systems.
+Now it is possible to create new
+device drivers in an average of a few hours.
+.NH 2
+Block I/O system
+.PP
+The model block I/O device consists
+of randomly addressed, secondary
+memory blocks of 512 bytes each.
+The blocks are uniformly addressed
+0, 1, .\|.\|. up to the size of the device.
+The block device driver has the job of
+emulating this model on a
+physical device.
+.PP
+The block I/O devices are accessed
+through a layer of buffering software.
+The system maintains a list of buffers
+(typically between 10 and 70)
+each assigned a device name and
+a device address.
+This buffer pool constitutes a data cache
+for the block devices.
+On a read request,
+the cache is searched for the desired block.
+If the block is found,
+the data are made available to the
+requester without any physical I/O.
+If the block is not in the cache,
+the least recently used block in the cache is renamed,
+the correct device driver is called to
+fill up the renamed buffer, and then the
+data are made available.
+Write requests are handled in an analogous manner.
+The correct buffer is found
+and relabeled if necessary.
+The write is performed simply by marking
+the buffer as ``dirty.''
+The physical I/O is then deferred until
+the buffer is renamed.
+.PP
+The benefits in reduction of physical I/O
+of this scheme are substantial,
+especially considering the file system implementation.
+There are,
+however,
+some drawbacks.
+The asynchronous nature of the
+algorithm makes error reporting
+and meaningful user error handling
+almost impossible.
+The cavalier approach to I/O error
+handling in the
+.UX
+system is partly due to the asynchronous
+nature of the block I/O system.
+A second problem is in the delayed writes.
+If the system stops unexpectedly,
+it is almost certain that there is a
+lot of logically complete,
+but physically incomplete,
+I/O in the buffers.
+There is a system primitive to
+flush all outstanding I/O activity
+from the buffers.
+Periodic use of this primitive helps,
+but does not solve, the problem.
+Finally,
+the associativity in the buffers
+can alter the physical I/O sequence
+from that of the logical I/O sequence.
+This means that there are times
+when data structures on disk are inconsistent,
+even though the software is careful
+to perform I/O in the correct order.
+On non-random devices,
+notably magnetic tape,
+the inversions of writes can be disastrous.
+The problem with magnetic tapes is ``cured'' by
+marking buffers as tape buffers
+when they are being used as such,
+and always starting I/O on such a buffer
+as soon as the write request is issued.
+.NH 2
+Character I/O system
+.PP
+The character I/O system consists of all
+devices that do not fall into the block I/O model.
+This includes the ``classical'' character devices
+such as communications lines and
+line printers.
+It also includes magnetic tape and disks when
+they are not used in a stereotyped way,
+for example, 80-byte physical records on tape
+and track-at-a-time disk copies.
+In short,
+the character I/O interface
+means ``everything other than block.''
+I/O requests from the user are sent to the
+device driver essentially unaltered.
+The implementation of these requests is, of course,
+up to the device driver.
+There are guidelines and conventions
+to help the implementation of
+certain types of device drivers.
+.NH 3
+Disk drivers
+.PP
+Disk drivers are implemented
+with a queue of transaction records.
+Each record holds a read/write flag,
+a primary memory address,
+a secondary memory address, and
+a transfer byte count.
+Paging is accomplished by passing
+such a record to the swapping device driver.
+The block I/O interface is implemented by
+passing such records with requests to
+fill and empty system buffers.
+The character I/O interface to the disk
+drivers create a transaction record that
+points directly into the user area.
+The routine that creates this record also insures
+that the user's buffer is not swapped or paged during this
+I/O transaction.
+Thus by implementing the general disk driver,
+it is possible to use the disk
+as a block device,
+a character device, and a swap device.
+The only really disk-specific code in normal
+disk drivers is the pre-sort of transactions to
+minimize latency for a particular device, and
+the actual issuing of the I/O request.
+.NH 3
+Character lists
+.PP
+Real character-oriented devices may
+be implemented using the common
+code to handle character lists.
+A character list is a queue of characters.
+One routine puts a character on a queue.
+Another gets a character from a queue.
+It is also possible to ask how many
+characters are currently on a queue.
+Storage for all queues in the system comes
+from a single common pool.
+Putting a character on a queue will allocate
+space from the common pool and link the
+character onto the data structure defining the queue.
+Getting a character from a queue returns
+the corresponding space to the pool.
+.PP
+A typical character-output device
+(console terminal, for example)
+is implemented by passing characters
+from the user onto a character queue until
+some maximum number of characters is on the queue.
+The I/O is prodded to start as
+soon as there is anything on the queue
+and, once started,
+it is sustained by hardware completion interrupts.
+Each time there is a completion interrupt,
+the driver gets the next character from the queue
+and sends it to the hardware.
+The number of characters on the queue is checked and,
+as the count falls through some intermediate level,
+an event (the queue address) is signaled.
+The process that is passing characters from
+the user to the queue can be waiting on the event, and
+refill the queue to its maximum
+when the event occurs.
+.PP
+A typical character input device
+(for example, a terminal keyboard)
+is handled in a very similar manner.
+.PP
+An important subclass of character devices is terminals.
+A terminal is represented by three
+character queues.
+There are two input queues (raw and canonical)
+and an output queue.
+Characters going to the output of a terminal
+are handled by common code as described
+above.
+The main difference is that there is also code
+to interpret the output stream as
+.UC  ASCII
+characters and to perform some translations,
+e.g., escapes for deficient terminals.
+Another common aspect of terminals is code
+to insert real-time delay after certain control characters.
+.PP
+Input on terminals is a little different.
+Characters are collected from the terminal and
+placed on a raw input queue.
+Some device-dependent code conversion and
+escape interpretation is handled here.
+When a line is complete in the raw queue,
+an event is signaled.
+The code catching this signal then copies a
+line from the raw queue to the canonical queue
+while performing character erase and line kill editing.
+User read requests on terminals can be
+directed at either the raw or canonical queues.
+.NH 3
+Other character devices
+.PP
+Finally,
+there are devices that fit no general category.
+These devices are set up as character I/O drivers.
+An example is a driver that reads and writes
+unmapped primary memory as an I/O device.
+Some devices are too
+fast to be treated a character at time,
+but do not fit the disk I/O mold.
+Examples are fast communications lines and
+fast line printers.
+These devices either have their own buffers
+or ``borrow'' block I/O buffers for a while and
+then give them back.
+.NH
+THE FILE SYSTEM
+.PP
+In the
+.UX
+system,
+a file is a (one-dimensional) array of bytes.
+No other structure of files is implied by the
+system.
+Files are attached anywhere
+(and possibly multiply)
+onto a hierarchy of directories.
+Directories are simply files that
+users cannot write.
+For a further discussion
+of the external view of files and directories,
+see Ref.\0
+.[
+ritchie thompson unix bstj 1978
+%Q This issue
+.].
+.PP
+The
+.UX
+file system is a disk data structure
+accessed completely through
+the block I/O system.
+As stated before,
+the canonical view of a ``disk'' is
+a randomly addressable array of
+512-byte blocks.
+The file system, however,
+views the disk as a randomly addressable array
+of 1024-byte blocks,
+so that each file system block
+consists of two consecutive disk blocks.
+A file system breaks the disk into
+four regions.
+The first file system block (address 0)
+is unused by the file system.
+It is left aside for booting procedures.
+The second file system block (address 1)
+contains the so-called ``super-block.''
+This block,
+among other things,
+contains the size of the disk and
+the boundaries of the other regions.
+Next comes the i-list,
+a list of file definitions.
+Each file definition is
+a 64-byte structure, called an i-node.
+The offset of a particular i-node
+within the i-list is called its i-number.
+The combination of device name
+(major and minor numbers) and i-number
+serves to uniquely name a particular file.
+After the i-list,
+and to the end of the disk,
+come free storage blocks that
+are available for the contents of files.
+.PP
+The free space on a disk is maintained
+as a linked list of available disk blocks.
+Every block in this chain contains a disk address
+of the next block in the chain.
+The remaining space contains the address of up to
+50 disk blocks that are also free.
+Thus with one I/O operation,
+the system obtains 50 free blocks and a
+pointer where to find more.
+The disk allocation algorithms are
+very straightforward.
+Since all allocation is in fixed-size
+blocks and there is strict accounting of
+space,
+there is no need to compact or garbage collect.
+However,
+as disk space becomes dispersed,
+latency gradually increases.
+Some installations choose to occasionally compact
+disk space to reduce latency.
+.PP
+An i-node contains 13 disk addresses.
+The first 10 of these addresses point directly at
+the first 10 blocks of a file.
+If a file is larger than 10 blocks (5,120 bytes),
+then the eleventh address points at a block
+that contains the addresses of the next 128 blocks of the file.
+If the file is still larger than this
+(70,656 bytes),
+then the twelfth block points at up to 128 blocks,
+each pointing to 128 blocks of the file.
+Files yet larger
+(8,459,264 bytes)
+use the thirteenth address for a ``triple indirect'' address.
+The algorithm ends here with the maximum file size
+of 1,082,201,087 bytes.
+.PP
+A logical directory hierarchy is added
+to this flat physical structure simply
+by adding a new type of file, the directory.
+A directory is accessed exactly as an ordinary file.
+It contains 16-byte entries consisting of
+a 14-byte name and an i-number.
+The root of the hierarchy is at a known i-number
+(\f2viz.,\f1 2).
+The file system structure allows an arbitrary, directed graph
+of directories with regular files linked in
+at arbitrary places in this graph.
+In fact,
+very early
+.UX
+systems used such a structure.
+Administration of such a structure became so
+chaotic that later systems were restricted
+to a directory tree.
+Even now,
+with regular files linked multiply
+into arbitrary places in the tree,
+accounting for space has become a problem.
+It may become necessary to restrict the entire
+structure to a tree,
+and allow a new form of linking that
+is subservient to the tree structure.
+.PP
+The file system allows
+easy creation,
+easy removal,
+easy random accessing,
+and very easy space allocation.
+With most physical addresses confined
+to a small contiguous section of disk,
+it is also easy to dump, restore, and
+check the consistency of the file system.
+Large files suffer from indirect addressing,
+but the cache prevents most of the implied physical I/O
+without adding much execution time.
+The space overhead properties of this scheme are quite good.
+For example,
+on one particular file system,
+there are 25,000 files containing 130M bytes of data-file content.
+The overhead (i-node, indirect blocks, and last block breakage)
+is about 11.5M bytes.
+The directory structure to support these files
+has about 1,500 directories containing 0.6M bytes of directory content
+and about 0.5M bytes of overhead in accessing the directories.
+Added up any way,
+this comes out to less than a 10 percent overhead for actual
+stored data.
+Most systems have this much overhead in
+padded trailing blanks alone.
+.NH 2
+File system implementation
+.PP
+Because the i-node defines a file,
+the implementation of the file system centers
+around access to the i-node.
+The system maintains a table of all active
+i-nodes.
+As a new file is accessed,
+the system locates the corresponding i-node,
+allocates an i-node table entry, and reads
+the i-node into primary memory.
+As in the buffer cache,
+the table entry is considered to be the current
+version of the i-node.
+Modifications to the i-node are made to
+the table entry.
+When the last access to the i-node goes
+away,
+the table entry is copied back to the
+secondary store i-list and the table entry is freed.
+.PP
+All I/O operations on files are carried out
+with the aid of the corresponding i-node table entry.
+The accessing of a file is a straightforward
+implementation of the algorithms mentioned previously.
+The user is not aware of i-nodes and i-numbers.
+References to the file system are made in terms of
+path names of the directory tree.
+Converting a path name into an i-node table entry
+is also straightforward.
+Starting at some known i-node
+(the root or the current directory of some process),
+the next component of the path name is
+searched by reading the directory.
+This gives an i-number and an implied device
+(that of the directory).
+Thus the next i-node table entry can be accessed.
+If that was the last component of the path name,
+then this i-node is the result.
+If not,
+this i-node is the directory needed to look up
+the next component of the path name, and the
+algorithm is repeated.
+.PP
+The user process accesses the file system with
+certain primitives.
+The most common of these are
+.UL open ,
+.UL create ,
+.UL read ,
+.UL write ,
+.UL lseek ,
+and
+.UL close .
+The data structures maintained are shown in Fig. 2.
+.KS
+.sp 22P
+.ce
+Fig. 2\(emFile system data structure.
+.KE
+In the system user table area associated with a user,
+there is room for some (usually between 10 and 50) open files.
+This open file table consists of pointers that can be used to access
+corresponding i-node table entries.
+Associated with each of these open files is
+a current I/O pointer.
+This is a byte offset of
+the next read/write operation on the file.
+The system treats each read/write request
+as random with an implied seek to the
+I/O pointer.
+The user usually thinks of the file as
+sequential with the I/O pointer
+automatically counting the number of bytes
+that have been read/written from the file.
+The user may,
+of course,
+perform random I/O by setting the I/O pointer
+before reads/writes.
+.PP
+With file sharing,
+it is necessary to allow related
+processes to share a common I/O pointer
+and yet have separate I/O pointers
+for independent processes
+that access the same file.
+With these two conditions,
+the I/O pointer cannot reside
+in the i-node table nor can
+it reside in the list of
+open files for the process.
+A new table
+(the open file table)
+was invented for the sole purpose
+of holding the I/O pointer.
+Processes that share the same open
+file
+(the result of
+.UL fork s)
+share a common open file table entry.
+A separate open of the same file will
+only share the i-node table entry,
+but will have distinct open file table entries.
+.PP
+The main file system primitives are implemented as follows.
+.UL \&open
+converts a file system path name into an i-node
+table entry.
+A pointer to the i-node table entry is placed in a
+newly created open file table entry.
+A pointer to the file table entry is placed in the
+system user table entry for the process.
+.UL \&create
+first creates a new i-node entry,
+writes the i-number into a directory, and
+then builds the same structure as for an
+.UL open .
+.UL \&read
+and
+.UL write
+just access the i-node entry as described above.
+.UL \&lseek
+simply manipulates the I/O pointer.
+No physical seeking is done.
+.UL \&close
+just frees the structures built by
+.UL open
+and
+.UL create .
+Reference counts are kept on the open file table entries and
+the i-node table entries to free these structures after
+the last reference goes away.
+.UL \&unlink
+simply decrements the count of the
+number of directories pointing at the given i-node.
+When the last reference to an i-node table entry
+goes away,
+if the i-node has no directories pointing to it,
+then the file is removed and the i-node is freed.
+This delayed removal of files prevents
+problems arising from removing active files.
+A file may be removed while still open.
+The resulting unnamed file vanishes
+when the file is closed.
+This is a method of obtaining temporary files.
+.PP
+There is a type of unnamed
+.UC  FIFO
+file called a
+.UL pipe.
+Implementation of
+.UL pipe s
+consists of implied
+.UL lseek s
+before each
+.UL read
+or
+.UL write
+in order to implement
+first-in-first-out.
+There are also checks and synchronization
+to prevent the
+writer from grossly outproducing the
+reader and to prevent the reader from
+overtaking the writer.
+.NH 2
+Mounted file systems
+.PP
+The file system of a
+.UX
+system
+starts with some designated block device
+formatted as described above to contain
+a hierarchy.
+The root of this structure is the root of
+the
+.UX
+file system.
+A second formatted block device may be
+mounted
+at any node of
+the current hierarchy.
+This logically extends the current hierarchy.
+The implementation of
+mounting
+is trivial.
+A mount table is maintained containing
+pairs of designated leaf i-nodes and
+block devices.
+When converting a path name into an i-node,
+a check is made to see if the new i-node is a
+designated node.
+If it is,
+the i-node of the root
+of the block device replaces it.
+.PP
+Allocation of space for a file is taken
+from the free pool on the device on which the
+file lives.
+Thus a file system consisting of many
+mounted devices does not have a common pool of
+free secondary storage space.
+This separation of space on different
+devices is necessary to allow easy
+unmounting
+of a device.
+.NH 2
+Other system functions
+.PP
+There are some other things that the system
+does for the user\-a
+little accounting,
+a little tracing/debugging,
+and a little access protection.
+Most of these things are not very
+well developed.
+There are some features that are missed in some
+applications, for example, better inter-process communication.
+.PP
+The
+.UX
+kernel is an I/O multiplexer more than
+a complete operating system.
+This is as it should be.
+Because of this outlook,
+many features are
+found in most
+other operating systems that are missing from the
+.UX
+kernel.
+For example,
+the
+.UX
+kernel does not support
+file access methods,
+file disposition,
+file formats,
+file maximum size,
+spooling,
+command language,
+logical records,
+physical records,
+assignment of logical file names,
+logical file names,
+an operator's console,
+an operator,
+log-in,
+or log-out.
+Many of these things are symptoms rather than features.
+Many of these things are implemented
+in user software
+using the kernel as a tool.
+A good example of this is the command language.
+.[
+bourne shell 1978 bstj
+%Q This issue
+.]
+Each user may have his or her own command language.
+Maintenance of such code is as easy as
+maintaining user code.
+The idea of implementing ``system'' code with general
+user primitives
+comes directly from
+.UC  MULTICS .
+.[
+organick multics 1972
+.]
+.LP
+.[
+$LIST$
+.]

@@ -1,0 +1,12 @@
+cons(4) cons: SYS16 console interface.
+dc(4) dc: SYS16 disk driver for ANSI interface disks.
+drum(4) drum: paging device.
+intro(4) intro: introduction to special files.
+lp(4) lp: line printer.
+mem(4) mem, kmem: main memory.
+newtty(4) newtty: summary of the ``new'' tty driver.
+null(4) null: data sink.
+pty(4) pty: pseudo-terminal device.
+sio(4) sio: eight port terminal i/o multiplexer.
+tc(4) tc: Streaming tape controller interface.
+tty(4) tty: general terminal interface.

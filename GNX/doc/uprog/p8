@@ -1,0 +1,28 @@
+.ig
+	p8: version 1.1 of 1/24/83
+	
+
+	@(#)p8	1.1	(NSC)	1/24/83
+..
+.SH
+References
+.LP
+.IP [1]
+K. L. Thompson and D. M. Ritchie,
+.ul
+The
+.ul
+.UC UNIX
+.ul
+Programmer's Manual,
+Bell Laboratories, 1978.
+.IP [2]
+B. W. Kernighan and D. M. Ritchie,
+.ul
+The C Programming Language,
+Prentice-Hall, Inc., 1978.
+.IP [3]
+B. W. Kernighan,
+.UC UNIX \& ``
+for Beginners \(em Second Edition.''
+Bell Laboratories, 1978.

@@ -1,0 +1,254 @@
+.ig
+	vhel3: version 1.2 of 11/8/83
+	
+
+	@(#)vhel3	1.2	(NSC)	11/8/83
+..
+.NH
+TEXT PROCESSING
+.NH 2
+Document Preparation
+.LP
+.sh ED
+Interactive line editor provided as a standard in Bell
+Laboratories \s-2UNIX\s0.  
+Provides random access to all lines of a file.  Some of the 
+capabilities of ED are listed below:
+.op
+Find lines by number or pattern.  Patterns may include: 
+.in +2
+.nf
+Specified characters, structs, beginning of line, end of line
+Add, delete, change, copy, move or join lines
+Permute or split contents of a line
+Replace one or all instances of a pattern within a line
+Combine or split files
+Escape to C shell (command language) during editing
+.fi
+.in 0
+.op
+Do any of above operations on every pattern-selected line in a
+given range.
+.sh SED
+Stream-oriented version of ED.  Can perform batch edits based
+on a command script containing ED commands.  Can perform
+a sequence of editing operations on each line of an input stream
+of unbounded length.
+.op
+SED features:
+.in +2
+.nf
+Lines can be selected by address or range of addresses
+Control flow and conditional testing
+Multiple output streams
+Multiline capability
+.in 0
+.sh EX
+Interactive line editor.  EX allows access to ED commands and
+implements the command syntax of VI in a line-oriented mode.
+EX is a subset of VI, and represents an alternate entry
+point into VI.
+.sh EDIT
+Another name for EX.
+.sh VI
+A full screen editor with access to the two line editors, ED
+and EX.  Both VI and EX are derived from Berkeley 4.1 bsd.
+In addition to the features listed under ED, VI implements 
+the following capabilities:
+.op
+Scrolling and reverse-scrolling by page or by a specified
+number of lines.
+.op
+String searches repeatable by a single key-stroke.
+.op
+Cursor motion via arrow keys and the standard h, j, l, and k
+keys, commands to position the cursor at top, middle, or
+bottom of the display, commands that perform cursor
+motion based on previous or next word, sentence, or
+paragraph.
+.op
+Commands to find the matching parenthesis, brace, or square
+bracket of a pair.
+.op
+Mark a position in a file and return to it via a single key-
+stroke.
+.op
+Insert a pattern a specified number of times.
+.op
+Delete a word from the right or from the left of the cursor.
+.op
+Delete from the cursor to the end of the line or file.
+.op
+Delete or modify all lines containing a pattern within a
+specified range.
+.op
+Undo previous change.
+.op
+Text manipulation through named buffers.
+.op
+Repeat previous change.
+.op
+Options regarding indentation, error diagnostics, page size,
+autowrap, etc., that can be set interactively or auto-
+matically through a C shell variable.
+.op
+File recovery.
+.sh PTX
+Make a permuted (key word in context) index.
+.sh SPELL
+Look for spelling errors by comparing each word in a
+document against a word list.
+.op
+25,000\(emword list includes proper names.
+.op
+Handles common prefixes and suffixes.
+.op
+Collects words to help tailor local spelling lists.
+.sh LOOK
+Search for words in dictionary that begin with specified prefix.
+.sh CRYPT
+Encrypt and decrypt files for security.
+.NH 2
+Document Formatting
+.LP
+.sh TROFF
+.sh NROFF
+Advanced typesetting.
+TROFF can produce output to drive a laser-printer or typesetter device;
+NROFF drives ASCII terminals of all types.
+When appropriately programmed,
+TROFF and NROFF are capable of elaborate
+feats of formatting,
+TROFF and NROFF accept the same input language.
+.op
+Completely definable page format keyed to dynamically planted
+``interrupts'' at specified lines.
+.op
+Maintains several separately definable typesetting environments (e.g., one for
+body text, one for footnotes, and one for unusually elaborate
+headings).
+.op
+Arbitrary number of output pools can be combined at will.
+.op
+Macros with substitutable arguments, and macros invocable
+in mid-line.
+.op
+Computation and printing of numerical quantities.
+.op
+Conditional execution of macros.
+.op
+Tabular layout facility.
+.op
+Positions expressible in inches, centimeters, ems, points,
+machine units
+or arithmetic combinations thereof.
+.op
+Access to character-width computation for unusually difficult
+layout problems.
+.op
+Overstrikes, built-up brackets, horizontal and vertical line drawing.
+.op
+Dynamic relative or absolute positioning and size selection,
+globally or at the character level.
+.op
+Can exploit the characteristics of the terminal being used,
+for approximating special characters, reverse motions,
+proportional spacing, etc.
+processors TBL is fully compatible
+with TROFF and NROFF.
+.in 0
+.LP
+NROFF will produce multicolumn output on terminals capable of reverse line
+feed, or through the postprocessor COL.
+.LP
+High programming skill is required to exploit the formatting capabilities
+of TROFF and NROFF, although unskilled personnel can easily be trained
+to enter documents according to canned
+formats such as those provided by the MS
+and ME macro packages, listed below. 
+TROFF and EQN are essentially identical
+to NROFF and NEQN so it is usually possible
+to define interchangeable formats
+to produce approximate proof copy on terminals before
+actual typesetting.  The preprocessor, TBL, is fully compatible
+with TROFF and NROFF.
+.sh MS
+.sh ME
+Standardized layout packages
+for use with NROFF/TROFF.
+.op
+Page numbers and draft dates.
+.op
+Automatically numbered subheads.
+.op
+Footnotes.
+.op
+Single or double column.
+.op
+Paragraphing, display and indentation.
+.op
+Numbered equations.
+.sh EQN
+A mathematical typesetting preprocessor for TROFF.
+Translates easily readable formulas, either in-line or displayed, into 
+detailed typesetting instructions.
+Formulas are written in a style like this:
+.DS
+sigma sup 2 ~=~ 1 over N sum from i=1 to N ( x sub i \- x bar ) sup 2
+.DE
+which produces:
+.EQ
+sigma sup 2 ~=~ 1 over N sum from i=1 to N ( x sub i - x bar ) sup 2
+.EN
+.op
+Automatic calculation of size changes for subscripts, sub-subscripts,
+etc.
+.op
+Full vocabulary of Greek letters and special symbols.
+.op
+Automatic calculation of large bracket sizes.
+.op
+Vertical ``piling'' of formulae for matrices, conditional
+alternatives, etc.
+.op
+Integrals, sums, etc., with arbitrarily complex limits.
+.op
+Diacriticals: dots, double dots, hats, bars, etc.
+.op
+Easily learned by nonprogrammers and mathematical typists.
+.sh NEQN
+A version of EQN for NROFF;
+accepts the same input language.
+Prepares formulas for display on
+any terminal that NROFF knows about,
+for example, those based on Diablo printing mechanism.
+.op
+Same facilities as EQN within graphical capability of
+terminal.
+.sh TBL
+A preprocessor for NROFF/TROFF
+that translates simple descriptions of table layouts
+and contents into detailed typesetting instructions.
+.op
+Computes column widths.
+.op
+Handles left- and right-justified columns,
+centered columns and decimal-point
+alignment.
+.op
+Places column titles.
+.op
+Table entries can be text,
+which is adjusted to fit.
+.op
+Can box all or parts of table.
+.sh COL
+Process files with reverse line feeds to allow
+one-pass printing.
+.sh DEROFF
+Remove all TROFF commands from input.
+.sh CHECKEQ
+Check document for possible errors in EQN usage.
+.sh CHECKNR
+Examine files for syntax errors in macro, nroff, and troff
+commands.

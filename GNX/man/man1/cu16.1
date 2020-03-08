@@ -1,0 +1,169 @@
+.ig
+	@(#)cu16.1	1.6	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.if t .ds T ~\ 
+.if n .ds T ~
+.TH CU16 1
+.SH NAME
+cu16 \- remote terminal program
+.SH SYNOPSIS
+.B cu16
+[
+.B -s 
+[ 
+.B \-b
+] 110 300 600 1200 2400 4800 9600 ]
+.SH DESCRIPTION
+.I Cu16
+opens a remote line as a terminal.
+It talks to a tty device connected to a serial port
+on another system.
+It manages an interactive conversation and echoes 
+terminal input.
+.I Cu16
+uses the value of the
+.I DDTPORT
+environment variable
+to find which device to open as a remote line.
+.PP
+The default transmission speed for the port is 9600 baud.
+The
+.B \-s 
+flag sets transmission speeds (110, 300, 600, 1200, 2400, 
+4800, 9600 baud).
+.I Cu16
+does not support modems for dial-up connections.
+.PP
+The
+.B \-b
+flag specifies that nulls are to be turned into breaks.
+This allows the break key and the ASCII NUL character (control-shift-@
+on many terminals) to send a break.
+.PP
+After making the connection,
+.I cu16
+runs as two processes:
+the
+.I send
+process reads the standard input and
+passes most of it to the remote system;
+the
+.I receive
+process reads from the remote system and passes
+most data to the standard output.
+Lines beginning with `\*T' have special meanings.
+.PP
+The
+.I send
+process interprets the following:
+.TP 18
+\*T\|\f3.\|
+terminate the conversation.
+.br
+.ns
+.TP 18
+\*TEOT
+terminate the conversation.
+.TP 18
+\*T< file
+send the contents of
+.I file
+to the remote system,
+as though typed at the terminal.
+.TP 18
+\*T^ Z
+suspend the
+.I cu16
+program.
+Note that the control-Z must be followed by a newline.
+.TP 18
+\*T#
+sends a break.
+.TP 18
+\*T!
+invoke an interactive shell on the local system.
+.TP 18
+\*T!cmd ...
+run the command on the local system
+(via
+.BR "sh \-c" ")."
+.TP 18
+\*T$cmd ...
+run the command locally and send its output
+to the remote system.
+.TP 18
+\*T%take from [to]
+copy file `from' (on the remote system)
+to file `to' on the local system.
+If `to' is omitted,
+the `from' name is used both places.
+.TP 18
+\*T%put from [to]
+copy file `from' (on local system)
+to file `to' on remote system.
+If `to' is omitted, the `from' name is used both places.
+.TP 18
+\*T:
+during an output diversion, this toggles whether the operation of
+.I cu16
+will be silent, i.e., whether information received from the remote
+system will be written to the standard output.
+This allows a ``progress report'' during long transfers.
+.TP 18
+\*T\*T\f3\|.\|.\|.\fP
+send
+the line `~\|.\|.\|.'.
+.PP
+Both the
+.I send
+and
+.I receive
+processes handle output diversions of the following form:
+.PP
+\&~>[>][:]file
+.br
+zero or more lines to be written to file
+.br
+\&~>
+.PP
+In any case, output is diverted (or appended, if `>>' used) to the file.
+If `:' is used,
+the diversion is
+.I silent,
+i.e., it is written only to the file.
+If `:' is omitted,
+output is written both to the file and to the standard output.
+The trailing `~>' terminates the diversion.
+.PP
+The use of
+.B "\*T%put"
+requires
+.I stty
+and
+.I cat
+on the remote side.
+It also requires that the
+erase and kill characters on the remote
+system be identical to the ones on the local system.
+Backslashes are inserted at appropriate places.
+.PP
+The use of
+.B "\*T%take"
+requires the existence of
+.I echo
+and
+.I tee
+on the remote system.
+Also,
+.B "stty tabs"
+mode is required on the remote system if
+tabs are to be copied without expansion.
+.SH FILES
+/dev/tty??	the remote line to open
+.SH "SEE ALSO"
+ tty(4), stty(1)
+.SH DIAGNOSTICS
+Exit code is
+zero for normal exit,
+nonzero otherwise.

@@ -1,0 +1,773 @@
+.ig
+	@(#)db16supt	1.7	9/23/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.if t .ds T ~\ 
+.if t .ds U _\ 
+.if n .ds T ~
+.if n .ds U _
+.he "'G\s-2ENIX\s0 Cross-Support Software''%'"
+.nr sf 3
+.de $0
+.(x
+\\$2	\\$1
+.)x
+..
+.tp
+.sp 3i
+.sz 12
+.(l C
+\f3G\s-2ENIX\s0 Cross-Support Software For An NS16000-Based System
+.sp 1.5i
+September, 1983\fP
+.)l
+.bp
+.sz 8
+.sh 1 "\f3Introduction\fP"
+.lp
+G\s-2ENIX\s0\s4\uTM\d\s0 cross-support software 
+consists of C and Pascal compilers, an assembler, a linker,
+a debugger, a monitor, basic I/O routines and other tools (see Table 1).
+Using these tools you can make, down-load, and execute a program on an
+NS16000\s4\uTM\d\s0-based target system, such as the
+DB16000 Development Board.
+.(f
+G\s-2ENIX\s0, SYS16, and NS16000
+are trademarks of National Semiconductor Corporation.
+.)f
+.lp
+Cross-support software runs under the control of a host system and
+produces code for a target system.  The host system can be either VAX\**
+.(f
+\** VAX is a trademark of Digital Equipment Corporation
+.)f
+running Berkeley 4.1bsd \s-2UNIX\s0\**
+.(f
+\** U\s-2NIX\s0 is a trademark of Bell Laboratories.
+.)f
+or an NS16000-based host system, such as SYS16\s4\uTM\d\s0
+.(f
+G\s-2ENIX\s0 was derived from 4.1bsd which was developed at the
+University of California at Berkeley.
+.)f
+.(f
+The information in this document is for reference only and is subject
+to change without notice.
+.)f
+running \s-2GENIX\s0.
+.lp
+This document describes
+.i dbmon ,
+a monitor for the DB16000 (Section 3) and the basic I/O routines (Section 4).
+Throughout this documentation the DB16000 is used as a sample
+NS16000-based target system for explaining how to use \s-2GENIX\s0
+cross-support software.
+.lp
+Code for
+.i dbmon 
+and the basic I/O routines are in /usr/NSC/db16k; Section 2
+provides an overview of the files in that directory.
+This document also gives a step-by-step
+procedure for compiling, loading, and executing a program on the
+DB16000 (Section 5).  
+.sp 2
+.ce
+Table 1  G\s-2ENIX\s0 CROSS-SUPPORT SOFTWARE TOOLS
+.(b
+.TS
+center box tab ($);
+c|c|c
+c|c|c
+l|l|l .
+.sp
+NAME UNDER$NAME FOR$
+\s-2GENIX\s0$CROSS-SUPPORT$PURPOSE
+.sp
+_
+ar$nar$File archiver
+_
+as$nasm$Assembler
+_
+cc$nmcc$C Compiler
+_
+cu16$cu16$Communication link to DB16000
+_
+ddt$ddt$Debugger and down-loader
+_
+ld$nmeld$Linker
+_
+monfix$monfix$Monitor maker
+_
+nburn$nburn$PROM burner
+_
+nm$nnm$Symbol table printer
+_
+pc$nmpc$Pascal compiler (optional)
+_
+ranlib$nranlib$Library maker
+_
+size$nsize$Byte counter
+_
+strip$nstrip$Symbol table remover
+_
+/lib$../lib$Standard \s-2UNIX\s0 libraries
+_
+dbmon$dbmon$Monitor
+_
+sio, prf$sio, prf$Basic C I/O routines for DB16000
+_
+gets$gets$Basic C I/O routines for DB16000
+_
+pio$pio$Basic Pascal I/O routines for DB16000
+.TE
+.)b
+.sh 2 "\f3Documentation Conventions\fP"
+.lp
+The documentation conventions used in this paper are:
+.ip $ 
+for the escape key
+.ip <cr>
+for a carriage return
+.ip X 
+for a digit of a number
+.ip <lf>
+for linefeed
+.ip ^ 
+for the control key
+.lp
+In examples and instructions items appearing in boldface must be 
+entered exacctly as shown.
+System responses are in regular typeface.
+.sh 1 "\f3Files in the db16k Directory\fP"
+.lp
+The files in the db16k directory contain
+.i dbmon
+monitor source and executable code,
+basic I/O routine source and executable code (for Pascal and C
+programs), and
+information on the monitor.  The source code is provided and
+documented so that the monitor or the basic I/O routines 
+can be customized for different appplications.
+.lp
+Files that contain monitor source or executable code are:
+.nr ii 1.5i
+.ip dbmon.x
+Contains the ready-to-burn executable code for
+.i dbmon .
+It assumes the DB16000 has an NS16082 Memory Management Unit (MMU).
+.ip rom.o
+Monitor object code made from assembling rom.s.  
+.ip rom.s
+Monitor assembly language source code with comments for non-MMU boards.
+Use this file for altering the monitor for non-MMU boards. 
+.ip rom.v
+Monitor assembly language source code with version number.
+File is a combination of rom.s and vers.s.
+.ip vers.s
+Contains the monitor reset banner and version number.
+.ip version
+Contains the current version number.
+.ip README
+Describes how to burn EPROMs for a \s-2GENIX\s0 DB16000 monitor.
+.ip makefile
+.i Make
+description file for building the binary DB16000 monitor from the source.
+.ip newvers.sh
+Called by makefile to create vers.s.
+.sp
+.lp
+Files that contain basic C I/O 
+routines source or executable code:
+.ip gets.o
+Object code for a simplified version of the standard \s-2UNIX\s0 C
+.i gets
+routine.
+.ip prf.o 
+Object code for a simplified version of the standard \s-2UNIX\s0 C
+.i printf(3)
+routine.
+.ip sio.o 
+Object code made by assembling sio.s for versions of C
+.i putchar
+and
+.i getchar
+routines.  
+.ip sio.s
+Assembly language source code for versions of C
+.i putchar
+and 
+.i getchar 
+routines.
+.sp
+.lp
+Files that contain basic Pascal I/O routines
+source or exectuable code:
+.ip pio.o 
+Object code produced by assembling pio.s.  Object code
+is for versions of Pascal 
+.i read , 
+.i readln , 
+.i write , 
+and 
+.i writeln
+procedures.
+.ip pio.s
+Assembly language source code produced by compiling
+file pio.p and modifying the assembly file as
+described in Section 4.3.  Code is for versions of Pascal
+.i read , 
+.i readln , 
+.i write , 
+and 
+.i writeln
+procedures.
+.ip pio.p
+Pascal  source 
+code for versions of Pascal 
+.i read , 
+.i readln , 
+.i write , 
+and 
+.i writeln
+procedures.
+.nr ii 0.5i
+.lp
+The \s-2GENIX\s0 monitor files are described in Section 3 and the files which
+contain the basic I/O routines are described in Section 4.
+.sh 1 "\f3Monitor Support\fP" 
+.lp
+Before any cross-software can access the DB16000, the monitor supplied
+on the board must be replaced by 
+.i dbmon ,
+the monitor supplied in the package.
+With G\s-2ENIX\s0 Cross-Support Software
+.i dbmon
+is supplied as two sets of EPROMS.
+The set labeled
+.i dbmon1 
+assumes that the DB16000 Development Board has MMU.  The set labeled
+.i dbmon2
+assumes that MMU is not present on the DB16000.
+The executable code for the monitor is in
+/usr/db16k/dbmon.x or in 
+/usr/NSC/db16k/dbmon.x for \s-2GENIX\s0 cross-support.
+Instructions for substituting the monitor are in Section 3.2.
+.lp
+The dbmon.x executable file assumes that the DB16000 has an NS16082
+Memory Management Unit (MMU) on board.
+If you plan to run the DB16000 board without MMU, follow
+the instructions
+in the run-time monitor source code for configuring a version
+without MMU support.
+Also, the configuration section of the monitor source code defines
+the memory configuration parameters used by the monitor.
+When the monitor source code is changed, it must be reassembled, run
+thorugh 
+.i monfix
+and burned into 
+PROMs. 
+.lp
+You can communicate directly with the monitor through 
+.i cu16 (1).
+See the 
+.i "DBMON Reference Manual"
+documentation. 
+.sh 2 "\f3Monitor Routines\fP"
+.lp
+The
+.i dbmon
+program resides in PROMs on the DB16000.
+After the DB16000 board is reset, the monitor program takes
+control.  It also communicates with
+.i ddt
+for down-loading, debugging, and executing a program.
+An executing program receives
+control from the monitor; for control to return to the monitor, the
+program must contain a breakpoint instruction.  For example, at
+the end of the source code for a C program there must be the
+statement:
+.sp
+.ti +1i
+.b asm("bpt");
+.sh 2 "\f3Making New Monitor PROMs\fP"
+.lp
+Since the monitor is supplied in source form, 
+entirely new monitors need not be created for new applications.  The monitor 
+can be modified, reassembled and burned into new PROMs as needed.
+Because changes to the monitor will vary depending on the environment,
+this section does not give instructions on changing the actual code.
+This section does list instructions
+for making a monitor after the code is changed and
+ready to be installed on the DB16000.  
+.lp
+To install the pre-made dbmon.x file, begin with step 2.
+.ip 1.
+Run
+.i make.
+.(l
+% \f3cd /usr/NSC/db16k <cr>\fP
+% \f3make <cr>\fP
+.)l
+The 
+.i make 
+command uses the dependency information contained in
+.i makefile
+to rebuild the monitor.  It calls 
+.i newvers.sh
+which gets the version number from file
+.i version
+and stores the current version with the reset banner in 
+.i vers.s .
+Next, it adds 
+.i vers.s 
+banner to 
+.i rom.s 
+to create 
+.i rom.v .
+Finally,
+.i make
+calls the linker 
+.i ld (1)
+(or
+.i nmeld (1)
+in cross-support)
+to create 
+.i dbmon.x 
+and runs that file through
+.i monfix (1).
+The resulting file is ready for burning into an EPROM.
+.ip 2.
+Connect a Data I/O System 19 EPROM burner to your VT102-compatible
+terminal auxiliary port.  Plug in the Data I/O and turn it on.
+.ip 3.
+On the Data I/O hit \f3LOAD\fP then
+.b 1 ,
+.b 9 ,
+.b 2 ,
+.b 4 .
+Place a 2732 EPROM in the socket indicated by the light.
+.ip 4.
+Enable burner with the key sequence:
+.b SELECT ,
+.b 5 ,
+.b 0 ,
+.b ENTER ,
+.b SELECT ,
+.b D ,
+.b 1 ,
+.b ENTER ,
+.b START .
+.ip 5.
+First burn the even bytes.  Issue the command:
+.(l 
+% \f3nburn -s 0 4 e dbmon.x <cr>\fP
+text\*Usize XXXX data\*Usize XX
+XXXX (XXXX) bytes transferred
+the check sum was XXXX
+.)l
+.ip 6.
+On the burner press the \f3PROG\fP key then \f3START\fP.
+.ip 7.
+When the burner has finished, replace the programmed EPROM with
+a new 2732 EPROM.
+.ip 8.
+Enable the burner again.  Repeat steps 3 and 4. 
+.ip 9.
+Burn the odd bytes with the command:
+.)l
+% \f3nburn -s 0 4 o dbmon.x <cr>\fP
+.(l
+.ip 10.
+Remove the old monitor EPROMs and replace them with the new ones.
+Install the odd byte EPROM on the left with the point of the
+EPROM towards the middle of the board.  Install the even-byte EPROM on
+the right with the point of the EPROM towards the middle of the
+board.  See Figure 1.
+.if n \{\
+.(b
+.hl
+              J1                                     J2
+|----!!!!!!!!!!!!!!!!!!---------------------------!!!!!!!!----|
+|                          +---+ .... +---+ ....              |
+|                          |   | .  . |   | .  .              |
+|                          |   | .  . |   | .  .              |
+|                          +-^-+ .... +-^-+ ....              |
+|                           ODD        EVEN                   |
+|                     ADDRESSES        ADDRESSES              |
+|                                                             |
+|                                                             |
+|                                                             |
+|      DB16000                      +---------------+         |
+|                                   |    NS16032    <         |
+|                                   +---------------+         |
+|                 P1                              P2          |
++-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----!!!!!!!!!!!!!!!!!!--+
+.sp 2
+.ce
+Figure 1  DB116000 Monitor PROMs
+.)b
+.\}
+.if t \{\
+.vS
+.(b
+.hl
+.sp 22
+.ce
+Figure 1  DB16000 Monitor PROMs
+.hl
+.)b
+.vE
+.\}
+.sh 1 "\f3DB16000 Basic I/O Routines\fP"
+.lp
+The DB16000 basic I/O routines
+are low-level functions which 
+allow a program to
+execute on the DB16000 and communicate
+with a terminal, without help from
+a host operating system.  
+The basic I/O routines are divided into three modules which
+simulate the action of the standard
+\s-2UNIX\s0 library routines.  These routines 
+let programs 
+read from and write to a terminal.
+There are three modules for C programs (Section 4.2)
+and one module for Pascal programs (Section 4.3).
+.sh 2 "\f3Using DB16000 Basic I/O Routines\fP"
+.lp
+The basic I/O routines are simplified
+stand-alone versions of the normal library routines and not all functions
+are provided.  Available options and functions are listed with each routine.
+.lp
+In a \s-2GENIX\s0 cross-support software environment, 
+the files are in /usr/NSC/db16k directory.
+In the \s-2GENIX\s0/SYS16 environment, the files are in /usr/src/db16k.
+.sh 2 "\f3C I/O Routines\fP"
+.ip "\f2prf.o\fP" 
+.lp
+This module defines a stand-alone version of 
+.i printf (3)
+and is taken from the \s-2UNIX\s0 stand-alone library.
+The supported options are
+.b "%s" ,
+.b "%u" ,
+.b "%d"
+(\(==\c
+.b "%u" ),
+.b "%o" ,
+.b "%x" ,
+.b "%D" ,
+and
+.b %c .
+.lp
+For this
+.i printf ,
+.b \en 
+will not be expanded into a return-newline character.
+To specify return-newline use 
+.b \er\en . 
+.ip "\f2gets.o\fP"
+.lp
+This module defines the stand-alone routine
+.i gets
+and is taken from the \s-2UNIX\s0 stand-alone library.
+This routine uses 
+.i getchar , 
+described below, to read an entire line.
+A line is
+terminated with either a carriage return or newline.  
+.i gets
+echos the line.
+Line editing
+may be done with erase characters #, and ^H, and with line kill 
+characters \@ and ^U.
+.ip "\f2sio.o\fP"
+.lp
+This module defines the stand-alone routines
+.i putchar
+and
+.i getchar .
+These write and read a single character, respectively.  Reading is done
+without echoing.
+.sh 2 "\f3Pascal I/O Library\fP" 
+.ip \f3pio.p\fP
+.lp
+This module defines stand-alone 
+procedures for Pascal input and output.  
+Syntax for these procedures are:
+.(l
+read(<variable-list>); 
+readln(<variable-list>);
+write(<variable-list>);
+writeln(<variable-list>);
+.)l  
+.lp
+The <variable-list> for write and writeln consists of zero or
+more comma-separated variable-field-specifiers of the form:
+.sp
+.ti +0.5i
+<variable>[:<width>]
+.lp
+<width> specifies the field into which the variable is written.  If
+the variable is longer than width, it is truncated on the right.  If 
+<width> is longer than <variable>, the field is padded with blanks on
+the left.
+.lp
+For input, 
+integer, char, and string types are supported.
+For output, integer,
+char, string, and Boolean types are supported.
+.lp 
+All 
+.i read 
+and 
+.i write 
+routines in pio.p are renamed as
+.i road
+and 
+.i wrote ,
+respectively, to avoid
+potential
+name collisions with the standard Pascal I/O routines
+at compile time.  After the pio.p file is assembled, the routine names
+are changed to read and write.
+The pio.s and pio.o files 
+in the db16k directory 
+have had the name changes made and can be used directly.
+.lp
+The standard Pascal 
+.i read
+and 
+.i write
+calls access the procedures in pio.p.
+For example: 
+.lp
+.ti +0.5i
+writeln(`dzn',`dzn':2,17);
+.lp
+calls 
+.i write$textstring2 ,
+.i write$textring3 ,
+.i write$textinteger2 ,
+and
+.i writeln$text .
+.sh 1 "\f3Using the Linker With the DB16000\fP"
+.lp
+When a program is intended to be run on the DB16000 board,
+the linker (\c
+.i ld
+in the SYS16/\s-2GENIX\s0 environment and
+.i nmeld
+in a cross-support environment)
+must be told to relocate the program to the proper RAM address
+range for the DB16000 board using the 
+.b \-T 
+option.
+The address normally given for 
+.b \-T
+is 8000 hex.
+Also, the entry point must be indicated with the 
+.b \-e 
+option.
+For C programs, generally 
+``\*Umain'' is the entry label; for Pascal programs ``\*Uprogram'' is the
+entry label; and for assembly language programs ``\*Ustart'' is normally
+the entry label.
+See
+.i ld (1).  
+.sh 1 "\f3Sample Session\fP"
+.lp
+This section assumes that the DB16000 Board is properly installed.
+.ip 1.
+Write a program using a text editor.  Suppose myprog.c has been 
+created and contains:
+.(l 
+main() 
+{ 
+	printf("hello\er\en"); 
+	asm("bpt"); 
+} 
+.)l
+.ip 2.
+Compile the new code using
+.i cc
+(or 
+.i nmcc
+for cross-support software):
+.(l
+% \f3cc -c myprog.c <cr>\fP
+.)l
+.ip
+.i Cc 
+produces the file 
+.i myprog.o , 
+an unlinked object file.
+.ip 3.
+Link the object file with the basic I/O routines in modules
+.i prf.o
+and
+.i sio.o .
+Use  
+.i ld
+(or 
+.i nmeld
+for cross-support software):
+.sp
+.(l
+% \f3ld \-T 8000 -e \*Umain myprog.o prf.o sio.o <cr>\fP  
+.)l
+.ip
+.i Ld
+produces an executable file named 
+.i a.out .
+The 
+.b \-T 
+option tells the linker to locate the program at 8000
+hex.
+The 
+.b \-e 
+option tells the linker the program's entry point.
+.ip 4.
+Update the ttyXX port information in /dev/ttyXX.
+XX is the number of the terminal port to which the DB16000 is
+connected.  Login as the super user.  Edit /etc/ttys and
+change 18ttyXX to 08ttyXX (see 
+.i tty (5)
+and
+.i init (8).
+Next issue: 
+.(l
+# \f3Kill -1 1 <cr>\fP
+# \f3chmod 666 /dev/ttyXX <cr>\fP
+.)l
+.ip
+These commands only
+need to be executed once and must be issued by the super user.
+.ip 5.
+Set the environment for the 
+.i ddt
+and
+.i cu16
+(because this must be done
+each time you login, placing this command in a .login or .cshrc
+file is convenient):
+.(l
+% \f3setenv DDTPORT /dev/ttyXX <cr> \fP
+.)l
+.ip 6.
+Check that the line is open and the DB16000 is connected using
+.i cu16 :  
+.(l
+% \f3cu16 <cr>\fP
+Port /dev/ttyXX being used
+connected
+.)l
+.ip
+If ``connected'' is not displayed on your terminal, the line is not
+properly set up.  Check steps 1 and 2.  If ``connected'' is displayed
+but the terminal is locked up, the board is not properly connected.
+Hit an interrupt key to unlock the terminal, check that the
+DB16000 is correctly connected, and repeat step 6.
+.ip 7.
+Hit the reset switch on the board.  
+.(l
+National DB16000 Monitor (Rev. X.X) (kernel) Date Time
+E SVC
+*
+.)l
+.ip
+This reset banner displayed on the screen indicates that
+.i cu16 
+has established communication with the monitor.  
+.ip 8.
+Issue a monitor command to ensure that everything is working:
+.(l
+*
+\f3pr0 <cr>\fP
+=FFFFFFb1
+*
+.)l
+.ip
+The command \f3pr0\f1 prints the contents of register r0 on the next
+line.
+.ip 9.
+Type a tilde and a period to exit 
+.i cu16 :
+.(l
+* 
+\f3\*T. <cr>\fP
+Disconnected
+%
+.)l
+.ip 10.
+Invoke
+.i ddt 
+using the 
+.b \-r
+option for debugging on a remote
+NS16000 board:
+.(l
+.nr aa \w'%initfun+1fc<sb>,tos'
+.ta \n(aau+(3n)
+% \f3ddt -r a.out <cr>\fP
+opening /dev/ttyXX
+reading a.out symbols.found 11
+.sp
+.nf
+.ta 8 +8 +8 +8 +8
+\f3$d\fP	1100 76 0
+		\f3main/\fP	br\*Umain+0f	\f3<lf>\fP
+\*Umain+2/	addr	%initfun+1fc<sb>,tos	\f3<lf>\fP	
+\*Umain+5/	cxp	\*Uprintf	\f3<lf>\fP
+\*Umain+7/	adjspb	-4	\f3<lf>\fP
+\*Umain+0a/	bpt	\f3$g\fP
+.sp
+hello
+.sp
+\*Umain+0a/	bpt	<<bpt	\f3$d\fP	1100 76 0
+\f3<cr>\fP
+\f3]\fP
+\*Umain+0f/	enter	[],0	\f3]\fP
+\*Umain+12/	br	\*Umain+2	\f3]\fP
+\*Umain+2/	addr	%initfun+1fc<sb>,tos	\f3]\fP
+\*Umain+5/	cxp	\*Uprintf	\f3<lf>\fP	
+\*Umain+5/	adjspb	-4	\f3putchar$b\fP	\f3$p\fP
+\*Uputchar/	tbitb	0,@0fffa02	<<bpt 0	\f3$p\fP
+.sp
+h
+.sp
+\*Uputchar/	tbitb	0,@0fffa02	<<bpt 0	\f3$q\fP
+%
+.)l
+.ip
+The \f3$d\fP command downloads the a.out file to the DB16000. 
+The \f3main/\fP command displays the instruction at the address
+referenced by the symbol \f2main\fP.
+The location is also ``opened'' so a change command typed after the
+\f3main/\fP command could alter the contents of that address.
+The line-feed character, \f3<lf>\fP,
+displays the instruction at the next address.  The address
+\f2\*Umain+2\fP is listed in the left column.
+The \f3$g\fP
+command executes the program.
+To execute the program again, it
+is reloaded with \f3$d\fP and \f3]\fP
+is used to single-step through the program.
+\f3putchar$b\fP creates a breakpoint at the instruction
+\f2putchar\fP.
+\f3$p\fP inserts the breakpoint created with \f3$b\fP
+and begins execution.
+.i Ddt
+stops execution when it finds the \f2putchar\fP instruction and
+displays the line.
+\f3$q\fP quits \f2ddt\fP.
+.hx 
+.bp
+.sp 6
+.(l C
+G\s-2ENIX\s0 Cross-Support Software For An NS16000-Based System
+.)l
+.sp 1.5i
+.tl ''Table of Contents''
+.sp 4
+.xp

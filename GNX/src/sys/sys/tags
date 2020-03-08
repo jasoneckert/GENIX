@@ -1,0 +1,435 @@
+BASEPRI	../sys/clock.c	?^#define BASEPRI(p) (p.mod != 0)$?
+BUFHASH	../dev/bio.c	?^#define	BUFHASH(dev, dblkno)	\\$?
+GETB	../dev/dcu.c	?^#define	GETB(d,i) (((unsigned char *)(&d))[i])	/* ?
+HASH	../sys/slp.c	?^#define HASH(x)	(( (int) x >> 5) & (SQSIZE-1))$?
+INOHASH	../sys/iget.c	?^#define	INOHASH(dev,ino)	(((dev)+(ino))%INOHSZ)$?
+INT	../dev/dcu.c	?^#define INT(d)	((int)(d))	/* make something an int?
+ISSIG	../sys/trap.c	?^#define	ISSIG(p)	((p)->p_sig && \\$?
+LPUNIT	../dev/lp.c	?^#define LPUNIT(dev) (minor(dev) >> 3)$?
+Mmain	../sys/main.c	?^main()$?
+STAT	../dev/dcu.c	?^#define	STAT(p,s) (((s) >> (p)->ph_statshift) & DC?
+TCUUNIT	../dev/tcu.c	?^#define	TCUUNIT(dev) (0)		/* "minor(dev) & 3", uni?
+USERMODE	../sys/trap.c	?^#define USERMODE(ps)	((ps) & 0x01000000)$?
+aborttrap	../sys/vmtrap.c	?^aborttrap(pc, mpsr, ppl)$?
+access	../sys/fio.c	?^access(ip, mode)$?
+acct	../sys/acct.c	?^acct()$?
+addrtocst	../sys/vmmem.c	?^addrtocst(addr)$?
+alarm	../sys/sys4.c	?^alarm()$?
+alloc	../sys/alloc.c	?^alloc(dev)$?
+alloclistpage	../sys/vmmem.c	?^alloclistpage(spti, addr, type, zeroflag)$?
+ave	../sys/clock.c	?^#define	ave(a,b) ((int)(((int)(a*b))/(b+1)))$?
+b_to_q	../sys/prim.c	?^b_to_q(cp, cc, q)$?
+badblock	../sys/alloc.c	?^badblock(fp, bn)$?
+baddr	../dev/bio.c	?^baddr(dev, blkno)$?
+bawrite	../dev/bio.c	?^bawrite(bp)$?
+bdwrite	../dev/bio.c	?^bdwrite(bp)$?
+bflush	../dev/bio.c	?^bflush(dev)$?
+bhinit	../dev/bio.c	?^bhinit()$?
+binit	../sys/main.c	?^binit()$?
+binval	../dev/bio.c	?^binval(dev)$?
+bmap	../sys/subr.c	?^bmap(ip, bn, rwflg)$?
+bmclose	../dev/cons.c	?^bmclose(dev,flag)$?
+bmioctl	../dev/cons.c	?^bmioctl(dev, cmd, addr, flag)$?
+bmopen	../dev/cons.c	?^bmopen(dev, flag)$?
+bmoutputchar	../dev/termem.c	?^bmoutputchar (c)$?
+bmputchar	../dev/cons.c	?^bmputchar (c)$?
+bmread	../dev/cons.c	?^bmread(dev)$?
+bmrint	../dev/cons.c	?^bmrint(dev)$?
+bmstart	../dev/cons.c	?^bmstart(tp)$?
+bmwrite	../dev/cons.c	?^bmwrite(dev)$?
+bmxint	../dev/cons.c	?^bmxint(dev)$?
+boot	../sys/machdep.c	?^boot(paniced, arghowto)$?
+bread	../dev/bio.c	?^bread(dev, blkno)$?
+breada	../dev/bio.c	?^breada(dev, blkno, rablkno)$?
+brelse	../dev/bio.c	?^brelse(bp)$?
+bwrite	../dev/bio.c	?^bwrite(bp)$?
+callinit	../sys/clock.c	?^callinit()$?
+catq	../sys/prim.c	?^catq(from, to)$?
+changemap	../sys/vm.c	?^changemap(spti, addr, mask, data)$?
+changemapprot	../sys/vm.c	?^changemapprot(spti, addr, newprot)$?
+chdir	../sys/sys4.c	?^chdir()$?
+chdirec	../sys/sys4.c	?^chdirec(ipp)$?
+checkmem	../sys/vmsys.c	?^checkmem(spti, addr, count, writeflag)$?
+chmod	../sys/sys4.c	?^chmod()$?
+chown	../sys/sys4.c	?^chown()$?
+chroot	../sys/sys4.c	?^chroot()$?
+cinit	../sys/prim.c	?^cinit()$?
+clearmap	../sys/vm.c	?^clearmap(spti, addr)$?
+clearptetable	../sys/vm.c	?^clearptetable(spti)$?
+clkreld	../sys/machdep.c	?^clkreld()$?
+clkstart	../sys/machdep.c	?^clkstart()$?
+close	../sys/sys2.c	?^close()$?
+closef	../sys/fio.c	?^closef(fp)$?
+clrbuf	../dev/bio.c	?^clrbuf(bp)$?
+compress	../sys/acct.c	?^compress(t)$?
+copyptetable	../sys/vm.c	?^copyptetable(oldspti, newspti)$?
+copyu	../sys/vmsys.c	?^copyu(procid)$?
+core	../sys/sigjcl.c	?^core()$?
+cpanic	../sys/prf.c	?^cpanic(s, adx)$?
+cpass	../sys/subr.c	?^cpass()$?
+creat	../sys/sys2.c	?^creat()$?
+csttopg	../sys/vmmem.c	?^csttopg(cstp)$?
+ctox	../dev/termem.c	?^# define ctox(c)	(Cw*((c)-1)+Cl)		/* exact */$?
+cursorinit	../dev/termem.c	?^cursorinit ()$?
+cursoroff	../dev/termem.c	?^cursoroff ()$?
+cursoron	../dev/termem.c	?^cursoron ()$?
+cursorxy	../dev/termem.c	?^cursorxy (x, y)$?
+dcucommand	../dev/dcu.c	?^dcucommand(ph, opcode, data)$?
+dcudump	../dev/dcu.c	?^dcudump(dev)			/* dump core after a system crash *?
+dcuecc	../dev/dcu.c	?^dcuecc(ecc, data)$?
+dcuhandleerror	../dev/dcu.c	?^dcuhandleerror(du)$?
+dcuintr	../dev/dcu.c	?^dcuintr()$?
+dcuintrunit	../dev/dcu.c	?^dcuintrunit(du, err)$?
+dcuopen	../dev/dcu.c	?^dcuopen(dev, rw)$?
+dcuqueueio	../dev/dcu.c	?^dcuqueueio(du)$?
+dcuread	../dev/dcu.c	?^dcuread(dev)			/* character read routine */$?
+dcustart	../dev/dcu.c	?^dcustart(du, skip)$?
+dcustrategy	../dev/dcu.c	?^dcustrategy(bp)$?
+dcuwait	../dev/dcu.c	?^dcuwait(ph)$?
+dcuwrite	../dev/dcu.c	?^dcuwrite(dev)			/* character write routine */$?
+delete_char	../dev/termem.c	?^delete_char (num)$?
+delete_line	../dev/termem.c	?^delete_line (num)$?
+deverror	../sys/prf.c	?^deverror(bp, o1, o2)$?
+disksort	../dev/dsort.c	?^disksort(dp, bp)$?
+dkblock	../sys/machdep.c	?^dkblock(bp)$?
+dkunit	../sys/machdep.c	?^dkunit(bp)$?
+do_newline	../dev/termem.c	?^do_newline ()$?
+doadump	../sys/machdep.c	?^doadump()$?
+dobpt	../sys/machdep.c	?^dobpt()$?
+doflavor	../dev/rs.c	?^doflavor(c,tp)$?
+dorti	../sys/machdep.c	?^dorti(n)$?
+doswapio	../sys/vmswap.c	?^doswapio()$?
+downshare	../sys/vm.c	?^downshare(ownspti, spti)$?
+dumpcst	../dev/flavors.c	?^dumpcst()$?
+dumpecc	../dev/flavors.c	?^dumpecc()$?
+dumpptetable	../dev/flavors.c	?^dumpptetable(spti)$?
+dumpspt	../dev/flavors.c	?^dumpspt()$?
+dumpsys	../sys/machdep.c	?^dumpsys()$?
+dup	../sys/sys3.c	?^dup()$?
+erase_display	../dev/termem.c	?^erase_display (code)$?
+erase_line	../dev/termem.c	?^erase_line (code)$?
+exec	../sys/sys1.c	?^exec()$?
+exece	../sys/sys1.c	?^exece()$?
+exit	../sys/sys1.c	?^exit(rv)$?
+fakeint	../dev/lp.c	?^fakeint () {$?
+falloc	../sys/fio.c	?^falloc()$?
+flavordump	../dev/flavors.c	?^flavordump(c)$?
+flushtty	../dev/tty.c	?^flushtty(tp, rw)$?
+forceclose	../sys/vmsys.c	?^forceclose(dev)$?
+fork	../sys/sys1.c	?^fork()$?
+fork1	../sys/sys1.c	?^fork1(isvfork)$?
+free	../sys/alloc.c	?^free(dev, bno)$?
+freepage	../sys/vmmem.c	?^freepage(addr)$?
+freepagewait	../sys/vmmem.c	?^freepagewait()$?
+fserr	../sys/alloc.c	?^fserr(fp, cp)$?
+fstat	../sys/sys3.c	?^fstat()$?
+ftime	../sys/sys4.c	?^ftime()$?
+getblk	../dev/bio.c	?^getblk(dev, blkno)$?
+getc	../sys/prim.c	?^getc(p)$?
+geteblk	../dev/bio.c	?^geteblk()$?
+geterror	../dev/bio.c	?^geterror(bp)$?
+getf	../sys/fio.c	?^getf(f)$?
+getfs	../sys/alloc.c	?^	getfs(dev)$?
+getgid	../sys/sys4.c	?^getgid()$?
+getmap	../sys/vm.c	?^getmap(spti, addr)$?
+getmdev	../sys/sys3.c	?^getmdev()$?
+getpid	../sys/sys4.c	?^getpid()$?
+getuid	../sys/sys4.c	?^getuid()$?
+getxfile	../sys/sys1.c	?^getxfile(ip, nargc, uid, gid)$?
+goto_rc	../dev/termem.c	?^goto_rc (r, c)$?
+gsignal	../sys/sigjcl.c	?^gsignal(pgrp, sig)$?
+gtime	../sys/sys4.c	?^gtime()$?
+halt	../sys/machdep.c	?^halt()$?
+hardclock	../sys/clock.c	?^hardclock(pc, ps)$?
+hardswap	../sys/vmsched.c	?^hardswap(inp, desperate, deservin, advice)$?
+ialloc	../sys/alloc.c	?^ialloc(dev)$?
+idleclearpage	../sys/vmmem.c	?^idleclearpage()$?
+iexpand	../sys/iget.c	?^iexpand(ip, dp)$?
+ifind	../sys/iget.c	?^ifind(dev, ino)$?
+ifree	../sys/alloc.c	?^ifree(dev, ino)$?
+iget	../sys/iget.c	?^iget(dev, ino)$?
+ihinit	../sys/iget.c	?^ihinit()$?
+iinit	../sys/main.c	?^iinit()$?
+imax	../sys/vmsched.c	?^#define imax(x,y)	(x > y \? x : y)$?
+imin	../sys/vmsched.c	?^#define imin(x,y)	(x < y \? x : y)$?
+incore	../dev/bio.c	?^incore(dev, blkno)$?
+inferior	../sys/sys4.c	?^inferior(p)$?
+init_termem	../dev/termem.c	?^init_termem ()$?
+initmem	../sys/vminit.c	?^initmem()$?
+initvm	../sys/vminit.c	?^initvm()$?
+insert_char	../dev/termem.c	?^insert_char (num)$?
+insert_line	../dev/termem.c	?^insert_line (num)$?
+ioctl	../sys/ioctl.c	?^ioctl()$?
+iodone	../dev/bio.c	?^iodone(bp)$?
+iomove	../sys/rdwri.c	?^iomove(cp, n, flag)$?
+iowait	../dev/bio.c	?^iowait(bp)$?
+iput	../sys/iget.c	?^iput(ip)$?
+issig	../sys/sigjcl.c	?^issig()$?
+itrunc	../sys/iget.c	?^itrunc(ip)$?
+iupdat	../sys/iget.c	?^iupdat(ip, ta, tm, waitfor)$?
+jabsio	../dev/rs.c	?^jabsio(tp)$?
+kallocpage	../sys/vmmem.c	?^kallocpage(lock)$?
+kfreepage	../sys/vmmem.c	?^kfreepage(addr)$?
+kill	../sys/sys4.c	?^kill()$?
+link	../sys/sys2.c	?^link()$?
+loadav	../sys/vmsched.c	?^loadav(avg, n)$?
+lockmem	../sys/vmsys.c	?^lockmem(spti, addr, count)$?
+lockpage	../sys/vmmem.c	?^lockpage(addr)$?
+lpcanon	../dev/lp.c	?^lpcanon(c)$?
+lpclose	../dev/lp.c	?^lpclose(flag)$?
+lperrint	../dev/lp.c	?^lperrint() {$?
+lpflush	../dev/lp.c	?^lpflush () {$?
+lpintr	../dev/lp.c	?^lpintr() {$?
+lpopen	../dev/lp.c	?^lpopen(dev, flag)$?
+lpoutput	../dev/lp.c	?^lpoutput(c)$?
+lptout	../dev/lp.c	?^lptout () {$?
+lpwrite	../dev/lp.c	?^lpwrite() {$?
+machine_check	../sys/trap.c	?^machine_check(pc,psl)$?
+maknode	../sys/iget.c	?^maknode(mode)$?
+mfpr	../sys/machdep.c	?^mfpr(reg)$?
+minphys	../dev/bio.c	?^minphys(bp)$?
+mknod	../sys/sys2.c	?^mknod()$?
+mmkcopy	../dev/mem.c	?^mmkcopy(writeflag)$?
+mmpcopy	../dev/mem.c	?^mmpcopy(writeflag)$?
+mmread	../dev/mem.c	?^mmread(dev)$?
+mmwrite	../dev/mem.c	?^mmwrite(dev)$?
+mtpr	../sys/machdep.c	?^mtpr(reg,val)$?
+namei	../sys/nami.c	?^namei(func, flag)$?
+ndflush	../sys/prim.c	?^ndflush (q, cc)$?
+ndqb	../sys/prim.c	?^ndqb (q, flag)$?
+newcursor	../dev/termem.c	?^newcursor (parms, parmnum)$?
+newproc	../sys/slp.c	?^newproc(isvfork)$?
+nextc	../sys/prim.c	?^nextc(p, cp)$?
+nice	../sys/sys4.c	?^nice()$?
+nodev	../sys/subr.c	?^nodev() { u.u_error = ENODEV; }$?
+nosys	../sys/trap.c	?^nosys() { u.u_error = 100; }$?
+notavail	../dev/bio.c	?^notavail(bp)$?
+ns2651init	../dev/rs.c	?^ns2651init(tp)$?
+ns2651mode	../dev/rs.c	?^ns2651mode(tp)$?
+ns8253init	../dev/rs.c	?^ns8253init(tp)				/* National 8253 timer init */$?
+ntbreakc	../dev/ttynew.c	?^ntbreakc(c, tp)$?
+ntread	../dev/ttynew.c	?^ntread(tp)$?
+ntwrite	../dev/ttynew.c	?^ntwrite(tp)$?
+ntyclose	../dev/ttynew.c	?^ntyclose(tp)$?
+ntyecho	../dev/ttynew.c	?^ntyecho(c, tp)$?
+ntyinput	../dev/ttynew.c	?^ntyinput(c, tp)$?
+ntyopen	../dev/ttynew.c	?^ntyopen(dev, tp)$?
+ntyout	../dev/ttynew.c	?^ntyout(cp, tp)$?
+ntyoutput	../dev/ttynew.c	?^ntyoutput(c, tp)$?
+ntypend	../dev/ttynew.c	?^ntypend(tp)$?
+ntyrend	../dev/ttynew.c	?^ntyrend(tp, pb, pe)$?
+ntyretype	../dev/ttynew.c	?^ntyretype(tp)$?
+ntyrub	../dev/ttynew.c	?^ntyrub(c, tp)$?
+ntyrubo	../dev/ttynew.c	?^ntyrubo(tp, cnt)$?
+nulldev	../sys/subr.c	?^nulldev() { }$?
+nullioctl	../sys/ioctl.c	?^nullioctl(tp, cmd, addr)$?
+nullsys	../sys/trap.c	?^nullsys() { }$?
+nz	../sys/vmsched.c	?^#define	nz(x)	(x != 0 \? x : 1)$?
+open	../sys/sys2.c	?^open()$?
+open1	../sys/sys2.c	?^open1(ip, mode, trf)$?
+openi	../sys/fio.c	?^openi(ip, rw)$?
+owner	../sys/fio.c	?^owner()$?
+pagein	../sys/vmtrap.c	?^pagein(spti, addr, pc)$?
+pagein2	../sys/vmtrap.c	?^pagein2(spti, addr, create)$?
+paintchar	../dev/termem.c	?^paintchar (c)$?
+paintcursor	../dev/termem.c	?^paintcursor ()$?
+paintinit	../dev/termem.c	?^paintinit ()$?
+passc	../sys/subr.c	?^passc(c)$?
+pause	../sys/sys4.c	?^pause()$?
+pfind	../sys/subr.c	?^pfind(pid)$?
+physaddr	../sys/vmmem.c	?^physaddr(spti, addr)$?
+physio	../dev/bio.c	?^physio(strat, bp, dev, rw, mincnt)$?
+pipe	../sys/pipe.c	?^pipe()$?
+plock	../sys/pipe.c	?^plock(ip)$?
+prdev	../sys/prf.c	?^prdev(str, dev)$?
+prele	../sys/pipe.c	?^prele(ip)$?
+prf	../sys/prf.c	?^prf(fmt, adx, touser)$?
+printf	../sys/prf.c	?^printf(fmt, x1)$?
+printn	../sys/prf.c	?^printn(n, b, touser)$?
+printx	../sys/prf.c	?^printx(x, touser)$?
+procstat	../dev/flavors.c	?^procstat(pp)$?
+procxmt	../sys/sigjcl.c	?^procxmt()$?
+psig	../sys/sigjcl.c	?^psig()$?
+psignal	../sys/sigjcl.c	?^psignal(p, sig)$?
+ptcclose	../dev/pty.c	?^ptcclose(dev, flag)$?
+ptcopen	../dev/pty.c	?^ptcopen(dev, flag)$?
+ptcread	../dev/pty.c	?^ptcread(dev)$?
+ptcwrite	../dev/pty.c	?^ptcwrite(dev)$?
+ptrace	../sys/sigjcl.c	?^ptrace()$?
+ptsclose	../dev/pty.c	?^ptsclose(dev, flag)$?
+ptsopen	../dev/pty.c	?^ptsopen(dev, flag)$?
+ptsread	../dev/pty.c	?^ptsread(dev)$?
+ptsstart	../dev/pty.c	?^ptsstart(tp)$?
+ptswrite	../dev/pty.c	?^ptswrite(dev)$?
+ptyioctl	../dev/pty.c	?^ptyioctl(dev, cmd, addr, flag)$?
+putc	../sys/prim.c	?^putc(c, p)$?
+putchar	../sys/prf.c	?^putchar(c, touser)$?
+rdwr	../sys/sys2.c	?^rdwr(mode)$?
+read	../sys/sys2.c	?^read()$?
+readi	../sys/rdwri.c	?^readi(ip)$?
+readp	../sys/pipe.c	?^readp(fp)$?
+reboot	../sys/sys4.c	?^reboot()$?
+remrq	../sys/swtch.c	?^remrq(p)$?
+rexit	../sys/sys1.c	?^rexit()$?
+rqinit	../sys/swtch.c	?^rqinit()$?
+rsclose	../dev/rs.c	?^rsclose(dev,flag)$?
+rsioctl	../dev/rs.c	?^rsioctl(dev,cmd,addr,flag)$?
+rsopen	../dev/rs.c	?^rsopen(dev,flag)$?
+rsputchar	../dev/rs.c	?^rsputchar(c)$?
+rsread	../dev/rs.c	?^rsread(dev)$?
+rsrint	../dev/rs.c	?^rsrint(dev)$?
+rsstart	../dev/rs.c	?^rsstart(tp)$?
+rsstop	../dev/rs.c	?^rsstop(tp,flag)$?
+rswrite	../dev/rs.c	?^rswrite(dev)$?
+rsxint	../dev/rs.c	?^rsxint(tp)$?
+rtoy	../dev/termem.c	?^# define rtoy(r)	(Ch*(Rmax-(r))+Rl)	/* exact */$?
+saccess	../sys/sys2.c	?^saccess()$?
+sbreak	../sys/sys1.c	?^sbreak()$?
+scanmap	../sys/vm.c	?^scanmap(spti, addr, inmem)$?
+schar	../sys/nami.c	?^schar()$?
+sched	../sys/vmsched.c	?^sched()$?
+schedstat	../dev/flavors.c	?^schedstat()$?
+scrollchunk	../dev/termem.c	?^scrollchunk (ap)$?
+seek	../sys/sys2.c	?^seek()$?
+sendsig	../sys/machdep.c	?^sendsig(funcadr, signo)$?
+set_rendition	../dev/termem.c	?^set_rendition (attributes, atnum)$?
+set_reset	../dev/termem.c	?^set_reset (code, private, onoff)$?
+setcursor	../dev/termem.c	?^setcursor (font, ci, blinkon, blinkoff)$?
+setgid	../sys/sys4.c	?^setgid()$?
+setmap	../sys/vm.c	?^setmap(spti, addr, ptedata)$?
+setmod	../sys/vm.c	?^setmod(spti, addr)$?
+setpgrp	../sys/sys4.c	?^setpgrp()$?
+setpri	../sys/slp.c	?^setpri(pp)$?
+setregs	../sys/sys1.c	?^setregs()$?
+setrq	../sys/swtch.c	?^setrq(p)$?
+setrun	../sys/slp.c	?^setrun(p)$?
+setspti	../sys/vmsys.c	?^setspti(spti)$?
+setuid	../sys/sys4.c	?^setuid()$?
+signal	../sys/signojcl.c	?^signal(pgrp, sig)$?
+sio_attach	../dev/sio.c	?^sio_attach (board)$?
+sio_close	../dev/sio.c	?^sio_close (dev, flag)$?
+sio_dump	../dev/sio.c	?^sio_dump (unit)$?
+sio_dumpmon	../dev/sio.c	?^sio_dumpmon ()$?
+sio_goose	../dev/sio.c	?^sio_goose (board)$?
+sio_int	../dev/sio.c	?^sio_int (board)$?
+sio_ioctl	../dev/sio.c	?^sio_ioctl (dev, cmd, addr, flag)$?
+sio_mkcmd	../dev/sio.c	?^sio_mkcmd (smp, cmd, line)$?
+sio_monitor	../dev/sio.c	?^sio_monitor (board, stat, lines, lines_pend)$?
+sio_open	../dev/sio.c	?^sio_open (dev, flag)$?
+sio_param	../dev/sio.c	?^sio_param (tp)$?
+sio_read	../dev/sio.c	?^sio_read (dev)$?
+sio_rint	../dev/sio.c	?^sio_rint (board)$?
+sio_start	../dev/sio.c	?^sio_start (tp)$?
+sio_stop	../dev/sio.c	?^sio_stop (tp, flag)$?
+sio_timer	../dev/sio.c	?^sio_timer ()$?
+sio_unwedge	../dev/sio.c	?^sio_unwedge (board)$?
+sio_write	../dev/sio.c	?^sio_write (dev)$?
+sio_xint	../dev/sio.c	?^sio_xint (board)$?
+sizeof	../sys/sysent.c	?^int sysentsize = sizeof(sysent) / sizeof(sysent[0]?
+sleep	../sys/slp.c	?^sleep(chan, pri)$?
+smount	../sys/sys3.c	?^smount()$?
+softclock	../sys/clock.c	?^softclock(pc,ps)$?
+spgrp	../sys/sys4.c	?^spgrp(top, npgrp)$?
+ssig	../sys/sys4.c	?^ssig()$?
+startup	../sys/machdep.c	?^startup()$?
+stat	../sys/sys3.c	?^stat()$?
+stat1	../sys/sys3.c	?^stat1(ip, ub, pipeadj)$?
+stime	../sys/sys4.c	?^stime()$?
+stop	../sys/sigjcl.c	?^stop(p)$?
+subyte	../sys/sufu.c	?^subyte(addr, data)$?
+sumount	../sys/sys3.c	?^sumount()$?
+supabort	../sys/vmtrap.c	?^supabort(pc, status, addr, addru)$?
+suser	../sys/fio.c	?^suser()$?
+suword	../sys/sufu.c	?^suword(addr, data)$?
+swapalloc	../sys/vmswap.c	?^swapalloc()$?
+swapdormtext	../sys/vmswap.c	?^swapdormtext()$?
+swapfree	../sys/vmswap.c	?^swapfree(page)$?
+swapin	../sys/vmswap.c	?^swapin(p)$?
+swapinsert	../sys/vmswap.c	?^swapinsert(physaddr, dir)$?
+swapint	../sys/vmswap.c	?^swapint()$?
+swapinu	../sys/vmsys.c	?^swapinu(procid)$?
+swapout	../sys/vmswap.c	?^swapout(spti, advice)$?
+swapoutpages	../sys/vmswap.c	?^swapoutpages()$?
+swappable	../sys/vmsched.c	?^#define	swappable(p) \\$?
+swappage	../sys/vmswap.c	?^swappage(physaddr)$?
+swapremove	../sys/vmswap.c	?^swapremove(physaddr, count, dir)$?
+swapwait	../sys/vmswap.c	?^swapwait(physaddr)$?
+swtch	../sys/swtch.c	?^swtch()$?
+swtchu	../sys/vmsys.c	?^swtchu(procid)$?
+syioctl	../sys/sys.c	?^syioctl(dev, cmd, addr, flag)$?
+sync	../sys/sys4.c	?^sync()$?
+syopen	../sys/sys.c	?^syopen(dev, flag)$?
+syread	../sys/sys.c	?^syread(dev)$?
+sysacct	../sys/acct.c	?^sysacct()$?
+syscall	../sys/trap.c	?^syscall (type, sp, r2, r1, r0, ppl, fp, pc, psl)$?
+sywrite	../sys/sys.c	?^sywrite(dev)$?
+tcuarmwrite	../dev/tcu.c	?^tcuarmwrite(dev)$?
+tcuclose	../dev/tcu.c	?^tcuclose(dev, flag)$?
+tcucommand	../dev/tcu.c	?^tcucommand(dev, com, count)$?
+tcudoio	../dev/tcu.c	?^tcudoio(opcode, opdata, argcount, argptr)$?
+tcudump	../dev/tcu.c	?^tcudump(dev)			/* dump core after a system crash *?
+tcuhandleerror	../dev/tcu.c	?^tcuhandleerror(bp)$?
+tcuintr	../dev/tcu.c	?^tcuintr()$?
+tcuioctl	../dev/tcu.c	?^tcuioctl(dev, cmd, addr, flag)$?
+tcuopen	../dev/tcu.c	?^tcuopen(dev, flag)$?
+tcuread	../dev/tcu.c	?^tcuread(dev)			/* character read routine */$?
+tcustart	../dev/tcu.c	?^tcustart(ph)$?
+tcustrategy	../dev/tcu.c	?^tcustrategy(bp)$?
+tcuwait	../dev/tcu.c	?^tcuwait()$?
+tcuwrite	../dev/tcu.c	?^tcuwrite(dev)			/* character write routine */$?
+timeout	../sys/clock.c	?^timeout(fun, arg, tim)$?
+times	../sys/sys4.c	?^times()$?
+tloop	../sys/iget.c	?^tloop(dev, bn, f1, f2)$?
+trap	../sys/trap.c	?^trap (type, sp, r2, r1, r0, ppl, fp, pc, psl)$?
+ttioctl	../dev/tty.c	?^ttioctl(tp, com, addr, flag)$?
+ttrstrt	../dev/tty.c	?^ttrstrt(tp)$?
+ttstart	../dev/tty.c	?^ttstart(tp)$?
+ttyblock	../dev/tty.c	?^ttyblock(tp)$?
+ttychars	../dev/tty.c	?^ttychars(tp)$?
+ttyclose	../dev/tty.c	?^ttyclose(tp)$?
+uchar	../sys/nami.c	?^uchar()$?
+ufalloc	../sys/fio.c	?^ufalloc()$?
+umask	../sys/sys4.c	?^umask()$?
+undint	../sys/machdep.c	?^undint(vector,r2,r1,r0,ipl,ufp,upc,ups)$?
+unlink	../sys/sys4.c	?^unlink()$?
+unlockmem	../sys/vmsys.c	?^unlockmem(spti, addr, count, writeflag)$?
+unlockpage	../sys/vmmem.c	?^unlockpage(addr)$?
+unputc	../sys/prim.c	?^unputc(p)$?
+unsharemap	../sys/vm.c	?^unsharemap(spti, addr)$?
+unsharemem	../sys/vmswap.c	?^unsharemem(addr)$?
+unsleep	../sys/slp.c	?^unsleep(p)$?
+update	../sys/alloc.c	?^update()$?
+update_cursor	../dev/termem.c	?^update_cursor ()$?
+uprintf	../sys/prf.c	?^uprintf(fmt, x1)$?
+upshare	../sys/vm.c	?^upshare(ownspti, spti)$?
+utime	../sys/sys4.c	?^utime()$?
+uunlock	../sys/vmsys.c	?^uunlock(procid)$?
+vfork	../sys/vmsys.c	?^vfork()$?
+vhangup	../sys/vmsys.c	?^vhangup()$?
+vlimit	../sys/vmsys.c	?^vlimit()$?
+vlock	../sys/vmsys.c	?^vlock()$?
+vmap	../sys/vmsys.c	?^vmap()$?
+vmmeter	../sys/vmsched.c	?^vmmeter()$?
+vmsadd	../sys/vmsys.c	?^vmsadd(vp, wp)$?
+vmtoobig	../sys/vmsys.c	?^vmtoobig()$?
+vmtotal	../sys/vmsched.c	?^vmtotal()$?
+vspy	../sys/vmsys.c	?^vspy()$?
+vtimes	../sys/vmsys.c	?^vtimes()$?
+wait	../sys/sys1.c	?^wait()$?
+wait1	../sys/sys1.c	?^wait1(options,vp)$?
+wakeup	../sys/slp.c	?^wakeup(chan)$?
+wdir	../sys/iget.c	?^wdir(ip)$?
+wflushtty	../dev/tty.c	?^wflushtty(tp)$?
+write	../sys/sys2.c	?^write()$?
+writei	../sys/rdwri.c	?^writei(ip)$?
+writep	../sys/pipe.c	?^writep(fp)$?
+xattach	../sys/vmsys.c	?^xattach(spti, ip, textsize, datasize)$?
+xdorm	../sys/vmsys.c	?^xdorm(fspti)$?
+xfree	../sys/vmsys.c	?^xfree()$?
+xfubyte	../sys/sufu.c	?^xfubyte(addr)$?
+xfuword	../sys/sufu.c	?^xfuword(addr)$?
+xreattach	../sys/vmsys.c	?^xreattach(addr)$?
+xrele	../sys/vmsys.c	?^xrele(ip)$?
+xtoc	../dev/termem.c	?^# define xtoc(x)	(((x)-Cl)/Cw+1)		/* inexact: x un?
+xunmount	../sys/vmsys.c	?^xunmount(dev)$?
+ytor	../dev/termem.c	?^# define ytor(y)	(Rmax-((y)-Rl)/Ch)	/* exact: y co?

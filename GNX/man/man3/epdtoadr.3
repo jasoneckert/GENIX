@@ -1,0 +1,38 @@
+.ig
+	@(#)epdtoadr.3	1.4	7/5/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH EPDTOADR 3
+.SH NAME
+epdtoadr \- convert external procedure descriptor to absolute address
+.SH SYNOPSIS
+.nf
+.B epdtoadr(descriptor)
+.B long descriptor;
+.fi
+.SH DESCRIPTION
+.I Epdtoadr
+converts an external procedure descriptor to an absolute address.  An
+external procedure descriptor is a 32 bit value used by the CXP and CXPD
+instructions to call a procedure.  Such descriptors are used by C for
+procedure variables.
+.PP
+An external procedure descriptor consists of a mod value and an offset value.
+The mod value is contained in the low 16 bits of the descriptor, and the
+offset is contained in the high 16 bits.  The mod value is the address of
+the module table entry for the called procedure.  The offset value is an
+index into the module's program base.  The program base is a 32 bit number
+located eight bytes into the module table entry.  The CXP and CXPD
+instructions calculate the absolute address of the procedure to call by
+adding the offset value to the program base value.  The
+.I epdtoadr
+function duplicates these calculations.
+.PP
+.I Epdtoadr
+is useful when the address of a procedure is wanted for typeout,
+or to provide the data for BSR or JUMP instructions.
+.PP
+.SH BUGS
+This is a nonstandard function.  Most other UNIX systems do not require any
+conversion, since the value used to call a procedure is the same as the
+address of the procedure.

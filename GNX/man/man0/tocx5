@@ -1,0 +1,25 @@
+a.out(5) a.out: assembler and link editor output (a16.out when cross-support).
+acct(5) acct: execution accounting file.
+aliases(5) aliases: aliases file for delivermail.
+ar(5) ar: archive (library) file format.
+core(5) core: format of memory image file.
+dir(5) dir: format of directories.
+disk(5) disk: format of a disk header.
+dump(5) dump, ddate: incremental dump format.
+environ(5) environ: user environment.
+filsys(5) filsys, flblk, ino: format of file system volume.
+fstab(5) fstab: static information about the filesystems.
+gettytab(5) gettytab: terminal line description database.
+group(5) group: group file.
+mtab(5) mtab: mounted file system table.
+passwd(5) passwd: password file.
+plot(5) plot: graphics interface.
+sccsfile(5) sccsfile: format of SCCS file.
+stab(5) stab: symbol table format.
+termcap(5) termcap: terminal capability data base.
+ttys(5) ttys: terminal initialization data.
+ttytype(5) ttytype: data base of terminal types by port.
+types(5) types: primitive system data types.
+utmp(5) utmp, wtmp: login records.
+uuencode(5) uuencode: format of an encoded uuencode file.
+wtmp(5) wtmp: user login history.

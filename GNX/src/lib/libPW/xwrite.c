@@ -1,0 +1,26 @@
+/*
+ * xwrite.c: version 1.1 of 11/2/82
+ * System III libPW Source
+ */
+# ifdef SCCS
+static char *sccsid = "@(#)xwrite.c	1.1 (NSC) 11/2/82";
+# endif
+
+# include "errno.h"
+
+/*
+	Interface to write which handles
+	all error conditions.
+	Returns number of bytes written on success,
+	returns fatal(<mesg>) on failure.
+*/
+
+xwrite(fildes,buffer,nbytes)
+char *buffer;
+{
+	register int n;
+
+	if (nbytes>0 && (n=write(fildes,buffer,nbytes))!=nbytes)
+		n = xmsg("","xwrite");
+	return(n);
+}

@@ -1,0 +1,59 @@
+.ig
+	@(#)mkpt.8	1.3	10/28/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH MKPT 8
+.SH NAME
+mkpt \- change the disk partition tables
+.SH DESCRIPTION
+.I Mkpt
+is a standalone program that may be used to edit the drive header
+in order to modify the origin and/or
+size of the filesystem partitions on a drive.
+The size of a partition is specified in disk
+.IR sectors ,
+not filesystem blocks.
+.PP
+.I Mkpt
+uses the standard notation of the standalone I/O library in identifying
+a partition to be modified.
+A partition is specified as
+.IR dc(x,y) ,
+where
+.I x
+refers to the unit number of the drive,
+and
+.I y
+refers to the filesystem partition that is to be modified.
+.PP
+The program terminates when it receives a carriage return in response to
+the prompt for a partition to modify.
+Entering a carriage return in response
+to other prompts will zero that field.
+Invalid input detected in any response
+will cause a termination of that cycle,
+without modifying any field changed during that cycle.
+.PP
+If a partition is to be changed,
+any filesystems that will be affected
+by the changes should first be dumped to tape.
+Next,
+run
+.I mkpt
+and make the appropriate modifications to the partition table.
+A new filesystem should then be built with
+.IR mkfs (8).
+After the new filesystem has been built,
+restore the affected filesystems
+from the dump tape.
+.SH DIAGNOSTICS
+The diagnostics are intended to be self explanatory.
+.SH FILES
+.ta \w'/usr/include/sys/disk.h'u+(4n)
+/usr/include/sys/disk.h	disk header
+.SH "SEE ALSO"
+dc(4),
+dcutest(8)
+.SH BUGS
+An equivalent facility that operates under a running
+UNIX system should be available.

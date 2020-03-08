@@ -1,0 +1,592 @@
+.ig
+	u1: version 1.4 of 11/22/83
+	
+
+	@(#)u1	1.4	(NSC)	11/22/83
+..
+.nr PS 8
+.if t .nr VS 11
+.if t .2C
+.nr PI .25i
+.SH
+INTRODUCTION
+.sz 8
+.PP
+The \s-2GENIX\s0 operating system provides
+many tools and facilities for
+writing and developing programs.
+This paper tells a new user
+how to start using the
+\s-2GENIX\s0 operating system and 
+how to make the best use 
+of the facilities available.
+.PP
+This paper has five sections:
+.IP "\ \ 1."
+Getting Started:
+How to log in,
+how to type,
+what to do about mistakes in typing,
+how to log out.
+Some of this information depends on local variables, such
+as what terminal you use,
+so this section must necessarily be supplemented
+by local information.
+.IP "\ \ 2."
+Day-to-day Use:
+Things you need every day to use
+the system
+effectively:
+generally useful commands;
+the file system.
+.IP "\ \ 3."
+Document Preparation:
+Preparing manu\%scripts is one of the most common uses
+for \s-2GENIX\s0 systems.
+This section contains advice,
+but not
+extensive instructions on any
+of the formatting tools.
+.IP "\ \ 4."
+Writing Programs:
+\s-2GENIX\s0
+is an excellent system for developing programs.
+This section describes some of the tools,
+but is not a tutorial in any of the programming languages
+provided by the system.
+.IP "\ \ 5."
+A Reading List.
+An annotated bibliography of 
+documents that new users can reference.
+.PP
+Other documents that should be used in conjunction with this paper are:
+.ul
+The
+.ul
+\s-2GENIX\s0
+.IT Programmer's
+.IT Manual \|;
+.R
+and
+.ul
+A Tutorial Introduction to the
+.ul
+\s-2GENIX\s0
+.ul
+Text Editor,
+.R
+which describes how to use the editor
+to get text \(em
+programs, data, documents \(em
+into the computer.
+.PP
+Note:  Most \s-2GENIX\s0 users use the C
+shell, and this paper assumes that the C 
+shell is interpreting commands.  (See the
+C shell and the Bourne shell section in 
+part II.)  Except where noted all information
+applies to both shells.
+.SH
+I.  GETTING STARTED
+.SH
+Logging In
+.PP
+You must have a 
+\s-2GENIX\s0
+login name and password, which you can get from your
+system administrator, 
+and you must have a terminal on which
+to log in.
+The
+\s-2GENIX\s0
+system
+is capable of dealing with a wide variety of terminals,
+including the family of VT100 compatible terminals.
+G\s-2ENIX\s0
+is strongly oriented towards devices with 
+.ul
+lower case capability.
+A terminal that produces only upper case 
+(e.g., model 33 Teletype, some video and portable terminals),
+may be awkward to use and finding another terminal is strongly
+recommended.
+.PP
+Be sure to set the switches appropriately for your device.  The
+switches that might need adjusting include the speed, upper/lower case mode,
+and even parity switches.
+See the System's Manual and terminal handbook.
+Establish a connection to the system (by plugging in the cables,
+dialing the system or whatever
+is needed for your configuration).
+When the connection is established, the
+\s-2GENIX\s0
+operating system will type:
+.P1
+NSC 16032 GENIX 
+.P2
+.P1
+login:
+.P2
+If it types garbage, check the transmit and receive speed switches.
+If that fails,
+push the ``break,'' ``interrupt,'' or control-q key a few times, slowly.
+If that fails to produce a login message, consult with someone
+familiar with the system.
+.PP
+When you get a
+.UL login:
+message,
+type your
+login name
+.ul
+in lower case.
+Follow it by a 
+.UC RETURN ;
+the 
+.UC GENIX 
+operating system will not do anything until you type a
+.UC RETURN .
+If a password is required,
+you will be asked for it,
+and (if possible)
+printing will be turned off while you type it.
+Again, type 
+.UC RETURN
+after entering your password.
+.PP
+The culmination of your login efforts is a
+``prompt character,''
+a single character that indicates that
+.UC GENIX
+is ready to accept commands from you.
+The default prompt character is a 
+percent sign
+.UL % 
+or a dollar sign
+.UL $ .
+(You may also get a message of the day just before the
+prompt character, or a notification that you have mail.)
+.SH
+Typing Commands
+.PP
+Once you've seen the prompt character, you can type commands.
+Commands are
+requests that ask
+the system to
+do something.
+Try typing
+.P1
+date
+.P2
+followed by 
+.UC RETURN .
+You should get back something such as
+.P1
+Thu Oct 20 14:17:10 PDT 1983
+.P2
+.PP
+Do not forget the
+.UC RETURN
+after the command,
+or nothing will happen.
+Generally, if the 
+.UC GENIX
+system does not respond to you,
+type a
+.UC RETURN ;
+something should happen.
+This document will not state 
+``type
+.UC RETURN ''
+throughout, but it must be entered at the end of each line.
+.PP
+Another command you might try is
+.UL who ,
+which tells you who is currently logged in:
+.P1
+who
+.P2
+gives something like
+.P1
+.ta .5i 1i
+mb	tty01	Jan 16    09:11
+ski	tty05	Jan 16    09:33
+gam	tty06	Jan 16    13:07
+.P2
+.PP
+The time is when the user logged in;
+``ttyxx'' is the system's idea of what terminal
+the user is on.
+.PP
+If you make a mistake typing the command name,
+and refer to a non-existent command,
+you will be told.
+For example, if you type
+.P1
+gnsrf
+.P2
+.UC GENIX
+will respond with
+.P1
+gnsrf: Command not found
+.P2
+Of course, if you inadvertently type the name of some other command,
+.UC GENIX
+will execute that command. 
+.SH
+Strange Terminal Behavior
+.PP
+Sometimes your terminal acts strangely.
+For example,
+each letter may be typed twice,
+or the
+.UC RETURN
+may not cause a line feed
+or a return to the left margin.  Type 
+.UL reset .
+Often, the state of the terminal can be reset by 
+logging out and logging back in.
+.PP
+The
+.UL stty
+command sets terminal options.
+Read the description of 
+.UL stty
+in section 1 of the 
+.ul
+\s-2GENIX\s0
+.ul
+Programmer's Reference Manual.
+To get intelligent treatment of
+tab characters
+(which are often used in
+\s-2GENIX\s0)
+if your terminal doesn't have tabs,
+type the command
+.P1
+stty \-tabs
+.P2
+and the system will convert each tab into the correct number
+of blanks for you.
+If your terminal does have tabs
+that can be set by the computer,
+the command
+.UL tset
+will set the stops correctly for you.
+.PP
+Other unusual terminal behavior may be caused by
+.UC GENIX
+not knowing the terminal type.
+The
+.UL set
+command of the C shell tells
+.UC GENIX
+what type of terminal you are using.
+Without this information, screen displays may not be what was
+intended.
+To set your terminal type to a VT100 or compatible terminal, use
+.P1
+set term = vt100
+.P2
+Read the Section 1 manual entry on
+.UL csh
+for more information.
+If you are using the Bourne shell (default prompt character is $),
+use 
+.P1
+TERM = vt100;
+export TERM
+.P2
+instead of the above given command.
+.SH
+Mistakes in Typing
+.PP
+If you make a mistake in typing, and see it before
+.UC RETURN
+has been typed,
+there are three ways to recover:
+type backspace (ctrl-h) to erase the previous character,
+type ctrl-w to erase the previous word, or type ctrl-u to
+erase the whole line.
+.PP
+Ctrl-h, ctrl-w and ctrl-u are combinations of simulteneously
+pressing the control key and the h, w, or u key.
+.PP
+For example, if you type
+.P1
+ser TERM = vt100
+.P2
+you can either backspace to the
+.UL r
+in 
+.UL ser
+then retype 
+.B "t TERM = vt100" ,
+erase the line word by word using
+ctrl-w then retype the line, or enter ctrl-u and retype
+the line.  Using ctrl-u causes a new-line so you can retype
+the command on a blank line.  The command is not processed
+until you press 
+\s-2RETURN\s0.
+.PP
+Certain characters have special meaning to the 
+.UC GENIX
+operating system, such as * and ? (see discussion of
+filenames).  To type these in a command line as literals precede
+the character with a backslash.  The \\ causes special
+symbols to lose their meanings.
+.SH
+Read-ahead
+.PP
+The \s-2GENIX\s0 operating system
+has full read-ahead,
+which means that you can type as fast as you want,
+whenever you want,
+even when some command is typing at you.
+If you type during output,
+your input characters will appear intermixed with the output characters,
+but they will be stored away
+and interpreted in the correct order.
+So you can type several commands one after another without
+waiting for the first to finish or even begin.
+.SH
+Stopping a Program
+.PP
+You can stop most programs by
+typing the character
+.UC DEL '' ``
+(called ``delete'' or ``rubout'' on some terminal).
+The ``interrupt'' or ``break'' key found on most terminals
+can also be used.
+In a few programs, like the text editors,
+.UC DEL
+stops whatever the program is doing but leaves you in that program.
+Turning off the terminal will not stop the execution of a program.
+If you are connected to 
+.UC GENIX
+through telephone lines, 
+hanging up the phone 
+as a last restort will stop most programs.
+.SH
+Logging Out
+.PP
+There are several ways to log out.
+You can type ctrl-d, logout or
+.P1
+login
+.P2
+to let someone else use the terminal you were on;
+.UC GENIX
+will prompt for a login.
+If dialed in, 
+another way to log out is to hang up the phone.
+Turning off the terminal is usually not sufficient.
+The \s-2GENIX\s0 operating system
+does not use a time-out mechanism, so if you do not log out,
+you will be logged in indefinitely.
+.SH
+Mail
+.PP
+When you log in, you may sometimes get the message
+.P1
+You have mail.
+.P2
+G\s-2ENIX\s0
+provides a postal system so you can
+communicate with
+other users of the system.
+To read your mail,
+type the command
+.P1
+mail
+.P2
+A list of new mail messages is printed.
+Type
+.UC RETURN,
+and 
+.UC GENIX
+will type the first message.
+After each message,
+.UL mail
+waits for you to say what to do with it.
+The two basic responses are
+.UL d ,
+which deletes the message,
+and
+.UC RETURN ,
+which does not alter that message and types the next one.  If there 
+are not any more messages, it types
+.P1
+At EOF
+.P2
+To exit the mail utility, type 
+.UL x
+or
+.UL q .
+.UL x 
+leaves the mail messages as you found them
+so they will still be there the next time you invoke mail.
+.UL q
+saves the undeleted messages in a file called
+.UL mbox
+in your login (or home) directory.
+Other responses are described in the manual or type
+.P1
+?
+.P2
+in response to the mail prompt for aa
+short description of other responses.
+.PP
+How do you send mail to someone else?
+Suppose the mail is to go to ``joe'' (assuming ``joe'' is 
+someone's login name).  Type
+.P1
+mail joe
+.I
+now type in the text of the letter
+on as many lines as you like ...
+After the last line of the letter,
+type return then type the
+character control-d, that is,
+hold down ``control'' and type
+a letter ``d''.
+.P2
+And that's it.
+The ctrl-d sequence, often called ``EOF'' for end-of-file, 
+is used throughout 
+the system
+to mark the end of input from a terminal.
+.PP
+For practice, send mail to yourself.
+(This isn't as strange as it might sound\(emmail
+to oneself is a handy reminder mechanism.)
+.PP
+There are other ways to send mail \(em
+you can send a previously prepared letter,
+and you can mail to a number of people all at once.
+For more details see
+.UL mail (1).
+(The notation
+.UL mail (1)
+means the command 
+.UL mail
+in section 1
+of the
+.ul
+\s-2GENIX\s0
+.ul
+.IT Programmer's
+.IT Manual .)
+.SH
+Writing to other users
+.PP
+At some point, 
+out of the blue will come a message
+like
+.P1
+Message from joe tty07 at 14:06...
+.P2
+accompanied by three beeps.
+It means that Joe wants to talk to you through the system,
+but unless you take explicit action you cannot reply.
+To respond,
+type the command
+.P1
+write joe
+.P2
+This establishes a two-way communication path.
+Now whatever Joe types on his terminal will appear on yours
+and vice versa.
+If you are in the middle of something, you have to
+get to a state where you can type the
+.UL write
+command.
+Normally, whatever program you are running has to terminate or be terminated.
+If you're editing, you can escape temporarily from the editor \(em read
+the editor tutorial.
+Also read about job control and suspending programs in 
+.I 
+An Introduction to the C shell.
+.R
+.PP
+A protocol is needed to keep what you type from getting
+garbled up with what Joe types. 
+Typically it's like this:
+.P1
+.tr --
+.fi
+.ft 1
+Joe types
+.UL write
+.UL smith
+and waits.
+.br
+Smith types
+.UL write
+.UL joe
+and waits.
+.br
+Joe now types his message
+(as many lines as he likes).
+When he's ready for a reply, he
+signals it by typing
+.UL -o- ,
+which
+stands for ``over'' (then return).
+.br
+Now Smith types a reply, also
+terminated by
+.UL -o- .
+.br
+This cycle repeats until
+someone gets tired; he then
+signals his intent to quit with
+.UL -oo- ,
+for ``over
+and out.''
+.br
+To terminate
+the conversation, each side must
+type a ctrl-d character alone
+on a line. (``Delete'' also works.)
+When the other person types ctrl-d,
+you will get the message
+.UL EOF
+on your terminal.
+.P2
+.PP
+If you write to someone who isn't logged in,
+or who doesn't want to be disturbed,
+the \s-2GENIX\s0 operating system will inform you.
+If the target is logged in but doesn't answer
+after a decent interval,
+simply type ctrl-d.
+.SH
+On-line Manual
+.PP
+The 
+.ul
+\s-2GENIX\s0
+.ul
+Programmer's Manual
+is typically kept on-line.
+If you get stuck on something,
+you can display the relevant manual section.
+This is also useful for getting the most up-to-date
+information on a command.
+To print a manual section, type
+``man command-name''.
+So to read up on the 
+.UL who
+command,
+type
+.P1
+man who
+.P2
+and, of course,
+.P1
+man man
+.P2
+tells about the
+.UL man
+command.

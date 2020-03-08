@@ -1,0 +1,260 @@
+.ig
+	vhel0: version 1.2 of 11/8/83
+	
+
+	@(#)vhel0	1.2	(NSC)	11/8/83
+..
+.sz 8
+.TL
+The GENIX Operating System \(em Summary
+.AU
+November, 1983
+.AI
+National Semiconductor Corporation
+.NH 
+INTRODUCTION
+.LP
+The \s-2GENIX\s0\|\s4\uTM\d\s0 operating system 
+.FS
+G\s-2ENIX\s0, SYS16, and NS16000
+are trademarks of National Semiconductor Corporation.
+.FE
+was derived from 
+Berkeley Software Distribution 4.1 Kernel, a derivative of the
+.UC UNIX*
+.FS
+* U\s-2NIX\s0 is a trademark of Bell Laboratories.
+.FE
+/32V System.
+.FS
+The information in this document is for reference only and is subject
+to change without notice.
+.FE
+.LP
+The 
+.UC GENIX 
+operating system is a general-purpose, multi-user, interactive operating
+system designed specifically to make the designer's, programmer's and
+documenter's computing environment simple, efficient, flexible, and
+productive.  Features of the
+.UC GENIX
+operating system
+include:
+.in 0.5i
+.IP o 2
+Hierarchical, tree-structured file system.
+.IP o 2
+Flexible, easy-to-use command language that can be tailored to meet
+specific user needs.
+.IP o 2
+Ability to execute sequential, asynchronous, and background processes.
+.IP o 2
+Demand paged virtual memory.
+.IP o 2
+Powerful text editors.
+.IP o 2
+Flexible, robust document preparation and text processing systems.
+.IP o 2
+Support of numerous programming languages, including:
+.IP "" 3
+C \(em high-level programming language conducive to structured programming
+.IP "" 3
+Assembler \(em for NS16000\s4\uTM\d\s0 assembly language  
+.IP "" 3
+Pascal (optional) \(em an easy to learn, strongly typed language
+.IP o 2
+Resident and remote debugging tool.
+.IP o 2
+Various system programming tools (e.g., compiler-compilers).
+.IP o 2
+Sophisticated `desk calculator' packages.
+.IP o 2
+Source Code Control System.
+.IP o 2
+Network communications facilities between CPU's running under
+a \s-2UNIX\s0 or
+.UC GENIX
+operating system.
+.in 0
+.LP
+This summary lists most of the 
+.UC GENIX
+programs available as commands.
+Executable code and printed manuals are 
+distributed for all of the listed software.
+Commands are self-contained and do not require extra setup
+information,
+unless specifically noted as ``interactive.''
+Interactive programs can be made to run from a prepared script
+by redirecting input.
+Most programs intended for interactive use
+(for example, the editor) 
+allow for an escape to
+command level (the shell).
+Most file processing commands
+can also go from standard input to standard output
+(``filters'').
+The piping facility of the shell may be used
+to connect such filters directly to the input or output
+of other programs.
+.NH
+PRODUCT OVERVIEW OF THE	GENIX OPERATING SYSTEM
+.LP
+A synopsis of the major features of the
+.UC GENIX
+operating system
+follows.
+.NH 2
+The File System
+.LP
+The file system of the
+.UC GENIX
+operating system
+consists of a highly uniform set of directories
+and files arranged in a tree-like hierarchical structure.
+.LP
+Some of its
+features are:
+.in 0.5i
+.IP o 2
+File systems are addressable to one billion bytes.
+.IP o 2
+Simple and consistent naming conventions; name can be absolute, or
+relative to any directory in the file system hierarchy.
+.IP o 2
+Mountable and demountable file systems and volumes.
+.IP o 2
+File linking across directories.
+.IP o 2
+Automatic file space allocation and de-allocation that is invisible
+to users.
+.IP o 2
+Flexible directory and file protection modes; allows all combinations
+of ``read,'' ``write,'' and ``execute'' access, independently for the owner
+of each file or directory, for a group of users, and for all other
+users; protection modes can be set dynamically.
+.IP o 2
+Facilities for creating, accessing, moving and processing files,
+directories or sets of these in a simple and uniform way.
+.IP o 2
+Provides device-independence since each physical I/O device, from
+interactive terminals to main memory, is treated like a file, allowing
+uniform file and device I/O.
+.IP o 2
+1 Kbyte file block size.
+.in 0
+.NH 2
+The Command Language
+.LP
+Communication with a CPU running under the
+.UC GENIX 
+operating system is normally carried out with
+the aid of a program called the
+.I shell .
+The
+.UC GENIX 
+operating system supports two shell programs:  the Bourne shell and
+the C shell.
+A shell is both a command language
+interpreter and a programming language that provides an interface to the
+operating system.  As a command language interpreter it reads lines typed by
+the user and interprets them as requests to execute other programs.
+Bourne shell commands resemble the ALGOL 68 commands.
+C shell commands are reminiscient of C constructs.
+.LP
+As a programming language, the shell includes:
+.in 0.5i
+.IP o 2
+Control-flow primitives
+.IP o 2
+Parameter Passing
+.IP o 2
+Variables and string substitution
+.IP o 2
+Constructs such as `while', `if then else', `case', and `for'
+.IP o 2
+Two-way communication between shell commands
+.in 0
+.LP
+As an interpreter, the C shell also features
+job control and command history.
+.LP
+The shell can modify the environment in which commands run.  Input and
+output can be redirected to files and processes that communicate through
+``pipes'' and semaphores can be invoked.  Commands are found by searching
+directories in the file system in a sequence that can be defined by the
+user.  Command lines can be read either from the terminal or from a file,
+thus allowing command procedures to be stored for later use.
+.LP
+By utilizing the shell as a programming language, users of the
+.UC GENIX 
+operating system can
+eliminate a great deal of the programming drudgery that often accompanies
+a project.  Many manual procedures can be quickly, inexpensively and 
+conveniently automated.  Because it is so easy to create and use shell 
+procedures, projects using the
+.UC GENIX 
+operating system can customize the general environment into
+one tailored to its own requirements, organizational structure and terminology.
+.NH 2
+Document Preparation and Text Processing
+.LP
+The
+.UC GENIX 
+operating system has 
+many text processing and document preparation
+facilities.  Included are a powerful full screen text editor, programmable
+text formatters that are robust and yet easy to use, text processing
+macro packages which simplify the creation of letters, reports, memoranda,
+books, etc., special processors for mathematical expressions and tabular
+material, and numerous supporting utilities such as spelling and 
+typographical error detectors.
+.NH 2
+Source Code Control System
+.LP
+The Source Code Control System (SCCS) in the
+.UC GENIX
+operating system
+is an integrated set of commands
+designed to aid software development projects or document preparation
+by controlling changes to source code or files of text (e.g. manuals).  SCCS
+provides facilities for storing, updating, and retrieving (by version number
+or date) all versions of source code modules or of documents, and for 
+recording
+who made the change, when it was made and why.  SCCS is designed to solve
+most of the source code and documentation control problems that projects
+encounter when customer support, system testing and development are all 
+proceeding simultaneously.
+.LP
+Some of the main characteristics of SCCS are:
+.in 0.5i
+.IP o 2
+The exact source code or text, as it existed at any point of development
+or maintenance, can be recreated at any later time.
+.IP o 2
+All versions of a source module or document are stored together, so that
+common code or text is stored only once.
+.IP o 2
+Versions of a source module or document can be protected from unauthorized
+changes.
+.IP o 2
+Sufficient identifying information (module name, date, time, etc.) can be
+automatically inserted into the source module or document, enabling one
+to identify the exact version of a module given only the corresponding
+load module, memory dump or text.
+.in 0
+.NH 2
+File transfer between CPU's under the 
+.UC GENIX 
+operating system (UUCP)
+.LP
+UUCP consists of a series of programs designed to permit communications 
+between CPU's running under a
+.UC GENIX 
+or a \s-2UNIX\s0 operating system using either dial-up or hard-wired 
+communication lines.
+UUCP's simple user interface provides for file transfers and
+remote command execution.  UUCP operates in batch mode; files are created
+in a spool directory for subsequent processing by a UUCP daemon program, thus
+eliminating the need for tying up a user port while the actual file transfer
+takes place.

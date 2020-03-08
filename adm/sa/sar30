@@ -1,0 +1,22 @@
+
+unix aissys C0.1 v2 AIS/3200    04/30/85
+
+18:00:25    %usr    %sys    %wio   %idle
+
+18:00:25 bread/s lread/s %rcache bwrit/s lwrit/s %wcache pread/s pwrit/s
+
+18:00:25 scall/s sread/s swrit/s  fork/s  exec/s rchar/s wchar/s
+
+18:00:25 swpin/s bswin/s swpot/s bswot/s pswch/s
+
+18:00:25 rawch/s canch/s outch/s rcvin/s xmtin/s mdmin/s
+
+18:00:25  device   %busy   avque   r+w/s  blks/s  avwait  avserv
+
+18:00:25  iget/s namei/s dirbk/s
+
+18:00:25 runq-sz %runocc swpq-sz %swpocc
+
+18:00:25 proc-sz ov inod-sz ov file-sz ov lock-sz    fhdr-sz   
+
+18:00:25   msg/s  sema/s

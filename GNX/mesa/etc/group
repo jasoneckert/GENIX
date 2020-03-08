@@ -1,0 +1,9 @@
+sys::0:
+daemon::1:
+system::10:daemon
+uucp::100:uucp
+uulogins::200:uucp
+loggedout::300:
+guest::400:guest
+games::401:
+users::500:

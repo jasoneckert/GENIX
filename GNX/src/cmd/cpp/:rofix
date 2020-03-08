@@ -1,0 +1,14 @@
+#! /bin/sh
+
+# :rofix: version 1.2 of 8/17/83
+# 
+#
+# @(#):rofix	1.2 (NSC) 8/17/83
+
+# This modifies rodata.s so everything is in sharable program space, not data
+# space.
+ed $1 <<!
+g/^[ 	]*\.static/s//.program/
+w
+q
+!

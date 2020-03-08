@@ -1,0 +1,145 @@
+.ig
+	u5: version 1.2 of 11/22/83
+	
+
+	@(#)u5	1.2	(NSC)	11/22/83
+..
+.SH
+V.  READING LIST
+.SH
+General:
+.LP
+.I "Volume 1" 
+and 
+.I "Volume 2"
+of
+.ul
+The
+.ul
+.UC GENIX
+.ul
+Programmer's Manual.
+Lists commands,
+system routines and interfaces, file formats,
+and some of the maintenance procedures.
+Section 1 of Volume 1 contains a brief description of each command and will probably be referenced frequently.
+Volume 2 of the Programmer's Manual
+contains more extensive descriptions
+of major commands,
+and tutorials and reference manuals.
+It contains all of the following papers 
+as well as descriptions of most of the programs
+already mentioned.
+.SH
+Document Preparation:
+.LP
+B. W. Kernighan,
+``A Tutorial Introduction to the
+.UC UNIX
+Text Editor''
+and
+``Advanced Editing on
+.UC UNIX ,''
+Bell Laboratories, 1978.
+Beginners need the introduction;
+the advanced material will help you get the most
+out of the editor.
+.LP
+M. E. Lesk,
+``Typing Documents on
+.UC UNIX ,''
+Bell Laboratories, 1978.
+Describes the
+.UL \-ms
+macro package, which isolates the novice
+from the vagaries of
+.UL nroff
+and
+.UL troff ,
+and takes care of most formatting situations.
+.LP
+B. W. Kernighan and L. L. Cherry,
+``A System for Typesetting Mathematics,''
+Bell Laboratories Computing Science Tech. Rep. 17.
+.LP
+M. E. Lesk,
+``Tbl \(em A Program to Format Tables,''
+Bell Laboratories CSTR 49, 1976.
+.LP
+J. F. Ossanna, Jr.,
+``NROFF/TROFF User's Manual,''
+Bell Laboratories CSTR 54, 1976.
+.UL troff
+is the basic formatter used by
+.UL \-ms ,
+.UL eqn
+and
+.UL tbl .
+The reference manual is indispensable
+if you are going to write or maintain these
+or similar programs.
+But start with:
+.LP
+B. W. Kernighan,
+``A TROFF Tutorial,''
+Bell Laboratories, 1976.
+An attempt to unravel the intricacies of
+.UL troff .
+Or:
+.LP
+Eric P. Allman,
+``Writing papers with 
+.ul
+nroff
+using -me,''
+Electronics Research Laboratory, University of
+California, Berkeley.  It describes the 
+.UL -me
+package and is a good way
+to begin using
+.UL nroff
+or
+.UL troff .
+.SH
+Programming:
+.LP
+B. W. Kernighan and D. M. Ritchie,
+.ul
+The C Programming Language,
+Prentice-Hall, 1978.
+Contains a tutorial introduction,
+complete discussions of all language features,
+and the reference manual.
+.LP
+B. W. Kernighan and D. M. Ritchie,
+.UC UNIX \& ``
+Programming,''
+Bell Laboratories, 1978.
+Describes how to interface with the system from C programs:
+I/O calls, signals, processes.
+.LP
+William Joy,
+``An Introduction to the C Shell,''
+Computer Science Division, Department of Electrical Engineering,
+University of
+California, Berkeley.
+An introduction and reference manual for the C Shell.
+Mandatory reading if you intend to make effective use
+of the programming power
+of this shell.
+.LP
+S. C. Johnson,
+``Yacc \(em Yet Another Compiler-Compiler,''
+Bell Laboratories CSTR 32, 1978.
+.LP
+M. E. Lesk,
+``Lex \(em A Lexical Analyzer Generator,''
+Bell Laboratories CSTR 39, 1975.
+.LP
+S. C. Johnson,
+``Lint, a C Program Checker,''
+Bell Laboratories CSTR 65, 1977.
+.LP
+S. I. Feldman,
+``MAKE \(em A Program for Maintaining Computer Programs,''
+Bell Laboratories CSTR 57, 1977.

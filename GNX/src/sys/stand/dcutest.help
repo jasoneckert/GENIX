@@ -1,0 +1,51 @@
+Start and stop commands:
+	p	Proceed with test operations.
+	o	Do one more test operation.
+	s	Type status and stop.
+	ep	Type status and proceed on errors.
+	es	Type status and stop on errors.
+	ei	Ignore errors (default).
+	l<n>	Setup limit of <n> operations (default infinite).
+
+Test and unit selection commands:
+	tr	Setup to test reading (default).
+	tw	Setup to test writing.
+	tb	Setup to test writing and reading (safely).
+	u<n>	Select unit number <n>.
+	we	Allow writes to current unit.
+	wl	Disable writes to current unit.
+	wa	Ask about writing to current unit.
+
+Information commands:
+	<sp>	Type status without stopping.
+	dv	Dump current values of parameters.
+	di	Dump last IOCB with an error.
+	de<n>	Dump meaning of error status <n>.
+	dl	Dump list of logged errors.
+	d<n>	Dump data contained in sector <n>.
+	db	Dump data buffer contents.
+	ds	Dump data about units after selftest.
+	dt	Dump all known disk types.
+	du	Dump data about units.
+	f<n>	Set frequency of typeout to <n> (default 1000).
+	c<n>	Convert from sector number <n> to cyl/trk/sec number.
+	h	Type this text.
+
+Sector selection commands:
+	b<l><u>	Set lower and upper sector bounds for test.
+	i<n>	Set next sector for IO to <n>.
+	il<n>	Setup for <n> sector transfers (default 1).
+	ii<n>	Setup for IO to sectors incrementing by <n>.
+	ir<n>	Setup for IO to random sectors (default).
+	is	Setup for IO to sequential sectors.
+
+Formatting commands:
+	xi<n>	Set interleave formatting value to <n>.
+	xr<n>	Set maximum retries for formatting to <n>.
+	xp<z><nz>	Set PLOZ and PLONZ formatting values to <n> and <nz>.
+	x<l><u>	Format the disk from cylinders <l> to <u>.
+
+Other commands:
+	z	Zero status counters and error log.
+	r	Reset parameters to initial values.
+	<del>	Type status and exit.

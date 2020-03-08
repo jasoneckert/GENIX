@@ -1,0 +1,961 @@
+.ig
+	@(#)stab.5	1.7	11/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH STAB 5
+.SH NAME
+stab \- symbol table format
+.SH SYNOPSIS
+.B #include <stab.h>
+.SH DESCRIPTION
+.PP
+The symbol table in an
+.I a.out
+file (see
+.IR a.out (5)),
+is an array of 12-byte entries,
+each of which identifies its purpose.
+.I Stab.h
+defines the format of the entries in the symbol table.
+The symbol table contains all of the information
+that is not stored within the address space,
+but is needed by
+.IR ld (1),
+by symbolic debuggers,
+or by any other programs.
+The part of the format that is used by
+.IR ld (1)
+is described in
+.IR a.out (5).
+That description should be read
+before trying to understand the complete symbol table format.
+The symbol table is concerned with describing the address space that the
+.I a.out
+file will be loaded into,
+thus the terms "address" and "location"
+refer to addresses within the address space,
+not offsets into the
+.I a.out
+file.
+.PP
+A discussion of the symbol table format follows the complete specification.
+The format of the symbol table is:
+.sp
+.br
+.nf
+.if n \{\
+.	ta 8 +8 +8 +8 +8 +8 +8 +8 +8 +8 +8 +8 +8 +8 +8 +8
+/*
+ * Complete, untranslated format of a symbol table entry:
+ *
+ * Note:
+ *	Complete symbol table definitions reside in <stab.h> and
+ *	simplified definitions in <nlist.h>.  These sets of
+ *	definitions are not fully compatible with each other; symbol
+ *	table information as defined in <nlist.h> does not correspond
+ *	directly to a.out file contents, but instead is obtained by
+ *	translating such information with nlist(3).
+ *	The <nlist.h> definitions do not provide access to all symbol
+ *	table information, but are more convenient than the <stab.h>
+ *	definitions for what they do cover.
+ *
+ *	<Stab.h> and <nlist.h> are mutually incompatible;
+ *	at most one may legally be included in a compilation.
+ *
+ * All terminal fields named N_xxx can be accessed simply by n_xxx.
+ */
+struct nlist {
+ union {			/* First doubleword:	*/
+   unsigned long N_name;
+   struct nmdesc {
+     unsigned long
+	N_addrmode :  5,	/* addressing mode	*/
+	N_unused   :  1,
+	N_namestr  : 26;	/* symbol name		*/
+   } N_nf;
+   long N_ldisp1;		/* only for N_AUX	*/
+ } N_nm;
+#define n_name		N_nm.N_name
+#define n_addrmode	N_nm.N_nf.N_addrmode
+#define n_namestr	N_nm.N_nf.N_namestr
+#define n_ldisp1	N_nm.N_ldisp1
+
+
+ union {			/* Second doubleword:		*/
+   unsigned long N_type;	/* allows word access to n_type	*/
+   struct {
+     unsigned long
+	N_etype   :  3,	/* type of STE (always)		*/
+	N_last    :  1,	/* last STE of lexical scope	*/
+	N_ext     :  1,	/* global symbol		*/
+	N_more    :  1,	/* next STE is subsidiary	*/
+	N_typestr : 26;	/* type name			*/
+   } N_tf;		/* basic fields in the n_type word	*/
+   struct {
+     unsigned long
+	N_etype    : 3,	/* see N_tf			*/
+	N_last     : 1,
+	N_ext      : 1,
+	N_more     : 1,
+	N_begin    : 1,	/* begin a lexical scope	*/
+	N_typeinfo : 1,	/* see N_aux			*/
+	N_proc     : 1,	/* procedure entry point	*/
+	N_nargs    : 7,	/* number of doublewords of args
+			 * popped by function if a type
+			 * modifier is M_FUN or N_proc
+			 * is on			*/
+	N_hllmod1  : 2,	/* first type modifier		*/
+	N_hllmod2  : 2,	/* second type modifier		*/
+	N_hllptype : 4,	/* primitive type		*/
+	N_bfield   : 8;	/* bit field specification	*/
+   } N_at;		/* atomic type declaration	*/
+   struct {
+     unsigned long 
+	N_etype       :  3,	/* see N_tf			  */
+	N_last        :  1,
+	N_ext         :  1,
+	N_more        :  1,
+	N_initialized :  1,	/* is data segment initialized?	   */
+	N_typeinfo    :  1,	/* use N_at format, not N_aux	   */
+	N_rom         :  1,	/* is text in ROM?		   */
+	N_auxtype     :  7,	/* specify purpose of aux STE	   */
+	N_no_ext      :  1,	/* if on, link table must be just
+				 * before static data because
+				 * there is no external addressing */
+	unused2       : 15;
+   } N_aux;			/* auxiliary type information	   */
+ } N_ty;
+#define n_type		N_ty.N_type
+#define n_etype		N_ty.N_tf.N_etype
+#define n_last		N_ty.N_tf.N_last
+#define n_ext		N_ty.N_tf.N_ext
+#define n_more		N_ty.N_tf.N_more
+#define n_typestr	N_ty.N_tf.N_typestr
+#define n_begin		N_ty.N_at.N_begin
+#define n_proc		N_ty.N_at.N_proc
+#define n_hllmod1	N_ty.N_at.N_hllmod1
+#define n_hllmod2	N_ty.N_at.N_hllmod2
+#define n_hllptype	N_ty.N_at.N_hllptype
+#define n_bfield	N_ty.N_at.N_bfield
+#define n_nargs		N_ty.N_at.N_nargs
+#define n_typeinfo	N_ty.N_aux.N_typeinfo
+#define n_initialized	N_ty.N_aux.N_initialized
+#define n_rom		N_ty.N_aux.N_rom
+#define n_auxtype	N_ty.N_aux.N_auxtype
+#define n_no_ext	N_ty.N_aux.N_no_ext
+
+
+ union {			/* Third doubleword:	*/
+   long N_value;	/* disp for addressing mode	*/
+   struct {		/* 2 disps for some addr modes	*/
+     short N_disp1,
+	   N_disp2;
+   } N_vf;
+ } N_v;				   /* symbol value	*/
+#define n_value		N_v.N_value
+#define n_disp1		N_v.N_vf.N_disp1
+#define n_disp2		N_v.N_vf.N_disp2
+#define n_ldisp2	N_v.N_value
+};
+
+
+/*
+ * A macro and masks to access type info and string offsets from
+ * n_type or n_name fields.  Using these may be more efficient
+ * than accessing via specific fields.
+ */
+#define N_STRX(x) \e
+   (x / 64)             /* gives the offset into the string table  */
+#define N_AMODE 0x1f    /* mask for addressing mode		   */
+#define N_EXT   0x10    /* external bit, or'ed in		   */
+#define N_MORE  0x20    /* more bit, or'ed in			   */
+#define N_ETYPE 0x07    /* mask for entry type bits		   */
+
+/*
+ * addressing modes (in n_addrmode field):
+ */
+#define A_R0	0x00	/* register 0 - r0			   */
+#define A_R0R	0x08	/* register 0 relative - disp(r0)	   */
+#define A_R1R	0x09	/* register 1 relative - disp(r1)	   */
+#define A_R2R	0x0a	/* register 2 relative - disp(r2)	   */
+#define A_R3R	0x0b	/* register 3 relative - disp(r3)	   */
+#define A_R4R	0x0c	/* register 4 relative - disp(r4)	   */
+#define A_R5R	0x0d	/* register 5 relative - disp(r5)	   */
+#define A_R6R	0x0e	/* register 6 relative - disp(r6)	   */
+#define A_R7R	0x0f	/* register 7 relative - disp(r7)	   */
+#define A_FPR	0x10	/* frame memory relative - disp2(disp1(FP))  */
+#define A_SPR	0x11	/* stack memory relative - disp2(disp1(SP))  */
+#define A_SBR	0x12	/* static memory relative - disp2(disp1(SB)) */
+#define A_IMM	0x14	/* immediate - value			   */
+#define A_ABS	0x15	/* absolute - @disp - not relocated	   */
+#define A_EX    0x16    /* external - EXTERNAL(disp1)+disp2	   */
+#define A_TOS	0x17	/* top of stack - TOS			   */
+#define A_FP	0x18	/* frame memory - disp(FP)		   */
+#define A_SP	0x19	/* stack memory - disp(SP)		   */
+#define A_SB    0x1a    /* static memory - disp(SB)		   */
+#define A_PC    0x1b    /* program memory - disp(PC) 
+			 * PC at beginning of module		   */
+
+/*
+ * There are several kinds of information that ld(1)
+ * must recognize that might be in an STE:
+ *	NM - n_namestr points to a string.
+ *	TN - n_typestr points to the name of a type.
+ *	AM - n_addrmode specifies NS16032 addressing mode and
+ *	     n_value contains displacement(s) for addressing mode.
+ *
+ * A main symbol table entry (MSTE) defines a symbol (always has name).
+ * Possible values of n_etype field:
+ */
+#define N_MAT   0  /* (MSTE, NM, AM), uses N_at			      */
+#define N_MTN   1  /* (MSTE, NM, AM, TN), symbol is of type specified */
+#define N_MPTN  2  /* (MSTE, NM, AM, TN), symbol is ptr to type specd */
+#define N_METN  3  /* (MSTE, NM, AM, TN), symbol uses type specd      */
+#define N_SLINE 4  /* (NM, AM), source line number instead of TN      */
+#define N_SCHAR 5  /* (NM, AM), source character number instead of TN */
+#define N_MAUX  6  /* (MSTE, NM), auxiliary info - uses N_aux	      */
+#define N_AUX   7  /* auxiliary info - uses N_aux		      */
+		   /* aux STEs use N_at if n_typeinfo is on	      */
+
+/*
+ * masks for accessing atomic type fields from n_type
+ */
+#define N_BEGIN    0x00000040	/* begin lexical scope		      */
+#define N_PROC     0x00000100	/* procedure entry point	      */
+				/* three fields specify the high level
+				 * language type of a symbol	      */
+#define N_NARGS    0x0000fe00	/* number of doublewords of args      */
+#define N_HLLMOD1  0x00030000	/* first type modifier		      */
+#define N_HLLMOD2  0x000c0000	/* second type modifier		      */
+#define N_HLLPTYPE 0x00f00000	/* primitive type of symbol	      */
+#define N_BFIELD   0xff000000	/* bit field specification	      */
+
+/*
+ * type modifier values (n_hllmod1 and n_hllmod2 fields)
+ */
+#define M_NONE	0	/* no modifier		*/
+#define M_PTR	1	/* ptr to		*/
+#define M_FUN	2	/* function returning	*/
+#define M_ARRAY	3	/* array of		*/
+
+/*
+ * high level language primitive types (n_hllptype field)
+ */
+#define T_UNDEF		 0	/* undefined or named type	*/
+#define T_INT		 1	/* signed integer		*/
+#define T_CHAR		 2	/* character variable		*/
+#define T_UINT		 3	/* unsigned integer		*/
+#define T_SETE		 4	/* set element			*/
+#define T_SET		 5	/* set: defines a scope		*/
+#define T_FLOAT		 6	/* 32-bit float			*/
+#define T_DFLOAT	 7	/* 64-bit float			*/
+#define T_STRUCT	 8	/* structure: defines a scope	*/
+#define T_UNION		 9	/* union: defines a scope	*/
+#define T_ENUM		10	/* enumeration: defines a scope	*/
+#define T_ENUME		11	/* enumeration element		*/
+#define T_BOOL		12	/* boolean			*/
+#define T_MORE		13	/* more type info is needed	*/
+
+/*
+ * masks for accessing auxiliary STE fields from n_type
+ */
+#define N_TYPEINFO	0x0080	/* use atomic type fields, not
+				 * the auxiliary STE fields.
+				 * n_auxtype is not valid	*/
+#define N_INIT		0x0040	/* data segment is initialized	*/
+#define N_ROM		0x0100	/* text segment is in rom	*/
+#define N_AUXTYPE	0xfe00	/* type of N_AUX or N_MAUX STE	*/
+#define N_NO_EXT	0x010000/* no external addressing-use sb*/
+
+/*
+ * values of n_auxtype field
+ */
+#define N_MODTYPE	0	/* module MSTE			    */
+#define N_TXTINFO	1	/* text segment and link table size */
+#define N_DATINFO	2	/* data segment size		    */
+#define N_COMMON	4	/* last MSTE is external for common
+				 * n_value gives size in bytes	    */
+#define N_LDISP		5	/* uses n_ldisp1 and n_ldisp2	    */
+#define N_LIFE		6	/* lifetime of MSTE		    */
+#define N_ARBND		7	/* array bounds			    */
+
+/*
+ * masks and macro to recognize a module MSTE
+ */
+#define N_MODMASK	0xfe87
+#define N_MOD		0x0006
+#define N_MODULE(x)	\e
+      (((x).n_type & N_MODMASK) == N_MOD)
+.\}
+.if t \{\
+.vS
+/*
+ * Complete, untranslated format of a symbol table entry:
+ *
+ * Note:
+ *	Complete symbol table definitions reside in <stab.h> and
+ *	simplified definitions in <nlist.h>.  These sets of
+ *	definitions are not fully compatible with each other; symbol
+ *	table information as defined in <nlist.h> does not correspond
+ *	directly to a.out file contents, but instead is obtained by
+ *	translating such information with nlist(3).
+ *	The <nlist.h> definitions do not provide access to all symbol
+ *	table information, but are more convenient than the <stab.h>
+ *	definitions for what they do cover.
+ *
+ *	<Stab.h> and <nlist.h> are mutually incompatible;
+ *	at most one may legally be included in a compilation.
+ *
+ * All terminal fields named N_xxx can be accessed simply by n_xxx.
+ */
+struct nlist {
+ union {			/* First doubleword: */
+   unsigned long N_name;
+   struct nmdesc {
+     unsigned long
+	N_addrmode : 5, 	/* addressing mode */
+	N_unused : 1, 
+	N_namestr : 26;		/* symbol name */
+   } N_nf;
+   long N_ldisp1;		/* only for N_AUX */
+ } N_nm;
+#define n_name		N_nm.N_name
+#define n_addrmode	N_nm.N_nf.N_addrmode
+#define n_namestr	N_nm.N_nf.N_namestr
+#define n_ldisp1	N_nm.N_ldisp1
+
+
+ union {			/* Second doubleword: */
+   unsigned long N_type;	/* allows word access to n_type */
+   struct {
+     unsigned long
+	N_etype : 3,	/* type of STE (always) */
+	N_last : 1,	/* last STE of lexical scope */
+	N_ext : 1,	/* global symbol */
+	N_more : 1,	/* next STE is subsidiary */
+	N_typestr : 26;	/* type name */
+   } N_tf;		/* basic fields in the n_type word */
+   struct {
+     unsigned long
+	N_etype : 3,	/* see N_tf */
+	N_last : 1,
+	N_ext : 1,
+	N_more : 1,
+	N_begin : 1,	/* begin a lexical scope */
+	N_typeinfo : 1,	/* see N_aux */
+	N_proc : 1,	/* procedure entry point */
+	N_nargs : 7,	/* number of doublewords of args
+			 * popped by function if a type
+			 * modifier is M_FUN or N_proc
+			 * is on */
+	N_hllmod1 : 2,	/* first type modifier */
+	N_hllmod2 : 2,	/* second type modifier */
+	N_hllptype : 4,	/* primitive type */
+	N_bfield : 8;	/* bit field specification */
+   } N_at;		/* atomic type declaration */
+   struct {
+     unsigned long 
+	N_etype : 3,	/* see N_tfi */
+	N_last : 1,
+	N_ext : 1,
+	N_more : 1,
+	N_initialized : 1,	/* is data segment initialized? */
+	N_typeinfo : 1,		/* use N_at format, not N_aux */
+	N_rom : 1,	/* is text in ROM? */
+	N_auxtype : 7,	/* specify purpose of aux STE */
+	N_no_ext : 1,	/* if on, link table must be just
+			 * before static data because
+			 * there is no external addressing */
+	unused2 : 15;
+   } N_aux;		/* auxiliary type information */
+ } N_ty;
+#define n_type		N_ty.N_type
+#define n_etype		N_ty.N_tf.N_etype
+#define n_last		N_ty.N_tf.N_last
+#define n_ext		N_ty.N_tf.N_ext
+#define n_more		N_ty.N_tf.N_more
+#define n_typestr	N_ty.N_tf.N_typestr
+#define n_begin		N_ty.N_at.N_begin
+#define n_proc		N_ty.N_at.N_proc
+#define n_hllmod1	N_ty.N_at.N_hllmod1
+#define n_hllmod2	N_ty.N_at.N_hllmod2
+#define n_hllptype	N_ty.N_at.N_hllptype
+#define n_bfield	N_ty.N_at.N_bfield
+#define n_nargs		N_ty.N_at.N_nargs
+#define n_typeinfo	N_ty.N_aux.N_typeinfo
+#define n_initialized	N_ty.N_aux.N_initialized
+#define n_rom		N_ty.N_aux.N_rom
+#define n_auxtype	N_ty.N_aux.N_auxtype
+#define n_no_ext	N_ty.N_aux.N_no_ext
+
+
+ union {		/* Third doubleword: */
+   long N_value;	/* disp for addressing mode */
+   struct {		/* 2 disps for some addr modesi */
+     short N_disp1,
+	   N_disp2;
+   } N_vf;
+ } N_v;			/* symbol value */
+#define n_value		N_v.N_value
+#define n_disp1		N_v.N_vf.N_disp1
+#define n_disp2		N_v.N_vf.N_disp2
+#define n_ldisp2	N_v.N_value
+};
+
+
+/*
+ * A macro and masks to access type info and string offsets from
+ * n_type or n_name fields.  Using these may be more efficient
+ * than accessing via specific fields.
+ */
+#define N_STRX(x) \
+(x / 64)             	/* gives the offset into the string table */
+#define N_AMODE 0x1f    /* mask for addressing mode */
+#define N_EXT 0x10    	/* external bit, or'ed in */
+#define N_MORE 0x20    	/* more bit, or'ed in */
+#define N_ETYPE 0x07    /* mask for entry type bits */
+
+/*
+ * addressing modes (in n_addrmode field):
+ */
+#define A_R0 0x00	/* register 0 - r0 */
+#define A_R0R 0x08	/* register 0 relative - disp(r0) */
+#define A_R1R 0x09	/* register 1 relative - disp(r1) */
+#define A_R2R 0x0a	/* register 2 relative - disp(r2) */
+#define A_R3R 0x0b	/* register 3 relative - disp(r3) */
+#define A_R4R 0x0c	/* register 4 relative - disp(r4) */
+#define A_R5R 0x0d	/* register 5 relative - disp(r5) */
+#define A_R6R 0x0e	/* register 6 relative - disp(r6) */
+#define A_R7R 0x0f	/* register 7 relative - disp(r7) */
+#define A_FPR 0x10	/* frame memory relative - disp2(disp1(FP)) */
+#define A_SPR 0x11	/* stack memory relative - disp2(disp1(SP)) */
+#define A_SBR 0x12	/* static memory relative - disp2(disp1(SB) */
+#define A_IMM 0x14	/* immediate - value */
+#define A_ABS 0x15	/* absolute - @disp - not relocated */
+#define A_EX 0x16    	/* external - EXTERNAL(disp1)+disp2 */
+#define A_TOS 0x17	/* top of stack - TOS */
+#define A_FP 0x18	/* frame memory - disp(FP) */
+#define A_SP 0x19	/* stack memory - disp(SP) */
+#define A_SB 0x1a    	/* static memory - disp(SB) */
+#define A_PC 0x1b    	/* program memory - disp(PC) 
+			 * PC at beginning of module */
+
+/*
+ * There are several kinds of information that ld(1)
+ * must recognize that might be in an STE:
+ *	NM - n_namestr points to a string.
+ *	TN - n_typestr points to the name of a type.
+ *	AM - n_addrmode specifies NS16032 addressing mode and
+ *	     n_value contains displacement(s) for addressing mode.
+ *
+ * A main symbol table entry (MSTE) defines a symbol (always has name).
+ * Possible values of n_etype field:
+ */
+#define N_MAT 0		/* (MSTE, NM, AM), uses N_at */
+#define N_MTN 1  	/* (MSTE, NM, AM, TN), symbol is of type specified */
+#define N_MPTN 2  	/* (MSTE, NM, AM, TN), symbol is ptr to type specd */
+#define N_METN 3  	/* (MSTE, NM, AM, TN), symbol uses type specd */
+#define N_SLINE 4	/* (NM, AM), source line number instead of TN */
+#define N_SCHAR 5  	/* (NM, AM), source character number instead of TN */
+#define N_MAUX 6  	/* (MSTE, NM), auxiliary info - uses N_aux */
+#define N_AUX 7  	/* auxiliary info - uses N_aux */
+		   	/* aux STEs use N_at if n_typeinfo is on */
+
+/*
+ * masks for accessing atomic type fields from n_type
+ */
+#define N_BEGIN 0x00000040	/* begin lexical scope */
+#define N_PROC 0x00000100	/* procedure entry point */
+				/* three fields specify the high level
+				 * language type of a symbol */
+#define N_NARGS 0x0000fe00	/* number of doublewords of args */
+#define N_HLLMOD1 0x00030000	/* first type modifier */
+#define N_HLLMOD2 0x000c0000	/* second type modifier */
+#define N_HLLPTYPE 0x00f00000	/* primitive type of symbol */
+#define N_BFIELD 0xff000000	/* bit field specification */
+
+/*
+ * type modifier values (n_hllmod1 and n_hllmod2 fields)
+ */
+#define M_NONE 0	/* no modifier */
+#define M_PTR 1		/* ptr to */
+#define M_FUN 2		/* function returning */
+#define M_ARRAY	3	/* array of */
+
+/*
+ * high level language primitive types (n_hllptype field)
+ */
+#define T_UNDEF 0	/* undefined or named type */
+#define T_INT 1		/* signed integer */
+#define T_CHAR 2	/* character variable */
+#define T_UINT 3	/* unsigned integer */
+#define T_SETE 4	/* set element */
+#define T_SET 5		/* set: defines a scope */
+#define T_FLOAT 6	/* 32-bit float */
+#define T_DFLOAT 7	/* 64-bit float */
+#define T_STRUCT 8	/* structure: defines a scope */
+#define T_UNION	9	/* union: defines a scope */
+#define T_ENUM 10	/* enumeration: defines a scope */
+#define T_ENUME	11	/* enumeration element */
+#define T_BOOL 12	/* boolean */
+#define T_MORE 13	/* more type info is needed */
+
+/*
+ * masks for accessing auxiliary STE fields from n_type
+ */
+#define N_TYPEINFO 0x0080	/* use atomic type fields, not
+				 * the auxiliary STE fields.
+				 * n_auxtype is not valid */
+#define N_INIT 0x0040		/* data segment is initialized */
+#define N_ROM 0x0100		/* text segment is in rom */
+#define N_AUXTYPE 0xfe00	/* type of N_AUX or N_MAUX STE */
+#define N_NO_EXT 0x010000i	/* no external addressing-use sb */
+
+/*
+ * values of n_auxtype field
+ */
+#define N_MODTYPE 0	/* module MSTE */
+#define N_TXTINFO 1	/* text segment and link table size */
+#define N_DATINFO 2	/* data segment size */
+#define N_COMMON 4	/* last MSTE is external for common
+			 * n_value gives size in bytes */
+#define N_LDISP	5	/* uses n_ldisp1 and n_ldisp2 */
+#define N_LIFE 6	/* lifetime of MSTE */
+#define N_ARBND	7	/* array bounds */
+
+/*
+ * masks and macro to recognize a module MSTE
+ */
+#define N_MODMASK 0xfe87
+#define N_MOD 0x0006
+#define N_MODULE(x)	\
+(((x).n_type & N_MODMASK) == N_MOD)
+.vE	\
+.\}
+.DT
+.fi
+.br
+.SH DISCUSSION
+.PP
+A
+.I
+main symbol table entry (MSTE)
+defines a symbol within the symbol table.
+Other entries either give additional information
+about a symbol or provide other information,
+such as correspondence points between the code and source files.
+.PP
+A symbol table entry contains three long words:
+n_name,
+n_type,
+and n_value.
+These words are frequently broken into a large number of bit fields.
+The low order 3 bits of the n_type field
+(the n_etype field)
+specify how to interpret the symbol table entry.
+There are three general kinds of information:
+NM (name pointer),
+AM (addressing mode),
+and TN (type name pointer).
+All can be in a symbol table entry and
+.IR ld (1)
+must be aware of each in order to move the symbols to the combined file.
+The n_etype field specifies whether the symbol table entry contains
+the NM,
+AM,
+or TN information.
+.PP
+The NM information is in the high order 26 bits of the n_name field
+(the n_namestr field);
+it specifies an offset into the string table of a character string
+which is usually a symbol name that ends in a null (0) character.
+The AM information is in the low order five bits of 
+the n_name field (the n_addrmode field) (specifying an NS16032
+addressing mode) and in the n_value field (specifying
+the displacement(s) for the addressing mode).
+Addressing modes that require two displacements
+use the low order 16 bits of the n_value field for disp1 (n_disp1 field)
+and the high order 16 bits of the n_value field for disp2 (n_disp2 field).
+If either of these displacements is larger than 16 bits,
+then the value -32768 is stored in both fields
+and an additional symbol table entry follows
+that gives two 32-bit displacements;
+the n_ldisp1 field is in the n_name word
+and the n_ldisp2 field is in the n_value word.
+The TN information is in the high order 26 bits
+of the n_type field (the n_typestr field)
+(specifying an offset into the string table
+for the name of a type definition symbol).
+.PP
+The NS16032 addressing modes are used to specify the values of symbols.
+Most symbols have values that are locations in the address space.
+These are usually specified using an addressing mode that
+specifies an offset from a register,
+such as the pc (program counter),
+sb (static base),
+or fp (frame pointer).
+It is not possible to discover what location in the address space is specified
+without knowing what value is to be used for the specified register.
+The only registers that are important for
+.IR ld (1)
+are the program counter (pc),
+the static base register (sb),
+and the module register.
+These registers are defined by the contents of the mod table;
+this information is not duplicated in the symbol table.
+.PP
+All of the symbol table entries occurring
+between one module definition and the next
+use the register values specified for the module.
+A module definition is considered to set
+the pc register to the beginning of the module's text segment,
+so the displacement for the A_PC addressing mode in the symbol table
+is always the offset within the text segment of the module.
+Thus the order of the symbols in the symbol table is important.
+In addition,
+other registers or other context-sensitive information
+are specified by symbol table order,
+so
+.IR ld (1)
+retains symbol table order within each module.
+The order in which modules are defined in the symbol table does not matter.
+.PP
+To aid in parsing the symbol table,
+the n_more bit in an MSTE
+specifies whether the next entry in the symbol table is
+an STE that gives additional information about this symbol.
+This bit will
+be on for all of the STEs that give information about a symbol
+except the last one.
+.SH "TYPE DEFINITIONS"
+.PP
+Symbolic debuggers and other utility routines need to know the type
+of the variable at the specified location.
+There are two basic ways
+in which this type information is specified.
+It is possible for the complete type information
+to be specified within the MSTE itself.
+If so,
+an STE with n_etype N_MAT is used.
+In this case,
+the n_type field is further defined by the N_at portion of the union.
+The high level language type of the variable is specified
+by up to two type modifiers and a primitive type specification.
+Thus,
+for example,
+it is possible to specify a variable
+that is a pointer to an array of unsigned integers.
+.PP
+Second,
+it is possible for the type to be specified
+by making use of a symbol that is defined to be a type definition.
+The symbol may be declared to be a specific named type (n_etype N_MTN),
+it may be declared to be a pointer
+to a specific named type (n_etype N_MPTN),
+or it may use a named type in a more complicated way (n_etype N_METN).
+In this last case,
+the next STE has n_etype N_AUX with n_typeinfo on,
+and contains the atomic type information
+that eventually uses an n_hllptype of N_UNDEF,
+which refers back to the originally named type.
+.PP
+A symbol that is a type definition is defined
+with n_etype N_MAUX and with n_typeinfo on.
+In this case the n_type field uses
+the N_at format to define the type.
+The n_value field contains the size of the type in bits.
+.PP
+The set of types that have been selected
+have been designed to support C and Pascal.
+Two primitive type codes are left undefined
+to allow additional languages to be supported.
+There are still 8 bits in this long word that are unused
+to allow additional languages to be supported.
+It is not necessary for full type information to be specified.
+It is easy to simply omit additional STEs
+that would be needed to specify complete type information.
+Primitive type T_UNDEF is used
+when either the final type is undefined (pointer to unknown)
+or when the final type was specified by a type name in the MSTE.
+.PP
+Most addressing modes specify the location of the variable
+that is described by the high level language type.
+In the case of immediate addressing,
+however,
+the high level language type describes
+the contents of the n_value field of the STE.
+If more than 32 bits are required for the immediate value,
+then additional long words are provided
+by additional N_AUX STEs of type N_LDISP.
+.PP
+Almost all types can be packed into small bit fields,
+thus there is an n_bfield field
+that applies to all types except procedures.
+This field assumes that the addressing mode will specify
+the location of the byte containing the first bit of the value.
+The n_bfield field then specifies
+a bit offset of 0-7 in the high order 3 bits
+and a bit length of 1-32 in the low order 5 bits of the field.
+This feature is used to distinguish between different lengths
+of signed and unsigned integers up to 32 bits long.
+.PP
+If a high level language type requires more than two type modifiers,
+then n_hllptype contains T_MORE
+and the next STE has an n_etype of N_AUX with n_typeinfo on.
+The n_type field uses format N_at
+to specify additional type information.
+This STE contains two more type modifiers.
+.PP
+If an atomic type definition specifies an array,
+then there may be an N_AUX STE of type N_ARBND following
+that specifies the lower and upper bounds of the array
+in n_ldisp1 and n_ldisp2 respectively.
+If an n_hllptype of T_MORE is used with an array type modifier
+that requires array bounds,
+then the N_ARBND STE must appear before the next N_AUX STE with n_typeinfo on.
+.SH "LEXICAL SCOPING"
+.PP
+The following types may define a lexical scope of symbols:
+functions,
+structures,
+unions,
+sets,
+enumerations.
+Once we have entered a lexical scope
+(indicated by the n_begin field),
+the MSTEs that follow in the symbol table
+are defined within this scope
+until an MSTE is found in which the n_last bit is turned on;
+this MSTE is the last symbol in the scope.
+An MSTE for a symbol within the lexical scope
+is not considered to be a "subsidiary" STE,
+thus the n_more bit is not on in the preceeding STE.
+Once we are in a function scope,
+the (fp) register is considered to be pointing
+at a stack frame for this function,
+thus allowing addressing modes for parameters and local variables
+to be specified via fp-relative addressing.
+Once we are in a structure scope,
+we assume that register (r0) contains the address
+of the beginning of the structure.
+The elements of a structure use R0-relative addressing
+to specify their location.
+A set is very similar to a packed structure of bits.
+The elements of an enumeration use immediate addressing
+to specify the value within the enumeration associated with that element.
+.PP
+If there are several different portions of a type
+that require lexical scopes in a single atomic type specification,
+such as a function returning a pointer
+to a function returning a pointer to a structure,
+then this type must be declared with a separate STE
+(either the MSTE or an N_AUX with n_typeinfo on)
+for each type or type modifier that might require a lexical scope.
+Thus it is not possible for both type modifiers to be M_FUN.
+The n_begin flag specifies whether a lexical scope is actually present.
+If there are two functions involved in a type,
+then the first STE containing n_at information
+uses an n_hllptype of T_MORE and one of the type modifiers is M_FUN.
+The MSTEs for all of the symbols in the lexical scope
+for the parameters to the function
+preceed the N_AUX STE with n_typeinfo on
+that finishes the type information for the original MSTE.
+This STE will not be immediately preceeded
+by an STE with the n_more bit on.
+.PP
+The lifetime of local variables in a procedure is usually the same
+as the lifetime of the entire procedure.
+Occasionally this is not true.
+It is possible for some compilers
+to shorten the lifetime of local variables
+or register variables to a bare minimum.
+To record the lifetimes of these variables,
+an N_AUX STE of type N_LIFE is used.
+It contains two offsets within the text segment of the current module.
+The last MSTE is valid when the (pc) is at or between these two points.
+Any number of N_LIFE STEs may exist for a single MSTE.
+.SH MODULES
+.PP
+A module definition starts with a symbol table entry
+for which the n_type field,
+when masked with N_MODMASK,
+has the value N_MOD.
+This operation ensures that n_etype is N_MAUX,
+that n_typeinfo is off,
+and that n_auxtype is N_MODTYPE.
+This is calculated by the N_MODULE macro that returns true
+if a symbol table entry is the beginning of a module definition.
+The n_value field is the module number (the address of the mod table entry).
+The n_initialized bit in the MSTE for the module
+specifies whether the data segment is initialized or not.
+The n_rom bit in the MSTE for the module
+specifies whether the text segment is in ROM (read-only memory) or not;
+if so,
+then the text segment for the module does not exist in the
+.I a.out
+file, but the mod table points to the location of the text and link
+table.  The symbols of the module thus have the correct values as
+long as the code magically appears in memory (due to ROM, or any
+other factor).
+If the data segment is not initialized,
+then it does not exist within the
+.I a.out
+file.
+The n_no_ext bit will be used to indicate that all of the external
+addressing modes in the module have been converted into SB-memory
+relative addressing modes that will only be equivalent to the
+external addressing modes they replace if the link table is placed
+immediately before the static data section of the module.  This
+feature has not been fully implemented, so this bit should remain
+off for now.  All of the unused fields in an STE should be set to
+zero to allow the definition of STEs to be extended in the future.
+.PP
+This MSTE is followed by two auxiliary STEs (n_etype of N_AUX)
+that specify the lengths of the three segments for each module:
+the text segment
+(or program code area in
+.I
+NS16000 Programmer's Reference Manual
+terminology),
+the data segment (or static area),
+and the link table for the module.
+An N_AUX entry of n_auxtype N_TXTINFO has
+the size of the text segment in the n_ldisp1 field
+and the size of the link table in the n_ldisp2 field.
+An N_AUX entry of n_auxtype N_DATINFO has
+the size of the data segment in the n_value field.
+Note that both the link table for a module
+and the text segment for a module
+are contained within the text segment of the
+.I a.out
+file.
+After the module has been defined in the symbol table,
+the following entries all describe symbols
+that are either imported by or defined
+by this module until the next module definition MSTE.
+.PP
+The external addressing mode (A_EX) is used for symbols for which an entry
+exists in the module's link table.
+Such a symbol is an "imported" symbol reference.
+.IR Ld (1)
+is responsible for filling in the link table entry in the appropriate way.
+In order for
+.IR ld (1)
+to know what should be placed in the corresponding link table entry,
+it is necessary for either this module
+or another module to "define" the symbol
+(provide an STE for the symbol that does not use the external addressing mode).
+The n_ext bit specifies whether
+the symbol is known externally to the module.
+An imported symbol reference
+that is not known externally (n_ext off)
+may only be defined by a symbol within the same module.
+A symbol definition that is not known externally (n_ext is off)
+may not satisfy a symbol reference in another module.
+Local imported symbols must have their link table entries
+filled in by the assembler.
+The linker
+.RI ( ld (1))
+need not be given local symbols
+and it may ignore non-external symbol definitions.
+Locally imported symbols will have their link table entries relocated
+rather than being fully determined by the linker.
+.PP
+There are two different kinds of link table entries:
+procedure references and pointers to global variables.
+These two entries have two different formats.
+A procedure reference contains the module number
+and the offset of the entry point within the text segment of the module.
+Procedure symbol references and definitions all use n_etype N_MAT.
+This allows some additional information about the procedure
+to exist in the n_type field.
+The n_proc field specifies whether this symbol defines
+or references a procedure.
+If n_proc is on,
+then the n_nargs field
+specifies the number of doubleword arguments to the procedure
+that will be popped off the stack by the procedure just before it returns.
+The eight largest values of this field are reserved for additional
+information about the call-save-return sequence.  In particular, the
+largest value of the n_nargs field specifies that the number of args
+to be popped off the stack is too large to fit into this field, so
+the linker will either have to not check for errors or use
+other type information to perform the check.
+The linker does not currently firmly enforce the matching of the
+number of arguments.
+If a symbol definition matches a symbol reference
+then the n_proc and n_nargs fields must match between the two symbols.
+.PP
+A link table entry that is a pointer to a global variable is
+described by a symbol that uses the external addressing mode.
+There are no restrictions on the high level language type of such a variable,
+so n_etype may be N_MAT,
+N_MTN,
+N_MPTN,
+or N_METN.
+If n_etype is N_MAT,
+then the n_proc bit is off.
+.PP
+An imported symbol reference to an area of common is specified
+by following the MSTE by an STE of n_etype N_AUX
+whose n_auxtype is N_COMMON.
+The n_value field specifies the size of the area of common in bytes.
+If there is no definition of this symbol,
+then
+.IR ld (1)
+creates an additional module with an uninitialized data segment
+and defines the area of common in this data segment.
+On VAX \s-2UNIX\s0,
+it is possible to have
+both initialized and uninitialized data within a single module.
+On NS16032 \s-2UNIX\s0,
+the entire data segment for a module is either initialized or uninitialized.
+If a module wishes to have
+both initialized and uninitialized static storage,
+this can be achieved
+by making the data segment for the module contain
+the initialized static,
+and to have a single common area for the uninitialized static storage.
+Note that the existence of two displacements
+in the external addressing mode
+allows many symbols for uninitialized static variables
+to use a single link table entry.
+Only one of the imported symbols for a single link table entry
+may have the n_ext bit on.
+.SH "SOURCE CORRESPONDENCE"
+.PP
+Another kind of information that needs to exist in the symbol table
+is a listing of how source code matches up to the
+.I a.out
+file.
+There are two n_etype values
+that specify different kinds of source correspondence,
+one based on source line numbers
+and the other based on source character positions.
+In both cases the n_namestr field specifies
+a character string that is the pathname of the source file,
+the n_typestr field specifies the point in the source file,
+and the n_addrmode and n_value fields specify an addressing mode.
+Most of the time a point in the source code corresponds
+to a location in the address space,
+such as a point in the text segment.
+Sometimes,
+however,
+a point in the source code does not refer
+to any point in the address space,
+but rather corresponds to an entry in the symbol table,
+such as a type definition.
+This is indicated by using the immediate addressing mode with a value of zero.
+This means that the specified point in the source code
+corresponds to the current MSTE in the symbol table.
+.SH FILES
+.nf
+/usr/include/a.out.h
+/usr/include/stab.h
+.fi
+.SH "SEE ALSO"
+as(1), ddt(1), ld(1), a.out(5)
+.SH CROSS-SUPPORT
+In the cross support environment, the name of NS16000
+a.out file is a16.out, while the include files are in
+/usr/NSC/include/a.out.h and /usr/NSC/include/stab.h.

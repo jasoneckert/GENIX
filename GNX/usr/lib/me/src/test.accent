@@ -1,0 +1,13 @@
+.ig
+	test.accent: version 1.1 of 5/5/83
+	Mesa Unix System Test File
+
+	@(#)test.accent	1.1	(NSC)	5/5/83
+..
+.sc
+.sp 4
+.b e\\*'migre
+.sp 4
+.b emigre\\*`
+.sp 4
+.b e\\*'migre\\*`

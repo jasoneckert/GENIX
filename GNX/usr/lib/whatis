@@ -1,0 +1,413 @@
+a.out (5)		- assembler and link editor output (a16.out when cross-support)
+abort (3)		- generate a fault
+abs (3)			- integer absolute value
+ac (8)			- login accounting
+access (2)		- determine accessibility of file
+acct (2)		- turn accounting on or off
+acct (5)		- execution accounting file
+adduser (8)		- procedure for adding new users
+admin (1)		- create and administer \s-1SCCS\s0 files
+adventure (6)		- an exploration game
+alarm (2)		- schedule signal after specified time
+aliases (5)		- aliases file for delivermail
+analyze (8)		- how do postmortem crash analysis
+apropos (1)		- locate commands by keyword lookup
+ar (1)			- archive and library maintainer (nar for cross-support)
+ar (5)			- archive (library) file format
+as (1)			- NS16000 assembler (nasm when cross-support)
+ascii (7)		- map of ASCII character set
+assert (3X)		- program verification
+at (1)			- execute commands at a later time
+atof, atoi, atol (3)	- convert ASCII to numbers
+awk (1)			- pattern scanning and processing language
+backgammon (6)		- the game
+badsect (8)		- create files to contain bad sectors
+banner (6)		- print large banner on printer
+basename (1)		- strip filename affixes
+bc (1)			- arbitrary-precision arithmetic language
+bcd (6)			- convert to antique media
+bdiff (1)		- big diff
+brk, sbrk, break (2)	- change core allocation
+burn (1)		- run for an interval
+cal (1)			- print calendar
+calendar (1)		- reminder service
+cat (1)			- catenate and print
+catman (8)		- create the cat files for the manual
+cb (1)			- C program beautifier
+cc (1)			- C compiler (nmcc for cross-support)
+cd (1)			- change working directory
+cdc (1)			- change the delta commentary of an \s-1SCCS\s0 delta
+chdir (2)		- change current working directory
+checknr (1)		- check nroff/troff files
+chfn (1)		- change full name of user
+chmod (1)		- change mode
+chmod (2)		- change mode of file
+chown (2)		- change owner and group of a file
+chown, chgrp (8)	- change owner or group
+chsh (1)		- change default login shell
+clear (1)		- clear terminal screen
+close (2)		- close a file
+clri (8)		- clear i-node
+cmp (1)			- compare two files
+col (1)			- filter reverse line feeds
+colcrt (1)		- filter nroff output for CRT previewing
+colrm (1)		- remove columns from a file
+comb (1)		- combine \s-1SCCS\s0 deltas
+comm (1)		- select or reject lines common to two sorted files
+compact, uncompact, ccat (1)	- compress and uncompress files, and cat them
+cons (4)		- SYS16 console interface
+core (5)		- format of memory image file
+cp (1)			- copy
+crash (8)		- what happens when the system crashes
+creat (2)		- create a new file
+cref (1)		- make cross-reference listing
+cron (8)		- clock daemon
+crypt (1)		- encode/decode
+crypt, setkey, encrypt (3)  - DES encryption
+csh (1)			- a shell (command interpreter) with C-like syntax
+ctags (1)		- create a tags file
+ctime, localtime, gmtime, asctime, timezone (3) -  convert date and time to ASCII
+cu (1C)			- call UNIX
+cu16 (1)		- remote terminal program
+curses (3)		- screen functions with ``optimal'' cursor motion
+date (1)		- print and set the date
+dbminit, fetch, store, delete, firstkey, nextkey (3X)	- data base subroutines
+dc (1)			- desk calculator
+dc (4)			- SYS16 disk driver for ANSI interface disks
+dcerr (8)		- decipher disk errors
+dcheck (8)		- file system directory consistency check
+dcutest (8)		- disk formatter and test program
+dd (1)			- convert and copy a file
+ddt (1)			- debug remote and local programs
+delivermail (8)		- deliver mail to arbitrary people
+delta (1)		- make a delta (change) to an \s-1SCCS\s0 file
+deroff (1)		- remove nroff, troff, tbl and eqn constructs
+df (1)			- disk free
+diction,explain (1)	- print wordy sentences; thesaurus for diction
+diff (1)		- differential file and directory comparator
+diff3 (1)		- 3-way differential file comparison
+dir (5)			- format of directories
+disk (5)		- format of a disk header
+dmesg (8)		- collect system diagnostic messages to form error log
+dpy (1)			- display the output of a command repeatedly
+drum (4)		- paging device
+du (1)			- summarize disk usage
+dump (8)		- incremental file system dump
+dump, ddate (5)		- incremental dump format
+dumpdir (8)		- print the names of files on a dump tape
+dup, dup2 (2)		- duplicate an open file descriptor
+echo (1)		- echo arguments
+ed (1)			- text editor
+end, etext, edata (3)	- last locations in program
+environ (5)		- user environment
+epdtoadr (3)		- convert external procedure descriptor to absolute address
+eqn, neqn, checkeq (1)	- typeset mathematics
+eqnchar (7)		- special character definitions for eqn
+ex, edit (1)		- text editor
+execl, execv, execle, execve, execlp, execvp, exec, exece, environ (2)	- execute a file
+exit (2)		- terminate process
+exp, log, log10, pow, sqrt (3M) - exponential, logarithm, power, square root
+expand, unexpand (1)	- expand tabs to spaces, and vice versa
+expr (1)		- evaluate arguments as an expression
+fabs, floor, ceil (3M)	- absolute value, floor, ceiling functions
+fclose, fflush (3S)	- close or flush a stream
+feof, ferror, clearerr, fileno (3S) - stream status inquiries
+file (1)		- determine file type
+filsys, flblk, ino (5)	- format of file system volume
+find (1)		- find files
+finger (1)		- user information lookup program
+fish (6)		- play ``Go Fish''
+fmt (1)			- simple text formatter
+fold (1)		- fold long lines for finite width output device
+fopen, freopen, fdopen (3S) - open a stream
+fork (2)		- spawn new process
+fortune (6)		- print a random, hopefully interesting, adage
+fread, fwrite (3S)	- buffered binary input/output
+frexp, ldexp, modf (3)	- split into mantissa and exponent
+from (1)		- who is my mail from?
+fsck (8)		- file system consistency check and interactive repair
+fseek, ftell, rewind (3S)   - reposition a stream
+fstab (5)		- static information about the filesystems
+gamma (3M)		- log gamma function
+get (1)			- get a version of an \s-1SCCS\s0 file
+getc, getchar, fgetc, getw (3S) - get character or word from stream
+getenv (3)		- value for environment name
+getfsent, getfsspec, getfsfile, setfsent, endfsent (3)	- get file system descriptor file entry
+getgrent, getgrgid, getgrnam, setgrent, endgrent (3)	- get group file entry
+gethostname, sethostname (2)	- get/set name of current host
+getlogin (3)		- get login name
+getpass (3)		- read a password
+getpid (2)		- get process identification
+getpw (3)		- get name from uid
+getpwent, getpwuid, getpwnam, setpwent, endpwent (3)	- get password file entry
+gets (1)		- get a string from standard input
+gets, fgets (3S)	- get a string from a stream
+getty  (8)		- set terminal mode
+gettytab (5)		- terminal line description database
+getuid, getgid, geteuid, getegid (2)	- get user and group identity
+greek (7)		- graphics for extended TTY-37 type-box
+grep, egrep, fgrep (1)	- search a file for a pattern
+group (5)		- group file
+halt (8)		- stop the processor
+hangman (6)		- Computer version of the game hangman for CRTs
+head (1)		- give first few lines
+help (1)		- give pointers to system documentation
+hier (7)		- file system hierarchy
+hypot, cabs (3M)	- Euclidean distance
+icheck (8)		- file system storage consistency check
+init (8)		- process control initialization
+install (8)		- install system software
+intro (1)		- introduction to commands
+intro (3)		- introduction to library functions
+intro (4)		- introduction to special files
+intro, errno (2)	- introduction to system calls and error numbers
+ioctl, stty, gtty (2)	- control device
+isalpha, isupper, islower, isdigit, isalnum, isspace, ispunct, isprint, iscntrl, isascii (3)	- character classification
+j0, j1, jn, y0, y1, yn (3M) - bessel functions
+jobs (3J)		- summary of job control facilities
+kill (1)		- terminate a process with extreme prejudice
+kill (2)		- send signal to a process
+killpg (2J)		- send signal to a process or a process group
+l3tol, ltol3 (3)	- convert between 3-byte integers and long integers
+last (1)		- indicate last logins of users and teletypes
+lastcomm (1)		- show last commands executed in reverse order
+ld (1)			- NS16000 link editor (nmeld for cross-support)
+leave (1)		- remind you when you have to leave
+lex (1)			- generator of lexical analysis programs
+link (2)		- link to a file
+lint (1)		- a C program verifier
+ln (1)			- make links
+lock (1)		- reserve a terminal
+login (1)		- sign on
+look (1)		- find lines in a sorted list
+lp (4)			- line printer
+lpr, lprm, lpq, print (1)   - line printer spooler
+ls (1)			- list contents of directory
+lseek, tell (2)		- move read/write pointer
+m4 (1)			- macro processor
+mail (1)		- send and receive mail
+make (1)		- maintain program groups
+makekey (8)		- generate encryption key
+malloc, free, realloc, calloc (3)   - main memory allocator
+man (1)			- find manual information by keywords; print out the manual
+man (7)			- macros to typeset manual
+me (7)			- macros for formatting papers
+mem, kmem (4)		- main memory
+mesg (1)		- permit or deny messages
+mille (6)		- play Mille Bournes
+mkdir (1)		- make a directory
+mkfs (8)		- construct a file system
+mklost+found (8)	- make a lost+found directory for fsck
+mknod (2)		- make a directory or a special file
+mknod (8)		- build special file
+mkpt (8)		- change the disk partition tables
+mkstr (1)		- create an error message file by massaging C source
+mktemp (3)		- make a unique file name
+mmerr (8)		- decipher MMU status register
+monfix (1)		- a monitor maker
+monitor (3)		- prepare execution profile
+more, page (1)		- file perusal filter for crt viewing
+mount, umount (2)	- mount or remove file system
+mount, umount (8)	- mount and dismount file system
+ms (7)			- macros for formatting manuscripts
+msgs (1)		- system messages and junk mail program
+mt (1)			- Magnetic tape manipulating program
+mtab (5)		- mounted file system table
+mv (1)			- move or rename files
+nburn (1)		- an EPROM burner
+ncheck	(8)		-  generate names from i-numbers
+newaliases (1)		- rebuild the data base for the mail aliases file
+newgrp (1)		- log in to a new group
+newtty (4)		- summary of the ``new'' tty driver
+nice (2)		- set program priority
+nice, nohup (1)		- run a command at low priority (sh only)
+nlist (3)		- get entries from name list
+nm (1)			- print name list (nnm for cross-support)
+null (4)		- data sink
+num (1)			- number lines
+number (6)		- convert Arabic numerals to English
+od (1)			- octal dump
+open (2)		- open for reading or writing
+opendir, readdir, telldir, seekdir, rewinddir, closedir (3X)	- flexible length directory operations
+openp, fopenp (3X)	- open file using search path
+passwd (1)		- change login password
+passwd (5)		- password file
+pause (2)		- stop until signal
+pc (1)			-  Pascal compiler (nmpc for cross-support)
+perror, sys_errlist, sys_nerr (3)   - system error messages
+pipe (2)		- create an interprocess channel
+plot (5)		- graphics interface
+plot: openpl et al. (3X)    - graphics interface
+popen, pclose (3S)	- initiate I/O to/from a process
+pr (1)			- print file
+print (1)		- pr to the line printer
+printenv (1)		- print out the environment
+printf, fprintf, sprintf (3S)	- formatted output conversion
+prmail (1)		- print out mail in the post office
+prof (1)		- display profile data
+profil (2)		- execution time profile
+prs (1)			- print an \s-1SCCS\s0 file
+prt (1)			- print \s-1SCCS\s0 file
+ps (1)			- process status
+pstat (8)		- print system facts
+ptrace (2)		- process trace
+ptx (1)			- permuted index
+pty (4)			- pseudo-terminal device
+putc, putchar, fputc, putw (3S) - put character or word on a stream
+puts, fputs (3S)	- put a string on a stream
+pwd (1)			- working directory name
+qsort (3)		- quicker sort
+quiz (6)		- test your knowledge
+quot (8)		- summarize file system ownership
+rain (6)		- animated raindrops display
+rand, srand (3)		- random number generator
+ranlib (1)		- convert archives to libraries (nranlib for cross-support)
+rc (8)			- command script for auto-reboot and daemons
+re_comp, re_exec (3)	- regular expression handler
+read (2)		- read from file
+reboot (2V)		- reboot system or halt processor
+reboot (8)		- UNIX bootstrapping procedures
+remind (1)		- date book
+renice (8)		- alter priority of running process by changing nice
+reset (1)		- reset the teletype bits to a sensible state
+restor (8)		- incremental file system restore
+rev (1)			- reverse lines of a file
+rewind (1)		- rewind tape drive
+rm, rmdir  (1)		- remove (unlink) files
+rmdel (1)		- remove a delta from an \s-1SCCS\s0 file
+rogue (6)		- Exploring The Dungeons of Doom
+sa, accton (8)		- system accounting
+sact (1)		- print current \s-1SCCS\s0 file editing activity
+savecore (8)		- save a core dump of the operating system
+scandir (3)		- scan a directory
+scanf, fscanf, sscanf (3S)  - formatted input conversion
+sccs (1)		- front end for the \s-1SCCS\s0 subsystem
+sccsdiff (1)		- compare two versions of an \s-1SCCS\s0 file
+sccsfile (5)		- format of \s-1SCCS\s0 file
+sccshelp (1)		- ask for help about \s-1SCCS\s0-related commands
+sed (1)			- stream editor
+see (1)			- see what a file has in it
+setbuf (3S)		- assign buffering to a stream
+setjmp, longjmp (3)	- non-local goto
+setpgrp, getpgrp (2J)	- set/get process group
+setroot (8)		- fix file system ownership and protection
+setuid, setgid (2)	- set user and group ID
+sh, for, case, if, while, \f3:\fP, \f3.\fP, break, continue, cd, eval, exec, exit, export, login, newgrp, read, readonly, set, shift, times, trap, umask, wait (1) - command language
+shutdown (8)		- close down the system at a given time
+signal (2)		- catch or ignore signals
+sigset, signal, sighold, sigignore, sigrelse, sigpause (3)  - manage signals
+sigsys (2J)		- catch or ignore signals
+sin, cos, tan, asin, acos, atan, atan2 (3M) - trigonometric functions
+sinh, cosh, tanh (3M)	- hyperbolic functions
+sio (4)			- eight port terminal i/o multiplexer
+size (1)		- size of an object file (nsize for cross-support)
+sleep (1)		- suspend execution for an interval
+sleep (3)		- suspend execution for interval
+soelim (1)		- eliminate \&.so's from nroff input
+sort (1)		- sort or merge files
+spell, spellin, spellout (1)	- find spelling errors
+split (1)		- split a file into pieces
+stab (5)		- symbol table format
+stat (1)		- print formatted inode contents
+stat, fstat (2)		- get file status
+stdio (3S)		- standard buffered input/output package
+sticky (8)		- executable files with persistent text
+stime (2)		- set time
+strcat, strncat, strcmp, strncmp, strcpy, strncpy, strlen, index, rindex (3)	- string operations
+strings (1)		- find the printable strings in a object, or other binary, file
+strip (1)		- remove symbols and relocation bits (nstrip when cross-support)
+stty (1)		- set terminal options
+style  (1)		-  analyze surface characteristics of a document
+su (1)			- substitute user id temporarily
+su1 (1)			- substitute user id for one command
+sum (1)			- sum and count blocks in a file
+swab (3)		- swap bytes
+sync (2)		- update super-block
+sync (8)		- update the super block
+syscall (2)		- indirect system call
+system (3)		- issue a shell command
+tabs (1)		- set terminal tabs
+tail (1)		- deliver the last part of a file
+tar (1)			- tape archiver
+tbl (1)			- format tables for nroff or troff
+tc (4)			- Streaming tape controller interface
+tcerr (8)		- decipher tape errors
+tee (1)			- pipe fitting
+termcap (5)		- terminal capability data base
+terminals (7)		- conventional names
+test (1)		- condition command
+tgetent, tgetnum, tgetflag, tgetstr, tgoto, tputs (3)	- terminal independent operation routines
+time (1)		- time a command
+time, ftime (2)		- get date and time
+times (2)		- get process times
+touch (1)		- update date last modified of a file
+tr (1)			- translate characters
+trman (1)		- translate version 6 manual macros to version 7 macros
+troff, nroff (1)	- text formatting and typesetting
+true, false (1)		- provide truth values
+tset (1)		- set terminal modes
+tsort (1)		- topological sort
+tty (1)			- get terminal name
+tty (4)			- general terminal interface
+ttyname, isatty, ttyslot (3)	- find name of a terminal
+ttys (5)		- terminal initialization data
+ttytype (5)		- data base of terminal types by port
+types (5)		- primitive system data types
+uid (1)			- print real and effective user and group ids
+ul (1)			- do underlining
+umask (2)		- set file creation mode mask
+unget (1)		- undo a previous get of an \s-1SCCS\s0 file
+ungetc (3S)		- push character back into input stream
+uniq (1)		- report repeated lines in a file
+units (1)		- conversion program
+unlink (2)		- remove directory entry
+update (8)		- periodically update the super block
+uptime (1)		- show how long system has been up
+users (1)		- compact list of users who are on the system
+utime (2)		- set file times
+utmp, wtmp (5)		- login records
+uuclean (1C)		- uucp spool directory clean-up
+uucp, uulog, uuname (1C)    - unix to unix copy
+uuencode (5)		- format of an encoded uuencode file
+uuencode,uudecode (1C)	- encode/decode a binary file for tranmission via mail
+uusend (1C)		- send a file to a remote host
+uustat (1C)		- uucp status inquiry and job control
+uux (1C)		- unix to unix command execution
+uvers (I)		- print kernel version
+val (1)			- validate \s-1SCCS\s0 file
+valloc (3)		- aligned memory allocator
+varargs (3)		- variable argument list
+vfork (2V)		- spawn new process in a virtual memory efficient way
+vhangup (2V)		- virtually ``hangup'' the current control terminal
+vi (1)			- screen oriented (visual) display editor based on ex
+vipw (8)		- edit the password file with vi
+vlimit (2V)		- control maximum system resource consumption
+vlock (2V)		- lock process pages into memory
+vmap (2V)		- perform various mapping operations
+vmstat (1)		- report virtual memory statistics
+vread (2V)		- read virtually
+vspy (2V)		- set up mapping to physical memory
+vtimes (2V)		- get information about resource utilization
+vwrite (2V)		- write (virtually) to file
+w (1)			- who is on and what they are doing
+wait (1)		- await completion of process
+wait (2)		- wait for process to terminate
+wait3 (2J)		- wait for process to terminate
+walkdir (3)		- recursively find files in a directory hierarchy
+wall (1)		- write to all users
+wc (1)			- word count
+what (1)		- identify \s-1SCCS\s0 files
+whatis (1)		- describe what a command is
+whereis (1)		- locate source, binary, and or manual for program
+which (1)		- locate a program file including aliases and paths (csh only)
+who (1)			- who is on the system
+whoami (1)		- print effective current user id
+worm (6)		- Play the growing worm game
+worms  (6)		-  animate worms on a display terminal
+write (1)		- write to another user
+write (2)		- write on a file
+wtmp (5)		- user login history
+wump (6)		- the game of hunt-the-wumpus
+xsend, xget, enroll (1) - secret mail
+yacc (1)		- yet another compiler-compiler
+yes (1)			- be repetitively affirmative

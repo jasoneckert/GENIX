@@ -1,0 +1,5 @@
+ARG='*'
+if [ "$1" ]
+then ARG=$@
+fi
+ls -ld $ARG

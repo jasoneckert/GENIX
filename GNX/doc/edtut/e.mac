@@ -1,0 +1,40 @@
+.ig
+	e.mac: version 1.4 of 11/29/83
+	
+
+	@(#)e.mac	1.4	(NSC)	11/29/83
+..
+.ds . \&\s+2.\s0\&
+.de UC
+\&\\$3\s-1\\$1\s0\\$2
+..
+.de UL
+\&\\$3\f3\\$1\f1\\$2
+..
+.de IT
+\&\\$3\f2\\$1\fP\\$2
+..
+.de UI
+\f3\\$1\f2\\$2\f1\\$3
+..
+.de P1
+.nf
+.if n .ta 5 10 15 20 25 30 35 40 45 50 55 60
+.if t .ta .3i .6i .9i 1.2i 1.5i 1.8i
+.tr -\-
+.		use first argument as indent if present
+.if \\n(.$ .DS I \\$1
+.if !\\n(.$ .DS I 5
+.ft 3
+..
+.de P2
+.br
+.ft 3
+.DE
+.ft 1
+.tr --
+..
+.hy 14
+.	2=not last lines; 4= no -xx; 8=no xx-
+.tr *\(**
+.nr PI .2i

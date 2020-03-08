@@ -1,0 +1,981 @@
+.ig
+	@(#)ddt.1	1.7	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.ds dq ""
+.de sh
+.br
+.ne 5
+.PP
+\fB\\$1\fR
+.PP
+..
+.if t .ds T ~\ 
+.if t .ds P #\ 
+.if t .ds U _\ 
+.if n .ds T ~
+.if n .ds P #
+.if n .ds U _
+.TH DDT 1
+.SH NAME
+ddt \- debug remote and local programs
+.SH SYNOPSIS
+.B ddt
+.B \[ -cdfhinrstuw ]
+[ \f2file\fP [ \f2file\fP ] ]
+.SH DESCRIPTION
+.I Ddt
+is an interactive symbolic debugger that allows remote and local
+debugging at the assembly language level.
+Locally, 
+.I ddt
+works through 
+.IR ptrace (2)
+by default or through a /dev/mem file.  Remotely,
+.I ddt
+communicates through a serial link.
+Code may be displayed and breakpoints set.
+Single-stepping is possible at machine instruction
+level, procedure level, or on non-sequential instruction fetch.
+.I Ddt
+supports debugging in physical address space, supervisor virtual
+address space, and user virtual address space.
+.PP
+When no options are specified and two file names are given, 
+the first file must be an 
+.I a.out 
+format file with symbols and the second file must be a core file.
+To specify a core file without specifying an
+.I a.out
+file, use the 
+.B \-c 
+option.
+.PP
+.I Ddt
+also allows examination of:
+.sp
+.RS 5
+Vmunix core files (produced with 
+.IR savecore (8))
+using the 
+.B \-u 
+option.
+.sp
+Vmunix
+through /dev/mem or /dev/kmem using the 
+.B \-f
+option.
+.sp
+Any \s-2GENIX\s0 file without symbols
+(using 
+.B \-f
+.IR file ).
+.RE
+.PP
+Options are:  
+.TP
+.B \-c     
+Indicate that the file is a core file.  
+No symbols are availiable.
+Used only when one file name is given.
+.TP
+.B \-d     
+Set input and output radix to decimal.
+.TP
+.B \-f     
+Examine 
+.I file
+``straight.''   No symbols exist and addresses represent actual offsets
+into the file.  
+.IP
+When the 
+.B \-f
+option is specified with two filenames,
+.I ddt
+assumes the first is a file in 
+.I a.out 
+format and the second is a /dev/mem file.
+.I Ddt
+examines memory through the /dev/mem files, not through the system  
+.I ptrace
+calls.
+Symbols are available in this case.
+.TP
+.B \-h     
+Set input and output radix to hexidecimal.
+.TP
+.B \-i     
+Open 
+.I file,
+but do not allow it to be executed.
+.B \-i
+is useful for comparing and checking a.out files.
+It cannot be used with 
+.B \-c 
+or 
+.B \-f.
+.TP
+.B \-n     
+Do not use the monitor commands that check the NS16082 Memory
+Management Unit (MMU) for address translation.  This option is for
+remote debugging ONLY.  It tells
+.I ddt
+that the remote system does not have an MMU.
+.I Ddt
+displays all addresses as virtual (as the CPU sees addresses).
+NOTE:  If an MMU is present in the remote system and enabled for
+translation, this option will cause aborts to be caught by ABORT
+vector (NS16032) of either 
+.I ddt
+or the last NS16000 program to set that vector.
+.TP
+.B \-r
+Debug remotely.  This allows debugging on a remote NS16000 board.
+The remote board must be set up as described in
+.IR "G\s-2ENIX\s0 Cross-Support Software for an NS16000-based System" .
+.TP
+.B \-s     
+Dump all program symbols in the 
+.I a.out 
+file on standard output, then exit.
+In this symbol dump, 
+.I ddt 
+lists each 
+symbol followed
+by the hex value for that symbol and its module table
+address (in decimal).
+Even though all the symbols are shown, where symbol name or symbol value
+conflicts exist (i.e., two or more symbols with same value or name), either
+the external symbol will replace the local or the last found symbol
+will replace any other.
+.TP
+.B \-t     
+Scan the Module Table for symbols.
+Normally, 
+.I ddt 
+takes the module number in the symbol table entry
+.I stab.h
+when it computes 
+module table-related instruction fields (sb relative, external).
+This option finds
+the module number by scanning the Module Table
+for the best match.
+This is only useful for tracking link errors.
+.TP
+.B \-u vmunix vmcore.N
+Debug vmunix core.
+.I Ddt
+examines a vmunix core file (made by 
+.IR savecore (8))
+with the corresponding vmunix and vmsymbols in /.
+The panic string will be printed for the crash.
+Registers at time of panic can be looked at, addresses in
+the kernel will be translated (i.e., for looking at u. area).
+.TP
+.B \-w     
+Write enable 
+.IR file .
+.B \-w 
+must be used with 
+.B \-f
+.BR " or \-i" .
+Using 
+.B \-fw 
+allows 
+.I file
+to be changed.  Using 
+.B \-iw 
+allows patching on 
+.I a.out 
+files.
+.B \-w
+is useful for changing code by hand.
+.PP
+When no options are specified,
+.I ddt 
+opens an 
+.I a.out 
+file in the current directory in hexidecimal mode for local execution.
+.PP
+In the following descriptions, the following characters are specified
+symbolically: 
+.PP
+.RS 5
+\f3$\fP    = escape
+.PP
+\f3<cr>\fP = return
+.PP
+\f3<lf>\fP = line feed ( ^j or ' )
+.PP
+\f3<bs>\fP = backspace
+.RE
+.PP
+.B "Ddt Command Format"
+.PP
+Most command lines use the format:
+.PP
+.RS 5
+[
+.I expression 
+]  ...  [ 
+.B $ 
+[ 
+.B $ 
+] ]  [ 
+.I number 
+]  ...  
+.I command
+[
+.B <cr>
+]
+.RE
+.PP
+.I Command
+is a command character or characters.
+.I Expression
+and 
+.I number
+arguments, such as symbols defined in an 
+.I a.out 
+file and numbers in the
+current radix, can optionally be used with certain command characters.
+Most commands are specified with one or two escape
+characters (\f3$\fP).
+The typical command consists of ``\f3$\f2command\f1'',
+which is escape followed by
+a command character.
+Some commands have multiple command characters and
+some require a
+.B <cr>
+to complete.
+.PP
+Commands are executed immediately.  When symbols or expressions are
+typed, <bs> may be used for input editing.
+.PP
+.B Symbols
+.PP
+Symbols are composed alphanumerics, underlines (\*U), dollar
+signs ($), and periods (.).
+.PP
+The ``$'' and ``.'' symbols are defined by 
+.I ddt.
+Alone, the symbol ``.'' refers
+to the most recently specified address, or if it is used immediately after
+a number, ``.'' means input the number in decimal radix.
+.I Ddt
+translates ``$'' into ``.'', so ``$'' functions the same as ``.''.
+.PP
+Symbols other than ``$'' and ``.'' are defined
+by the file being debugged.
+.PP
+All NS16032 CPU registers are available; they are specified to 
+.I ddt
+by the register names:
+.PP
+.RS 5
+.nf
+.nr aa \w'r0, r1, r2, r3, r4, r5, r6, r7'
+.ta \n(aau+(3n)
+r0, r1, r2, r3, r4, r5, r6, r7	General Purpose Registers 0-7
+psr                           	Processor Status Register
+f0, f1, f2, f3, f4, f5, f6, f7	Floating Point Registers 0-7 (local mode only)
+mod	Module Table Register
+sb	Static Base Register
+pc	Program Counter
+sp1	User Stack Pointer 
+sp0	Interrupt Stack Pointer
+fp	Frame Pointer
+intbase	Interrupt Base Register
+.fi
+.RE
+.PP
+These names are the same as those given in the NS16032 data sheet.
+.PP
+When a symbol is specified in a command line, the symbol can be abbreviated
+and an initial underline (\*U) need not be typed.  When 
+.I ddt
+looks for the symbol it selects the best match.   
+For example, assuming the symbol ``XYZ'' has been typed as part
+of a command line, 
+.I ddt
+will look through all the symbols and select the one closest to
+``XYZ'', as follows:
+.PP
+.RS 10
+1) XYZ
+.br
+2) \*UXYZ
+.br     
+3)  
+.RI XYZ$ anything
+.br
+4)  
+.RI XYZ anything
+.br
+5)  
+.RI \*UXYZ anything
+.RE
+.LP
+If 
+.I ddt
+does not find any of the six possible matches, it prints ``symbol
+<XYZ> not found''.
+If 
+.I ddt
+returns, for example, ``XYZTOMATO'', then the symbols ``XYZ'' and
+``\*UXYZ'' do not exist in the file; the symbols
+``\*UXYZ\f2anything\fP'', ``XYZ\f2anything\fP'', 
+and ``\*UXYZ\f2anything\fP'' may or may not be present in the file.  
+.I Anything
+field will match the first matching symbol.
+.PP
+.B Expressions
+.PP
+Expressions are composed of symbols,
+numbers,
+and operators.
+.LP
+When 
+.I ddt 
+evaluates expressions, it finds the value of 
+primary expressions first.  (Primary expressions, for example, 
+symbols and numbers, have intrinsic values.)  Next, 
+.I ddt
+negates or complements the primary expression.
+.I Ddt
+performs multiply,
+and,
+div,
+mod,
+shift right,
+and shift left operations.
+Last,
+.I ddt
+does add,
+subtract,
+or,
+and xor operations in the expression.  The following details
+.IR ddt 's
+order of evaluation for expression:
+.PP
+.RS 2
+.B "Low Priority"
+.RS 2
+expr ::=  D1 ``+'' D1	add
+
+        | D1 ``-'' D1	subtract
+
+        | D1 ``|'' D1	or
+
+        | D1 ``^'' D1	xor
+.RE
+.RE
+.PP
+.RS 2
+.B "Medium Priority"
+.RS 2
+D1   ::=  D2 ``*'' D2	multiply
+
+        | D2 ``&'' D2	and
+
+        | D2 ``\*P'' D2	div
+
+        | D2 ``%'' D2	mod
+
+        | D2 ``>'' D2	shift right by second D2
+
+        | D2 ``<'' D2	shift left by second D2
+.RE
+.RE
+.PP
+.RS 2
+.B "High Priority Operators"
+.RS 2
+D2   ::=  ``-'' D3	negate
+
+          ``\*T'' D3	complement
+.RE
+.RE
+.RS 2
+.PP
+.B "Primary Expressions"
+.RS 2
+D3   ::=  ``('' expr ``)''	subxpression
+
+          `` . ''           	dot
+
+          `` ` ''           	last displayed value
+
+          D3 "@e        	indirect through D3
+
+          symbol        	take symbol value; 
+
+          %symbol       	assume % is part of symbol
+
+.nf
+          number [0-9,a-f,A-F] 	if leading digit a-f provide leading 0, for
+				example, type ``0a'' for hex a
+.fi
+
+          number[.,o,x] 	. means decimal, o octal, and x hex
+
+          register[r0-r7,fp,sp,pc,psr,mod,msr,eia]
+.RE
+.RE
+.RS 4
+.sp
+And, for remote debugging add:
+.sp
+          register[bpr0,bpr1,bcnt,pf0,pf1,sc0,ptb0,ptb1,intb]
+.RE
+.PP
+The postfix `@'
+operator 
+makes the expression a pointer and the value is the
+4-byte quantity at that memory address.
+.PP
+When a register is used in an expression, it is both an address and
+a value.  For example, ``r0+4'' is the contents of r0 plus 4, while
+``r0/'' is the contents of r0 and ``r0/5<cr>'' stores 5 in r0. ``r0/<lf><lf>''
+prints the contents of r0, r1, and r2. (Be careful, ``r0<lf>'' stores
+the contents of r0 in the currently open location.)
+.PP
+Examples:
+.PP
+Consider the addressing mode 4(8(fp)). The effective operand
+address could be displayed with:
+.PP
+.RS 5
+fp+8@+4=
+.RE
+.PP
+or:
+.PP
+.RS 5
+fp+8@+4;
+.RE
+.PP
+The operand could be displayed in the current mode with:
+.PP
+.RS 5
+fp+8@+4/
+.PP
+.RE
+The more complicated case of ``4(8(fp))[r2:w]'' can be displayed
+with: ``fp+8@+4+r2*2i'' (then ``='', ``;'', ``/'', etc.)
+.PP
+For ext(a)+b, type:
+.PP
+.RS 5
+mod+4@+a*4@+b
+.RE
+.PP
+.B "Mode Selection Commands"
+.PP
+Mode selection commands tell 
+.I ddt
+what format to use for displaying output.
+The output format mode is specified locally or permanently.
+Typing a single
+.B $
+changes the output mode locally; typing
+.B $$
+changes the output mode permanently.  Local formats 
+remain in effect until the next
+.B <cr>
+is typed.  Permanent formats
+are effective until another permanent mode is specified.
+.PP
+Mode selection commands are:
+.TP
+.B $mb
+Select absolute numeric mode.
+Print the numeric value using the current radix.
+$mb is the same as 
+.B $mn
+, except that 
+.B $mb 
+ignores 
+.B $m\s-2A\s0
+and 
+.B $mr .
+.TP
+.B $mc
+Select character mode.  Show the hexadecimal value of nonprintable
+characters preceded by a backslash (/).
+.TP
+.B $mf
+Select floating-point mode.  Print numbers as floating-point
+numbers.
+.TP
+.B $mi
+Select instruction mode.  Display memory as assembly
+instruction mnemonics and their operands.  (\f3$mi\fP mode is used by 
+automatic mode (\f3$mA\fP) when the address is in the program code area.) 
+.TP
+.B $mn
+Select numeric mode.  \f3$mn\fP is the same as \f3$mb\fP,
+but \f3$mr\fP and \f3$mA\fP 
+override \f3$mn\fP.
+.TP
+.B $ms
+Select string mode.  Show memory contents as character
+strings, and stop printing on null.
+.TP
+.B $mA
+Select automatic mode (default except for
+.B \-f
+.I file
+option).
+.I Ddt
+prints the data at addresses in the program code area as instructions 
+(like under ``\f3$mi\fP'');
+.I ddt 
+prints the data at other addresses numerically, according 
+to the size given by ``$tX''.
+.TP
+.B $m\s-2N\s0
+Select normal mode (default for 
+.B \-f
+.I file 
+option).  \f3$mN\fP prints all data numerically and no symbols are
+available.
+.TP
+.B $ma
+Select nonsymbolic mode.
+.TP
+.B $mr
+Select symbolic mode.  \f3$mr\fP overrules \f3$mn\fP.
+.TP
+.IB value $mm
+Set maximum offset.
+The maximum offset tells
+.I ddt
+to show addresses as offsets from a symbol until the offset is greater
+than 
+.IR value .
+Default 
+.I value
+is 1000.
+.TP
+.BR $r [ bodx ]
+Set input/output radix as in printf:  b=binary, o=octal,
+d=decimal, x=hex.  Character or instruction input modes are not
+available.
+.TP
+.BR $t [ bwd ]
+Select the context or data size: 
+b=byte, w=word, d=doubleword.
+Default is 
+.BR d .
+.TP
+.B $n
+Like ``='' only display numeric as unsigned.
+.PP
+A decimal radix number can always be entered regardless
+of the input radix by typing the number followed by a ``.''; i.e., 
+``234.'' is 234
+base 10.  Likewise a hexadecimal radix number can always be entered by typing
+the number followed by a ``x''; i.e., ``2aex'' is 2AE base 16.
+An octal radix number can always be entered by typing
+the number followed by an ``o''.
+.PP
+.B "Run Commands"
+.PP
+The run commands are:
+.TP
+\f3$g\fP and \f3$\s-2G\s0 \f2arguments\f3 <cr>\fP
+Begin execution of the 
+.I a.out
+(or
+.IR file ).
+.B $G
+allows arguments to be passed to the program through 
+.IR ddt .
+For example, to debug ``/usr/ucb/ls \-R'', 
+give the run command ``$G \-R <cr>''.
+Arguments need only be set once with 
+.BR $G ;
+on repeat runs,
+.B $g 
+will use the same arguments.
+.B $G
+can be issued at any time to change arguments.
+.IP
+When
+.I ddt
+begins execution, it gives the name of 
+.I file
+and the arguments; for example, 
+.I ddt
+prints:
+.PP
+.RS 10
+running /usr/ucb/ls \-R
+.RE
+.IP
+Both 
+.B $g
+and
+.B $G
+put all breakpoints in a program before running.
+.IP
+For remote debugging, 
+.B $g
+and
+.B $p 
+are the same, except
+.B $g
+will not proceed from a breakpoint.
+.B $G
+does not pass arguments in remote mode.
+.PP
+.B "Retyping Output"
+.PP
+.I Ddt  
+regcognizes three commands for retyping output:
+.PP
+.RS 5
+.TP
+.B ;
+Retype the last value in symbolic format.
+.TP
+.B =
+Retype the last value as a number.
+.TP
+.B $n
+Retype the last value as a unsigned number.
+.RE
+.PP
+.B "Display (or Open Location) Commands"
+.PP
+These commands display code or data and ``open'' locations.
+.PP
+In the following table, ``the new address'' means the
+last value typed, either by
+.I ddt
+or through the keyboard.  However, ``if typed'' means ``if typed
+on the keyboard.''
+Certain commands change the location counter (.).
+Open location commands and their effects on ``.'' are:
+.sp
+.TS
+center box tab (x);
+c c c
+l l l .
+.sp
+Command:xFunction:xChanges ``.''?
+.sp
+_
+!xOpen the new address.xIf typed.
+/xOpen and type the new address.xIf typed.
+\exOpen and type the new address.xNever.
+^I (tab)xOpen and type the new address.xAlways.
+.TE
+.PP
+For example, ``10/'' displays address 10 and the contents of address ``10'';
+it leaves ``.'' set to 10.
+``10\e'' displays the same
+things, but it does not change ``.'' at all.
+.PP
+.B "Display or Change Commands"
+.PP
+These commands display and change memory locations.  To change
+the contents of a location, the address must be open (see previous
+section) and replacement expression must be specified in the command
+line.
+.I Ddt
+stores the value of the replacement expression in the location.
+.LP
+Some commands increment or decrement the location counter (.).
+The delta depends on the contexts established with the 
+.BI $t X 
+command,
+or in 
+.B $mi 
+mode, it depends on the size of the instruction.
+.LP
+All change or display commands open the new ``.''.
+.LP
+The change or display commands are:
+.TP 12
+.B ?
+Decrement ``.'' and display the new address.
+.TP 12
+.IB expr ?
+Store 
+.I expr
+first then decrement ``.'' and display the new address.
+.TP 12
+.B "< lf>"
+Increment ``.'' and displays the new address.
+.TP 12
+.IB expr '
+Store 
+.I expr
+then decrement ``.'' and display the new address.
+.TP 12
+.I expr\f3< lf>\fP
+Store
+.I expr
+then decrement ``.'' and display the new address.
+.TP 12
+.B <cr>
+Cancel temporary output format modes.
+.TP 12
+.IB expr <cr>
+Store
+.I expr
+then decrement ``.'' display the new address.
+.PP
+.B "Program Control Commands"
+.PP
+Program control commands manage breakpoints, step through a program,
+provide a help facility, quit
+.IR ddt , 
+display memory, and create command strings.
+For these commands the radix of 
+.IR number 
+is always decimal.
+.TP
+.IR addr $\f3b\fP
+Set breakpoint at
+.IR addr .
+If
+.I addr 
+is not specified, then the value of ``.'' is used.
+.TP
+.BI $ number\f3b\fP
+Remove breakpoint 
+.I number.
+.TP
+.B $\s-2B\s0
+Remove all breakpoints.
+.TP
+.B $l
+List all existing breakpoints.
+For remote debugging, also list which address space breakpoint are 
+in (user or supervisor).
+.TP
+.IB number $p
+Proceed from current pc, with
+.I number
+proceeds from breakpoints;
+default is 0.
+Proceed is done by stepping one instruction,
+(a ``
+.BR [ ''),
+inserting all breakpoints and running.
+.TP
+.IB number ]
+Single-step pc.  Do not insert breakpoint.  Default is 0.
+.TP
+.IB number [
+Single-step over pc. If the next instruction is cxp, cxpd, jsr or bsr,
+step over call.  Also, for remote debugging step over rett, reti.
+Does not insert breakpoint.
+.IB number [
+will do 
+.I number
+single-steps.  Default is 0.
+.TP
+.B }
+Single-step. Insert breakpoints.
+.TP
+.B {
+Single-step pc. If the instruction is cxp, cxpd, jsr or bsr,
+step over call.  Also, for remote debugging, step over
+rett, reti.  Insert breakpoints.
+.TP
+.B $k
+Skip the current instruction.
+.TP
+.B $s
+Display a stack trace.  Show offset in function and
+arguments to call (for C call-return sequences).
+.TP
+.B $\s-2S\s0
+Display a stack trace.  Show offset in function but
+no arguments to call (for bad stacks and non-C stacks).
+.TP
+.B $\s-2U\s0
+Put an uplevel breakpoint  
+at the return pc of the next frame.
+.TP
+.B $u
+Insert an uplevel breakpoint at the return pc of the next frame and 
+proceed.  Execution proceeds to that breakpoint because   
+.B $u
+causes 
+.I ddt
+to temporarily ignore any intervening breakpoints.
+When 
+.I ddt
+reaches the next frame,
+.B $u
+removes the breakpoint it inserted.
+.B $u 
+differs from 
+.B $U
+in that it proceeds directly to
+the next frame.
+Note:  
+.B $u
+can be used to get out of a call.  To work 
+as intended, be sure to step past the ENTER instruction
+in the current routine (the fp hasn't changed yet).  If you
+are not beyond the ENTER, then the breakpoint will be placed
+at a depth one greater than expected.
+.TP 
+.IR "calladdr, argn... arg1" \f3$c\fP
+Perform a cxp call to the address given.
+The address must be the start of routine and
+have the correct module value for that symbol. The
+arguments will be pushed on the stack in right to left order.
+If the program stops due to a breakpoint
+within the call routine, the arguments will not be cleaned
+off the stack on proceed or step.
+.TP
+.B $h
+Print a synopsis of 
+.I ddt 
+commands.
+.TP
+.B $q
+Quit
+.IR ddt .
+.TP
+.B ^d
+Display next 10 data items.
+.TP
+.B ^b
+Single-step 10 times (10 ` \f3]\fP ').
+.TP
+.B ^f
+Single-step over 10 times (10 ` \f3[\fP ').
+.TP
+.IB number $e command-string
+Execute the
+.I command-string
+when breakpoint
+.I number
+is hit, or if no
+.I number
+is given, whenever the program stops.  A
+.I command-string
+is any other 
+.I ddt
+command.  For example:
+``$er0/'' will show the contents of r0 every time the program
+stops (single-step or breakpoint).
+.TP
+.IB number $\s-2E\s0
+Disable command string for breakpoint
+.IR number ,
+or if no number
+is given, disable the 
+.B $e 
+(the any stop string).
+.BI $ number\f3b\fP
+will also disable command string
+.IR number ,
+and
+.B $B
+will disable all 
+.I number
+command strings.
+.TP
+.B $\s-2L\s0
+List all stop strings.
+.BR T :
+is the any break command
+string.
+Stop strings are set with \f3$e\fP.  \f3``1:''\fP
+would indicate breakpoint number 1 has that command string.
+.PP
+.B "Remote Debugging Commands"
+.PP
+This section describes commands available only during remote debugging.
+.TP
+.B $d
+Download the 
+.I a.out 
+file over the serial line.  When 
+.I ddt
+transfers a file, it prints to standard output the number of bytes
+remaining to be loaded (in increments of a thousand).
+.TP
+.B $v
+Switch to supervisor mode examination.
+The sp register is now sp0.
+The address space is as defined by the Memory Management Unit,
+MMU, (NS16082) for supervisor mode.
+.TP
+.B $\s-2V\s0
+Switch to user mode examination.
+The sp register is now sp1.
+The address space is as defined by the MMU (NS16082) for user mode.
+.TP
+.B $\s-2P\s0
+Nonsequential step.
+Progress until one nonsequential
+trap (as defined by MMU) has occurred.
+.TP
+.IB addr $x
+Set an MMU breakpoint at address or ``.'' if no address is given.
+Only one MMU breakpoint may be set.
+It can be seen with \f3$l\fP and removed with 
+.BI $ number\f3b\fP
+where
+.I number 
+is the number
+given by \f3$l\fP. When the breakpoint occurs, 
+.I ddt 
+prints a message
+stating the kind of access that caused the
+break.
+.B $x
+will break on execute, read, and write.
+.TP
+.IB addr $\s-2XX\s0
+Set an MMU breakpoint; same as above only break on
+execute.
+.TP
+.IB addr $r  
+Set an MMU breakpoint; same as above only break on
+read.
+.TP
+.IB addr $\s-2X\s0w
+Set an MMU breakpoint; same as above only break on
+write.
+.TP
+.IB addr $\s-2XR\s0
+Set an MMU breakpoint; same as above only break on
+read or write.
+.PP
+.B "Signals"
+.PP
+When using
+.I ddt
+locally, signals sent to the program being debugged are shown with
+standard \s-2GENIX\s0 names (see /usr/include/signal.h).  Remotely
+.I ddt
+shows traps caught by the running program with NS16000 trap names.
+For example:
+.TP
+Trap(UND) 
+An undefined instruction trap occurred.
+.SH FILES
+.nr aa \w'\dev\tty??'
+.ta \n(aau+(3n)
+/dev/tty??	the line used for remote debugging
+.SH "SEE ALSO"
+cu16(1), ptrace(2)
+.SH BUGS
+The 
+.IR ptrace (2) 
+addr argument for read or write to the u area (user process data structure
+within the kernel) is nonstandard.
+If the value matches any for registers in <sys/reg.h>,
+the request refers to a register.
+Otherwise, it is an index into the u.

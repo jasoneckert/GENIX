@@ -1,0 +1,26 @@
+To burn eboot.x use nburn program in /usr/nsc:
+
+With Prom burner connected via Datamedia aux port,
+and set to program 2732 proms(and one in place),
+and enabled with SELECT, 5, 0, ENTER, SELECT, D, 1, ENTER, START key sequence.
+type    nburn -s 0 4 e FILENAME<cr>   to load prom burner with even bytes
+the start prom burner to program EPROM with PROG, START.
+repeat the same for odd half using
+	nburn -s 0 4 o FILENAME<cr>
+
+Where FILENAME is the eboot.x image you want, i.e.
+		eboot.x	
+
+all the commands are
+
+	even 1st prom
+		nburn -s 0 4 e eboot.x<cr>
+
+	even 2nd prom
+		nburn -s 8 4 e eboot.x<cr>
+
+	odd 1st prom
+		nburn -s 0 4 o eboot.x<cr>
+
+	odd 2nd prom
+		nburn -s 8 4 o eboot.x<cr>

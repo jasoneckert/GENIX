@@ -1,0 +1,29 @@
+#! /bin/csh
+# @(#)mkguest.csh	1.4	9/23/83
+# @(#)Copyright (C) 1983 by National Semiconductor Corp.
+#
+# mkguest - make the guest user area
+#
+# must be run by root
+#
+# by: C Noll
+
+set path = (. /usr/nsc /usr/ucb /bin /usr/bin /etc)
+if ( ! -d /u ) then
+	rm -f /u
+	mkdir /u
+	chmod 0755 /u
+	/etc/chown root /u
+	/etc/chgrp sys /u
+endif
+if ( ! -d /u/guest ) then
+	rm -f /u/guest
+	mkdir /u/guest
+	chmod 0755 /u/guest
+	/etc/chown guest /u/guest
+	/etc/chgrp guest /u/guest
+	cp /usr/skel/.{login,cshrc,mailrc,project,exrc,plan} /u/guest
+	chown guest /u/guest/.{login,cshrc,mailrc,project,exrc,plan}
+	chgrp guest /u/guest/.{login,cshrc,mailrc,project,exrc,plan}
+	chmod 0644 /u/guest/.{login,cshrc,mailrc,project,exrc,plan}
+endif

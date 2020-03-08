@@ -1,0 +1,87 @@
+.ig
+	@(#)openp.3x	1.2	7/15/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH OPENP 3X
+.SH "NAME"
+openp, fopenp \- open file using search path
+.SH "SYNOPSIS"
+.nf
+.B
+openp (path, fname, fullname, mode)
+.B
+	char *path, *fname, *fullname;
+.B
+	int mode;
+.sp
+.B
+#include <stdio.h>
+.B
+FILE *fopenp (path, fname, fullname, mode)
+.B
+	char *path, *fname, *fullname, *mode;
+.sp
+.B
+cc ... -lnsc
+.fi
+.SH "DESCRIPTION"
+.I Openp
+constructs a sequence of
+full pathnames
+from the file leafname
+.I fname
+and the
+.IR sh (1)-style
+search path
+.IR path .
+As each pathname
+is constructed,
+.I openp
+attempts to
+.IR open (2)
+the file so designated 
+with the I/O mode
+.IR mode .
+As soon as an attempt is successful,
+.I openp
+returns the resulting file descriptor.
+On return,
+.I fullname
+points to the last pathname constructed;
+on entry it must point to sufficient space to hold the longest of these.
+.PP
+.I Fopenp
+is a version of
+.I openp
+that interfaces to the standard I/O library;
+it uses
+.IR fopen (3)
+in place of
+.IR open (2)
+and returns a
+.B FILE
+pointer in place of a file descriptor.
+.PP
+These functions are kept in the
+.I nsc
+library.
+.SH "CAVEATS"
+If
+.I fopenp
+is called with a
+.I mode
+that allows writing,
+a file early in the search sequence may be created from scratch,
+even though a file later in the search sequence already exists.
+.SH "DIAGNOSTICS"
+If no
+.I fullname
+succeeds,
+.I openp
+returns -1,
+whereas
+.I fopenp
+returns the pointer
+.BR NULL .
+.SH "SEE ALSO"
+open(2), fopen(3), sh(1)

@@ -1,0 +1,323 @@
+.ig
+	u3: version 1.2 of 11/22/83
+	
+
+	@(#)u3	1.2	(NSC)	11/22/83
+..
+.sp
+.SH
+III. DOCUMENT PREPARATION
+.PP
+G\s-2ENIX\s0
+systems are used extensively for document preparation.
+The two major 
+formatting
+programs
+are
+.UL nroff
+and 
+.UL troff.
+These programs produce a text with
+justified right margins, automatic page numbering and titling,
+automatic hyphenation,
+and the like.
+.UL nroff
+(pronounced ``en-roff'')
+is designed to produce output on terminals and
+line-printers.
+.UL troff
+(pronounced ``tee-roff'')
+drives a phototypesetter,
+which produces very high quality output
+on a device such as a laserprinter or phototypesetter.
+.SH
+Formatting Packages
+.PP
+For both
+.UL nroff 
+and 
+.UL troff
+the text to be formatted must contain
+formatting commands that indicate in detail
+how the formatted text is to look.
+For example, there might be commands that specify how long
+lines are, whether to use single or double spacing,
+and what running titles to use on each page.
+.PP
+Because
+.UL nroff
+and
+.UL troff
+are relatively hard to learn to use effectively,
+several
+``packages'' of canned formatting requests, called macros,
+are available to let you specify
+paragraphs, running titles, footnotes, multi-column output,
+and so on, with little effort
+and without having to learn
+.UL nroff
+and
+.UL troff .
+These packages require modest effort to learn,
+but the rewards for using them are so great
+that it is time well spent.  The
+\s-2GENIX\s0 operating system provides two formatting packages:
+.UL \-me
+and
+.UL \-ms .
+This section,
+provides a look at the ``manuscript'' 
+package known as
+.UL \-ms .
+Several papers in Volume 2 of the reference manual describe \-me,
+\-ms, nroff and troff.
+.PP
+Formatting requests typically consist of 
+a period and two upper-case letters,
+such as
+.UL .TL ,
+which is used to introduce a title,
+or
+.UL .PP
+to begin a new paragraph.
+A document is typed so it looks something like this:
+.P1
+\&.TL
+title of document
+\&.AU
+author name
+\&.SH
+section heading
+\&.PP
+paragraph ...
+\&.PP
+another paragraph ...
+\&.SH
+another section heading
+\&.PP
+etc.
+.P2
+The lines that begin with a period are the formatting requests.
+For example,
+.UL .PP
+calls for starting a new paragraph.
+The precise meaning of
+.UL .PP
+depends on what output device is being used
+(typesetter or terminal, for instance),
+and on what publication the document will appear in.
+For example,
+.UL \-ms
+normally assumes that a paragraph is preceded by a space
+(one line in
+.UL nroff ,
+12 line in
+.UL troff ),
+and the first word is indented.
+These rules can be changed if you like,
+but they are changed by changing the interpretation
+of
+.UL .PP ,
+not by re-typing the document.
+.PP
+To actually produce a document in standard format
+using
+.UL \-ms ,
+use the command
+.P1
+troff -ms files ...
+.P2
+for the typesetter, and
+.P1
+nroff -ms -Tdevice files ...
+.P2
+for a terminal.
+The
+.UL \-ms
+argument tells
+.UL troff
+and
+.UL nroff
+to use the manuscript package of formatting requests.
+The 
+.UL \-T
+argument tells nroff what the output device is.  For example, for a
+VT100-compatible terminal use
+.P1
+.UL \-Tdm
+.P2
+or for a lineprinter use 
+.P1
+.UL \-Tlpr
+.P2
+.SH
+Supporting Tools
+.PP
+In addition to the basic formatters,
+a host of supporting programs
+help with document preparation.
+The next paragraph lists some;
+check through the manuals
+for other possibilities.
+.PP
+.UL eqn
+and
+.UL neqn
+format mathematical equations 
+in the text of a document.
+.UL eqn
+and 
+.UL neqn
+use an easy-to-learn language that closely resembles the way
+formulas and equations are read aloud.
+For example, the
+.UL eqn
+input
+.P1
+sum from i=0 to n x sub i ~=~ pi over 2
+.P2
+produces the output
+.EQ
+sum from i=0 to n x sub i ~=~ pi over 2
+.EN
+.PP
+The program
+.UL tbl
+provides an analogous service for preparing tabular material;
+it does all the computations necessary to align complicated columns
+with elements of varying width.
+.PP
+.UL spell
+detects possible spelling mistakes in a document.
+.UL spell
+works by comparing the words in your document
+to a dictionary, and
+prints those that are not in the dictionary.
+It knows enough about English spelling to recognize plurals and the like.
+.PP
+.UL grep
+looks through a set of files for lines
+that contain a particular text pattern 
+(rather like the editor's context search does,
+but on any number of files).
+For example,
+.P1
+grep \(fming$\(fm chap*
+.P2
+will find all lines that end with
+the letters
+.UL ing
+in the files
+.UL chap* .
+(A good practice is to put single quotes around
+the pattern being searched for,
+in case the pattern contains characters like
+.UL *
+or
+.UL $
+that have a special meaning to the shell.)
+.UL grep
+is useful for finding which file in a set has
+a misspelled word detected by
+.UL spell .
+.PP
+.UL diff
+prints a list of the differences between
+two files,
+so you can compare
+two versions of something automatically.
+.PP
+.UL wc
+counts the words, lines and characters in a set of files.
+.UL tr
+translates characters into other characters;
+for example it will convert upper- to lower-case and vice versa.
+This translates upper into lower:
+.P1
+tr A-Z a-z <input >output
+.P2
+.PP
+.UL sort
+sorts files in a variety of ways;
+.UL cref
+makes cross-references for C programs;
+.UL ptx
+makes a permuted index
+(keyword-in-context listing).
+.UL sed
+provides many of the editing facilities
+of
+.UL ed ,
+but can apply them to arbitrarily long inputs.
+.UL awk
+provides the ability to do both pattern matching and numeric computations,
+and to process conveniently fields within lines.
+These programs are not limited to document preparation; they can be
+used on any text files, including programs and scripts.
+.PP
+Most of these programs are either independently documented in
+.I
+The \s-2GENIX\s0 Programmer's Manual Volume 2
+.R
+(like
+.UL eqn
+and
+.UL tbl ),
+or are sufficiently simple that the description in
+Volume 1 of the programmer's manual
+is adequate.
+.SH
+Hints for Preparing Documents
+.PP
+Most documents go through several versions (always more than you expected) before they
+are finally finished.
+Therefore, you should do everything possible to make
+the job of changing them easy.
+.PP
+First, when you do the purely mechanical operations of typing,
+type so that subsequent editing will be easy.
+Start each sentence on a new line.
+Make lines short,
+and break lines at natural places,
+such as after commas and semicolons,
+rather than randomly.
+Since most people change documents by rewriting phrases
+and adding, deleting and rearranging sentences,
+these precautions simplify any editing done later.
+.PP
+Keep the individual files of a document down
+to modest size,
+perhaps ten to fifteen thousand characters.
+Larger files edit more slowly
+and, of course, if you make a dumb mistake
+it's better to have clobbered a small file than a big one.
+Split into files at natural boundaries in the document,
+for the same reasons that you start each sentence
+on a new line.
+.PP
+The second aspect of making change easy
+is not to commit yourself to formatting details too early.
+One of the advantages of formatting packages like
+.UL \-ms
+is that they permit you to delay decisions
+to the last possible moment.
+Indeed,
+until a document is printed,
+it is not even decided whether it will be typeset
+or put on a line printer.
+.PP
+As a rule of thumb, for all but the most trivial jobs,
+you should type a document in terms of a set of requests
+like
+.UL .PP ,
+and then define them appropriately,
+either by using one of the canned packages
+or by defining your own
+.UL nroff
+and
+.UL troff
+commands.
+As long as you have entered the text in some systematic way,
+it can always be cleaned up and re-formatted
+by a judicious combination of
+editing commands and request definitions.

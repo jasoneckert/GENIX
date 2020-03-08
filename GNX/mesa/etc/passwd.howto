@@ -1,0 +1,32 @@
+@(#)passwd.howto	1.1	9/26/83
+@(#)Copyright (C) 1983 by National Semiconductor Corp.
+
+
+This file contains guidelines we have found useful on our own systems
+for maintaining the password file.
+
+1)	Do not reuse old account numbers.  Each new account should
+	be given a fresh, previously unused uid.  This means there
+	may be holes in the uid sequence.
+
+2)	Unless there is reason to reuse an old login name, do not
+	remove old accounts.  Instead, change old entries to forbid
+	logins (asterisk in the password field).  This policy prevents
+	the existence of files belonging to no one; instead, all files
+	will have an identifiable owner, making it easier to determine
+	what to do with questionable files.
+
+3)	The uid space should be partitioned into logically coherent
+	subspaces.
+
+	user-id		type (suggested users)
+	-------		----------------------
+	0		root
+	1-99		system administrative logins (bin, uucp, etc.)
+	100-199		subsystem logins (netnews, etc.)
+			The distinction between these and system
+			administrative logins can be fuzzy.
+	200-299		uucp dialin accounts
+	800-899		special user accounts (guest, customer, etc.)
+	900-999		restricted logins (games, date, etc.)
+	1000-2999	normal user accounts

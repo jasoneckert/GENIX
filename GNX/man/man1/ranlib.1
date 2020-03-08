@@ -1,0 +1,56 @@
+.ig
+	@(#)ranlib.1	1.4	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.if t .ds U _\ 
+.if n .ds U _
+.TH RANLIB 1
+.SH NAME
+ranlib \- convert archives to libraries (nranlib for cross-support)
+.SH SYNOPSIS
+.B ranlib
+.I archive ...
+.sp
+.B nranlib
+.I archive ...
+.SH DESCRIPTION
+.I Ranlib
+converts each
+.I archive
+to a form which can be loaded
+more rapidly by the loader,
+by adding a table of contents named
+.B _\^\*U.SYMDEF
+to the beginning of the archive.
+It uses
+.IR ar (1)
+to reconstruct the archive,
+so that sufficient temporary file space must
+be available in the file system containing the
+current directory.
+.SH SEE ALSO
+ld(1), ar(1)
+.SH CROSS-SUPPORT
+In a cross-support environment,
+.I ranlib
+is called
+.IR nranlib .
+.SH BUGS
+Because generation of a library by
+.I ar
+and randomization by
+.I ranlib
+are separate,
+phase errors are possible.
+For example, an object file that has been through
+.IR strip (1)
+and
+.IR ar (1)
+will generate this message when it is processed by 
+.IR ranlib (1):
+.sp
+.RS 10
+.B warning:
+.IB name (
+.IB object ):
+.B no symbol table

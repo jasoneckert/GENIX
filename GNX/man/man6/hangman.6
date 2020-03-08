@@ -1,0 +1,43 @@
+.ig
+	hangman.6: version 1.2 of 8/12/83
+	UNIX Game Manual Page Source
+
+	@(#)hangman.6	1.2	(NSC)	8/12/83
+..
+.TH HANGMAN 6
+.SH NAME
+hangman \- Computer version of the game hangman for CRTs
+.SH SYNOPSIS
+.B hangman
+[score-file]
+.SH DESCRIPTION
+In
+.I hangman,
+the computer picks a seven or more letter word from the on-line word list
+and you must try to guess it, one letter at a time.  If you guess a letter
+correctly, all occurrences of the letter in the word are filled in.
+If you guess wrongly, a section of a man (or woman) is drawn.  After seven
+wrong guesses, the person is complete and you lose, which costs you two
+additional letters.  Your score for a game is the number of wrong guesses
+taken, and is from 0 to 6 if you win, and 9 if you lose.
+.PP
+If the screen gets messed up, typing control-l will refresh it.
+.PP
+.I Hangman
+keeps track of the average score for all your games, the scores of your
+latest ten games, and a histogram of all of your scores.  The histogram
+tells you how many 0 move games, 1 move games, etc., you have played.  The
+dash seperates won games from lost games.
+.PP
+If you give a score file on the command line when starting
+.I hangman,
+then your scores will be saved in that file when you quit.  If the
+file already existed, you continue playing at the point you previously quit.
+You can quit by answering 'n' after a game is complete, or by typing the
+interrupt character at any time (even in the middle of a game).
+.SH FILES
+.nf
+/usr/games/hangman	The program
+/usr/dict/words     On-line word list
+/etc/termcap	Terminal descriptions
+.fi

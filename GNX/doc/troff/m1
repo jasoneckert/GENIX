@@ -1,0 +1,698 @@
+.ig
+	m1: version 1.2 of 11/29/83
+	
+
+	@(#)m1	1.2	(NSC)	11/29/83
+..
+.pn8
+.tr |
+.tr ~|
+.rm mx
+.br
+.ce
+.ft3
+.ps+2
+.rs
+.sp1.0i
+REFERENCE MANUAL
+.ft1
+.ps-2
+.sp
+.mh
+General Explanation
+.sc
+Form of input.
+Input consists of \f2text lines\f1, which are destined to be printed,
+interspersed with \f2control lines\f1,
+which set parameters or otherwise control subsequent processing.
+Control lines begin with a \f2control character\f1\(em\
+normally \f3.\f1 (period) or \f3\'\f1 (acute accent)\(em\
+followed by a one or two character name that specifies
+a basic \f2request\f1 or the substitution of
+a user-defined \f2macro\f1 in place of the control line.
+The control character \f3\'\f1 suppresses the \f2break\f1 function\(em\
+the forced output of a partially filled line\(em\
+caused by certain requests.
+The control character may be separated from the request/macro name by
+white space (spaces and/or tabs) for esthetic reasons.
+Names must be followed by either
+space or newline.
+Control lines with unrecognized names are ignored.
+.pg
+Various special functions may be introduced anywhere in the input by
+means of an \f2escape\f1 character, normally \f3\e\f1.
+For example, the function
+\f3\en\f2R\f1
+causes the interpolation of the contents of the
+\f2number register R\f1
+in place of the function;
+here \f2R\f1 is either a single character name
+as in \f3\en\f2x\f1,
+or left-parenthesis-introduced, two-character name as in \f3\en(\f2xx\f1.
+.sc
+Formatter and device resolution.
+\*(TR internally uses 432 units\(slinch, corresponding to
+the Graphic Systems phototypesetter
+which has a horizontal resolution of
+1\(sl432 inch and a vertical resolution
+of 1\(sl144 inch.
+\*(NR internally uses 240 units\(slinch,
+corresponding to the least common multiple of the
+horizontal and vertical resolutions of various
+typewriter-like output devices.
+\*(TR rounds horizontal\(slvertical numerical parameter input to the actual
+horizontal\(slvertical resolution of the Graphic Systems typesetter.
+\*(NR similarly rounds numerical input to the actual resolution
+of the output device indicated by the \f3\(miT\f1 option
+(default Model 37 Teletype).
+.sc
+Numerical parameter input.
+Both \*(NR and \*(TR
+accept numerical input with the appended scale
+indicators
+shown in the following table,
+where
+\f2S\f1 is the current type size in points,
+\f2V\f1 is the current vertical line spacing in
+basic units,
+and
+\f2C\f1 is a \f2nominal character width\f1 in basic units.
+.TS
+center box;
+c|c|ls
+c|c|ll
+c|l|l|l.
+Scale		Number of basic units
+Indicator	Meaning	\*(TR	\*(NR
+_
+\f3i\f1	Inch	432	240
+\f3c\f1	Centimeter	432\(mu50\(sl127	240\(mu50\(sl127
+\f3P\f1	Pica = 1\(sl6 inch	72	240\(sl6
+\f3m\f1	Em = \f2S\f1 points	6\(mu\f2S\f1	\f2C\f1
+\f3n\f1	En = Em\(sl2	3\(mu\f2S\f1	\f2C, same as Em\f1
+\f3p\f1	Point = 1\(sl72 inch	6	240\(sl72
+\f3u\f1	Basic unit	1	1
+\f3v\f1	Vertical line space	\f2V\f1	\f2V\f1
+none	Default, see below
+.TE
+In \*(NR, \f2both\f1 the em and the en are taken to be equal to the \f2C\f1,
+which is output-device dependent;
+common values are 1\(sl10 and 1\(sl12 inch.
+Actual character widths in \*(NR need not be all the same and constructed characters
+such as \(mi> (\(->) are often extra wide.
+The default scaling is ems for the horizontally-oriented requests
+and functions
+\f3ll\f1,
+\f3in\f1,
+\f3ti\f1,
+\f3ta\f1,
+\f3lt\f1,
+\f3po\f1,
+\f3mc\f1,
+\f3\eh\f1,
+and
+\f3\el\f1;
+\f2V\^\f1s
+for the vertically-oriented requests and functions
+\f3pl\f1,
+\f3wh\f1,
+\f3ch\f1,
+\f3dt\f1,
+\f3sp\f1,
+\f3sv\f1,
+\f3ne\f1,
+\f3rt\f1,
+\f3\ev\f1,
+\f3\ex\f1,
+and
+\f3\eL\f1;
+\f3p\f1 for the \f3vs\f1 request;
+and \f3u\f1 for the requests
+\f3nr\f1,
+\f3if\f1,
+and
+\f3ie\f1.
+\f2All\f1 other requests ignore any scale indicators.
+When a number register containing an already appropriately scaled number
+is interpolated to provide numerical input,
+the unit scale indicator
+\f3u\f1 may need to be appended to prevent
+an additional inappropriate default scaling.
+The number, \f2N\f1, may be specified in decimal-fraction form
+but the parameter finally stored is rounded to an integer number of basic units.
+.pg
+The \f2absolute position\f1 indicator \f3~\f1 may be prepended
+to a number \f2N\f1
+to generate the distance to the vertical or horizontal place \f2N\f1.
+For vertically-oriented requests and functions, \f3~\|\f2N\f1
+becomes the distance in basic units from the current vertical place on the page or in a \f2diversion\f1 (\(sc7.4)
+to the the vertical place \f2N\f1.
+For \f2all\f1 other requests and functions,
+\f3~\|\f2N\f1
+becomes the distance from
+the current horizontal place on the \f2input\f1 line to the horizontal place \f2N\f1.
+For example,
+.x1
+\&\f3.sp  ~\|3.2c\f1
+.x2
+will space \f2in the required direction\f1 to 3.2\|centimeters from the top of the page.
+.sc
+.tr &&
+Numerical expressions.
+Wherever numerical input is expected an expression involving parentheses,
+the arithmetic operators \f3\(pl\f1, \f3\(mi\f1, \f3\(sl\f1, \f3\(**\f1, \f3%\f1 (mod),
+and the logical operators
+\f3<\f1,
+\f3>\f1,
+\f3<=\f1,
+\f3>=\f1,
+\f3=\f1 (or \f3==\f1),
+\f3&\f1\ (and),
+\f3:\f1\ (or)
+may be used.
+Except where controlled by parentheses, evaluation of expressions is left-to-right;
+there is no operator precedence.
+In the case of certain requests, an initial \f3\(pl\f1 or \f3\(mi\f1 is stripped
+and interpreted as an increment or decrement indicator respectively.
+In the presence of default scaling, the desired scale indicator must be
+attached to \f2every\f1 number in an expression
+for which the desired and default scaling differ.
+For example,
+if the number register \f3x\f1 contains 2
+and the current point size is 10,
+then
+.br
+.tr &.
+.x1
+.ft3
+\&.ll  (4.25i\(pl\enxP\(pl3)\(sl2u
+.ft1
+.x2
+will set the line length to 1\(sl2 the sum of 4.25 inches \(pl 2 picas \(pl 30 points.
+.sc
+Notation.
+Numerical parameters are indicated in this manual in two ways.
+\(+-\f2N\f1 means that the argument may take the forms \f2N\f1, \(pl\f2N\f1, or \(mi\f2N\f1 and
+that the corresponding effect is to set the affected parameter
+to \f2N\f1, to increment it by \f2N\f1, or to decrement it by \f2N\f1 respectively.
+Plain \f2N\f1 means that an initial algebraic sign is \f2not\f1
+an increment indicator,
+but merely the sign of \f2N\f1.
+Generally, unreasonable numerical input is either ignored
+or truncated to a reasonable value.
+For example,
+most requests expect to set parameters to non-negative
+values;
+exceptions are
+\f3sp\f1,
+\f3wh\f1,
+\f3ch\f1,
+\f3nr\f1,
+and
+\f3if\f1.
+The requests
+\f3ps\f1,
+\f3ft\f1,
+\f3po\f1,
+\f3vs\f1,
+\f3ls\f1,
+\f3ll\f1,
+\f3in\f1,
+and
+\f3lt\f1
+restore the \f2previous\f1 parameter value in the \f2absence\f1
+of an argument.
+.pg
+Single character arguments are indicated by single lower case letters
+and
+one/two character arguments are indicated by a pair of lower case letters.
+Character string arguments are indicated by multi-character mnemonics.
+.mh
+Font and Character Size Control
+.sc
+Character set.
+The \*(TR character set consists of the Graphics Systems Commercial|II
+character set plus a Special Mathematical Font character
+set\(emeach having 102 characters.
+These character sets are shown in the attached Table|I.
+All \s-1ASCII\s+1 characters are included,
+with some on the Special Font.
+With three exceptions, the \s-1ASCII\s+1 characters are input as themselves,
+and non-\s-1ASCII\s+1 characters are input in the form \f3\e(\f2xx\f1 where
+\f2xx\f1 is a two-character name given in the attached Table|II.
+The three \s-1ASCII\s+1 exceptions are mapped as follows:
+.TS
+center box;
+cs|cs
+cc|cc
+cl|cl.
+\s-1ASCII\s+1 Input	Printed by \*(TR
+Character	Name	Character	Name
+_
+\'	acute accent	'	close quote
+\`	grave accent	`	open quote
+\(mi	minus	-	hyphen
+.TE
+.tr ~~
+The characters
+\f3\'\f1,
+\f3\`\f1,
+and
+\f3\-\f1
+may be input
+by \f3\e\'\f1, \f3\e\`\f1, and \f3\e\-\f1 respectively or by their names (Table II).
+The \s-1ASCII\s+1 characters \f3@\f1, \f3#\f1, \f3"\f1, \f3\(aa\f1, \f3\(ga\f1, \f3<\f1, \f3>\f1, \f3\e\f1, \f3{\f1, \f3}\f1, \f3~\f1, \f3^\f1, and \f3\(ul\f1 exist
+only on the Special Font and are printed as a 1-em space if that Font
+is not mounted.
+.pg
+.tr ~|
+\*(NR understands the entire \*(TR character set,
+but can in general print only \s-1ASCII\s+1
+characters,
+additional characters as may be available on
+the output device,
+such characters as may be able to be constructed
+by overstriking or other combination,
+and those that can reasonably be mapped
+into other printable characters.
+The exact behavior is determined by a driving
+table prepared for each device.
+The characters
+\f3\'\f1,
+\f3\`\f1,
+and
+\f3\(ul\f1
+print
+as themselves.
+.sc
+Fonts.
+The default mounted fonts are
+Times Roman (\f3R\f1),
+Times Italic (\f3I\f1),
+Times Bold (\f3B\f1),
+and the Special Mathematical Font (\f3S\f1)
+on physical typesetter positions 1, 2, 3, and 4 respectively.
+These fonts are used in this document.
+The \f2current\f1 font, initially Roman, may be changed
+(among the mounted fonts)
+by use of the \f3ft\f1 request,
+or by imbedding at any desired point
+either \f3\ef\f2x\f1, \f3\ef(\f2xx\f1, or \f3\ef\f2N\f1
+where
+\f2x\f1 and \f2xx\f1 are the name of a mounted font
+and \f2N\f1 is a numerical font position.
+It is \f2not\f1 necessary to change to the Special font;
+characters on that font are automatically handled.
+A request for a named but not-mounted font is \f2ignored\f1.
+\*(TR can be informed that any particular font is mounted
+by use of the \f3fp\f1 request.
+The list of known fonts is installation dependent.
+In the subsequent discussion of font-related requests,
+\f2F\f1 represents either a one\(sltwo-character
+font name or the numerical font position, 1-4.
+The current font is available (as numerical position) in the read-only number register \f3.f\f1.
+.pg
+\*(NR understands font control
+and normally underlines Italic characters (see \(sc10.5).
+.sc
+Character size.
+Character point sizes available on the Graphic Systems typesetter are
+6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 28, and 36.
+This is a range of 1\(sl12 inch to 1\(sl2 inch.
+The \f3ps\f1 request is used to change or restore the point size.
+Alternatively the point size may be changed between any two characters
+by imbedding a \f3\es\f2N\f1
+at the desired point
+to set the size to \f2N\f1,
+or a \f3\es\f2\(+-N\f1 (1\(<=\f2N\f1\(<=9)
+to increment\(sldecrement the size by \f2N\f1;
+\f3\es0\f1 restores the \f2previous\f1 size.
+Requested point size values that are between two valid
+sizes yield the larger of the two.
+The current size is available in the \f3.s\f1 register.
+\*(NR ignores type size control.
+.h1 *
+.fn
+.xx
+*Notes are explained at the end of the Summary and Index above.
+.ef
+.bt
+\f3&ps\f2|\(+-N\f1	10\|point	previous	E	Point size
+set to \(+-\f2N\f1.
+Alternatively imbed \f3\es\f2N\f1 or \f3\es\f2\(+-N\f1.
+Any positive size value may be requested;
+if invalid, the next larger valid size will result, with a
+maximum of 36.
+A paired sequence
+\(pl\f2N\f1,\|\(mi\f2N\f1
+will work because the previous requested value is also remembered.
+Ignored in \*(NR.
+.bt
+\f3&ss\f2|N\f1	12\(sl36\|em	ignored	E	Space-character size
+is set to \f2N\f1\(sl36\|ems.
+This size is the minimum word spacing in adjusted text.
+Ignored in \*(NR.
+.bt
+\f3&cs\|\f2F\|N\|M\f1	off	-	P	Constant character space
+(width) mode is
+set on for font \f2F\f1 (if mounted); the width of every character will be
+taken to be \f2N\f1\(sl36 ems.
+If \f2M\f1 is absent,
+the em is that of the character's point size;
+if \f2M\f1 is given,
+the em is \f2M\f1-points.
+All affected characters
+are centered in this space, including those with an actual width
+larger than this space.
+Special Font characters occurring while the current font
+is \f2F\f1 are also so treated.
+If \f2N\f1 is absent, the mode is turned off.
+The mode must be still or again in effect when the characters are physically printed.
+Ignored in \*(NR.
+.bt
+\f3&bd\f2|F|N\f1	off	-	P	The characters in font \f2F\f1 will be artificially
+emboldened by printing each one twice, separated by \f2N\f1\^\(mi1 basic units.
+A reasonable value for \f2N\f1 is 3 when the character size is in the vicinity
+of 10 points.
+If \f2N\f1 is missing the embolden mode is turned off.
+The column heads above were printed with \f3.bd|I|3\f1.
+The mode must be still or again in effect when the characters are physically printed.
+Ignored in \*(NR.
+.bt
+\f3&bd|S|\f2F|N\f1	off	-	P	The characters in the Special Font
+will be emboldened whenever the current font is \f2F\f1.
+This manual was printed with \f3.bd\|S\|B\|3\f1.
+The mode must be still or again in effect when the characters are physically printed.
+.bt
+\f3&ft|\f2F\f1	Roman	previous	E	Font changed to
+\f2F\f1.
+Alternatively, imbed \f3\ef\f2F\f1.
+The font name \f3P\f1 is reserved to mean the previous font.
+.bt
+\f3&fp|\f2N|F\f1	R,I,B,S	ignored	-	Font position.
+This is a statement
+that a font named \f2F\f1 is mounted on position \f2N\f1 (1-4).
+It is a fatal error if \f2F\f1 is not known.
+The phototypesetter has four fonts physically mounted.
+Each font consists of a film strip which can be mounted on a numbered
+quadrant of a wheel.
+The default mounting sequence assumed by \*(TR is
+R, I, B, and S on positions 1, 2, 3 and 4.
+.mh
+Page control
+.pg
+Top and bottom margins are \f2not\f1 automatically provided;
+it is conventional to define two \f2macros\f1 and to set \f2traps\f1
+for them at vertical positions 0 (top) and \f2\(miN\f1 (\f2N\f1 from the bottom).
+See \(sc7 and Tutorial Examples \(scT2.
+A pseudo-page transition onto the \f2first\f1 page occurs
+either when the first \f2break\f1 occurs or
+when the first \f2non-diverted\f1 text processing occurs.
+Arrangements
+for a trap to occur at the top of the first page
+must be completed before this transition.
+In the following, references to the \f2current diversion\f1 (\(sc7.4)
+mean that the mechanism being described works during both
+ordinary and diverted output (the former considered as the top diversion level).
+.pg
+The useable page width on the Graphic Systems phototypesetter
+is about 7.54|inches,
+beginning about 1\(sl27|inch from the left edge of the
+8|inch wide, continuous roll paper.
+The physical limitations on \*(NR output
+are output-device dependent.
+.h1
+.bt
+\f3&pl\f2|\(+-N\f1	11\|in	11\|in	\f3v\f1	Page length set to \f2\(+-N\f1.
+The internal limitation is about 75|inches in \*(TR and
+about 136|inches in \*(NR.
+The current page length is available in the \f3.p\f1 register.
+.bt
+\f3&bp\f2|\(+-N\f1	\f2N=\f11	-	B*,\f3v\f1	Begin page.
+.fn
+.xx
+*The use of "\ \f3\'\f1\ " as control character (instead of "\f3.\f1")
+suppresses the break function.
+.ef
+The current page is ejected and a new page is begun.
+If \f2\(+-N\f1 is given, the new page number will be \f2\(+-N\f1.
+Also see request \f3ns\f1.
+.bt
+\f3&pn\f2|\(+-N\f1	\f2N\f1=1	ignored	-	Page number.
+The next page (when it occurs) will have the page number \f2\(+-N\f1.
+A \f3pn\f1 must occur before the initial pseudo-page transition
+to effect the page number of the first page.
+The current page number is in the \f3%\f1 register.
+.bt
+\f3&po\f2|\(+-N\f1	0;|26\(sl27\|in\(dg	previous	\f3v\f1	Page offset.
+.fn
+.xx
+\(dgValues separated by ";" are for \*(NR and \*(TR respectively.
+.ef
+The current \f2left margin\f1 is set to \f2\(+-N\f1.
+The \*(TR initial value provides about 1|inch of paper margin
+including the physical typesetter margin of 1\(sl27|inch.
+In \*(TR the maximum (line-length)+(page-offset) is about 7.54 inches.
+See \(sc6.
+The current page offset is available in the \f3.o\f1 register.
+.bt
+\f3&ne\f2|N\f1	-	\f2N=\f11\|\f2V\f1	D,\f3v\f1	Need \f2N\f1 vertical space.
+If the distance, \f2D\f1, to the next trap position (see \(sc7.5) is less than \f2N\f1,
+a forward vertical space of size \f2D\f1 occurs,
+which will spring the trap.
+If there are no remaining
+traps on the page,
+\f2D\f1 is the distance to the bottom of the page.
+If \f2D\|<\|V\f1, another line could still be output
+and spring the trap.
+In a diversion, \f2D\f1 is the distance to the \f2diversion trap\f1, if any,
+or is very large.
+.bt
+\f3&mk\f2|R\f1	none	internal	D	Mark the \f2current\f1 vertical place
+in an internal register (both associated with the current diversion level),
+or in register \f2R\f1, if given.
+See \f3rt\f1 request.
+.bt
+\f3&rt\f2|\(+-N\f1	none	internal	D,\f3v\f1	Return \f2upward only\f1 to a marked vertical place
+in the current diversion.
+If \f2\(+-N\f1 (w.r.t. current place) is given,
+the place is \f2\(+-N\f1 from the top of the page or diversion
+or, if \f2N\f1 is absent, to a
+place marked by a previous \f3mk\f1.
+Note that the \f3sp\f1 request (\(sc5.3) may be used
+in all cases instead of \f3rt\f1
+by spacing to the absolute place stored in a explicit register;
+e.|g. using the sequence \f3.mk|\f2R\f1 ... \f3.sp|~\|\en\f2R\f3u\f1.
+.mh
+Text Filling, Adjusting, and Centering
+.sc
+Filling and adjusting.
+Normally,
+words are collected from input text lines
+and assembled into a output text line
+until some word doesn't fit.
+An attempt is then made
+the hyphenate the word in effort to assemble a part
+of it into the output line.
+The spaces between the words on the output line
+are then increased to spread out the line
+to the current \f2line length\f1
+minus any current \f2indent\f1.
+A \f2word\f1 is any string of characters delimited by
+the \f2space\f1 character or the beginning/end of the input line.
+Any adjacent pair of words that must be kept together
+(neither split across output lines nor spread apart
+in the adjustment process)
+can be tied together by separating them with the
+\f2unpaddable space\f1 character
+"\f3\e\ \ \f1" (backslash-space).
+The adjusted word spacings are uniform in \*(TR
+and the minimum interword spacing can be controlled
+with the \f3ss\f1 request (\(sc2).
+In \*(NR, they are normally nonuniform because of
+quantization to character-size spaces;
+however,
+the command line option \f3\-e\f1 causes uniform
+spacing with full output device resolution.
+Filling, adjustment, and hyphenation (\(sc13) can all be
+prevented or controlled.
+The \f2text length\f1 on the last line output is available in the \f3.n\f1 register,
+and text base-line position on the page for this line is in the \f3nl\f1 register.
+The text base-line high-water mark (lowest place) on the current page is in
+the \f3.h\f1 register.
+.pg
+An input text line ending with \f3.\f1\^, \f3?\f1, or \f3!\f1 is taken
+to be the end of a \f2sentence\f1, and an additional space character is
+automatically provided during filling.
+Multiple inter-word space characters found in the input are retained,
+except for trailing spaces;
+initial spaces also cause a \f2break\f1.
+.pg
+When filling is in effect, a \f3\ep\f1 may be imbedded or attached to a word to
+cause a \f2break\f1 at the \f2end\f1 of the word and have the resulting output
+line \f2spread out\f1 to fill the current line length.
+.pg
+.tr &&
+A text input line that happens to begin
+with a control character can
+be made to not look like a control line
+by prefacing it with
+the non-printing, zero-width filler character \f3\e&\f1.
+Still another way is to specify output translation of some
+convenient character into the control character
+using \f3tr\f1 (\(sc10.5).
+.tr &.
+.sc
+Interrupted text.
+The copying of a input line in \f2nofill\f (non-fill) mode can be \f2interrupted\f1
+by terminating
+the partial line with a \f3\ec\f1.
+The \f2next\f1 encountered input text line will be considered to be a continuation
+of the same line of input text.
+Similarly,
+a word within \f2filled\f1 text may be interrupted by terminating the
+word (and line) with \f3\ec\f1;
+the next encountered text will be taken as a continuation of the
+interrupted word.
+If the intervening control lines cause a break,
+any partial line will be forced out along with any partial word.
+.h1
+.bt
+\f3&br\f1	-	-	B	Break.
+The filling of the line currently
+being collected is stopped and
+the line is output without adjustment.
+Text lines beginning with space characters
+and empty text lines (blank lines) also cause a break.
+.bt
+.lg 0
+\f3&fi\f1	\(fill|on	-	B,E	Fill subsequent output lines.
+.lg 0
+The register \f3.u\f1 is 1 in fill mode and 0 in nofill mode.
+.bt
+\f3&nf\f1	fill|on	-	B,E	Nofill.
+Subsequent output lines are \f2neither\f1 filled \f2nor\f1 adjusted.
+Input text lines are copied directly to output lines
+\f2without regard\f1 for the current line length.
+.bt
+\f3&ad\f2|c\f1	adj,both	adjust	E	\
+Line adjustment is begun.
+If fill mode is not on, adjustment will be deferred until
+fill mode is back on.
+If the type indicator \f2c\f1 is present,
+the adjustment type is changed as shown in the following table.
+.TS
+center box;
+c|c
+c|l.
+Indicator	Adjust Type
+_
+\f3l\f1	adjust left margin only
+\f3r\f1	adjust right margin only
+\f3c\f1	center
+\f3b\f1 or \f3n\f1	adjust both margins
+absent	unchanged
+.TE
+.bt
+\f3&na\f1	adjust	-	E	Noadjust.
+Adjustment is turned off;
+the right margin will be ragged.
+The adjustment type for \f3ad\f1 is not changed.
+Output line filling still occurs if fill mode is on.
+.bt
+\f3&ce\f2|N\f1	off	\f2N\f1=1	B,E	Center the next \f2N\f1 input text lines
+within the current (line-length minus indent).
+If \f2N\f1=\^0, any residual count is cleared.
+A break occurs after each of the \f2N\f1 input lines.
+If the input line is too long,
+it will be left adjusted.
+.mh
+Vertical Spacing
+.sc
+Base-line spacing.
+The vertical spacing \f2(V)\f1 between the base-lines of successive
+output lines can be set
+using the \f3vs\f1 request
+with a resolution of 1\(sl144\|inch\|=\|1\(sl2|point
+in \*(TR,
+and to the output device resolution in \*(NR.
+\f2V\f1 must be large enough to accommodate the character sizes
+on the affected output lines.
+For the common type sizes (9-12 points),
+usual typesetting practice is to set \f2V\f1 to 2\ points greater than the
+point size;
+\*(TR default is 10-point type on a 12-point spacing
+(as in this document).
+The current \f2V\f1 is available in the \f3.v\f1 register.
+Multiple-\f2V\|\f1 line separation (e.\|g. double spacing) may be requested
+with \f3ls\f1.
+.sc
+Extra line-space.
+If a word contains a vertically tall construct requiring
+the output line containing it to have extra vertical space
+before and\(slor after it,
+the \f2extra-line-space\f1 function \f3\ex\f2\'N\|\|\'\f1
+can be imbedded in or attached to that word.
+In this and other functions having a pair of delimiters around
+their parameter (here \f3\'\f1\|),
+the delimiter choice is arbitrary,
+except that it can't look like the continuation of a number expression for \f2N\f1.
+If \f2N\f1 is negative,
+the output line containing the word will
+be preceded by \f2N\f1 extra vertical space;
+if \f2N\f1 is positive,
+the output line containing the word
+will be followed by \f2N\f1 extra vertical space.
+If successive requests for extra space apply to the same line,
+the maximum values are used.
+The most recently utilized post-line extra line-space is available in the \f3.a\f1 register.
+.sc
+Blocks of vertical space.
+A block of vertical space is ordinarily requested using \f3sp\f1,
+which honors the \f2no-space\f1 mode and which does
+not space \f2past\f1 a trap.
+A contiguous block of vertical space may be reserved using \f3sv\f1.
+.h1
+.bt
+\f3&vs\f2\|N\f1	1\(sl6in;12pts	previous	E,\f3p\f1	Set vertical base-line spacing size \f2V\f1.
+Transient \f2extra\f1 vertical space available with \f3\ex\f2\'N\|\|\'\f1 (see above).
+.bt
+\f3&ls\f2\|N\f1	\f2N=\^\f11	previous	E	\f2Line\f1 spacing
+set to \f2\(+-N\f1.
+\f2N\(mi\f11 \f2V\f1\^s \f2(blank lines)\f1 are
+appended to each output text line.
+Appended blank lines are omitted, if the text or previous appended blank line reached a trap position.
+.bt
+\f3&sp\f2|N\f1	-	\f2N\f1=1\f2V\f1	B,\f3v\f1	Space vertically in \f2either\f1 direction.
+If \f2N\f1 is negative, the motion is \f2backward\f1 (upward)
+and is limited to the distance to the top of the page.
+Forward (downward) motion is truncated to the distance to the
+nearest trap.
+If the no-space mode is on,
+no spacing occurs (see \f3ns\f1, and \f3rs\f1 below).
+.bt
+\f3&sv\f2|N\f1	-	\f2N=\f11\f2V\f1	\f3v\f1	Save a contiguous vertical block of size \f2N\f1.
+If the distance to the next trap is greater
+than \f2N\f1, \f2N\f1 vertical space is output.
+No-space mode has \f2no\f1 effect.
+If this distance is less than \f2N\f1,
+no vertical space is immediately output,
+but \f2N\f1 is remembered for later output (see \f3os\f1).
+Subsequent \f3sv\f1 requests will overwrite any still remembered \f2N\f1.
+.bt
+\f3&os\f1	-	-	-	Output saved vertical space.
+No-space mode has \f2no\f1 effect.
+Used to finally output a block of vertical space requested
+by an earlier \f3sv\f1 request.
+.bt
+\f3&ns\f1	space	-	D	No-space mode turned on.
+When on, the no-space mode inhibits \f3sp\f1 requests and
+\f3bp\f1 requests \f2without\f1 a next page number.
+The no-space mode is turned off when a line of
+output occurs, or with \f3rs\f1.
+.bt
+\f3&rs\f1	space	-	D	Restore spacing.
+The no-space mode is turned off.
+.bt
+Blank|text|line.	-	B		Causes a break and
+output of a blank line exactly like \f3sp|1\f1.

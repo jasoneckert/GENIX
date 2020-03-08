@@ -1,0 +1,12 @@
+To burn monitor use burn program in this directory:
+
+With Prom burner connected via Datamedia aux port,
+and set to program 2732 proms(and one in place),
+and enabled with SELECT, 5, 0, ENTER, SELECT, D, 1, ENTER, START key sequence.
+type    nburn -s 0 4 e FILENAME<cr>   to load prom burner with even bytes
+the start prom burner to program EPROM with PROG, START.
+repeat the same for odd half using
+	nburn -s 0 4 o FILENAME<cr>
+
+Where FILENAME is the monitor image you want, i.e.
+		dbmon.x	

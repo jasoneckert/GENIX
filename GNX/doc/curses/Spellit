@@ -1,0 +1,9 @@
+.ig
+	@(#)Spellit	1.1	11/10/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+#
+foreach f ($argv)
+	echo /usr/bin/spell $f \> $f.sp
+	/usr/bin/spell $f > $f.sp
+end

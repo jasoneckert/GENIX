@@ -1,0 +1,32 @@
+.ig
+	@(#)analyze.8	1.3	11/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.lg 0
+.TH ANALYZE 8
+.SH NAME
+analyze \- how do postmortem crash analysis
+.SH DESCRIPTION
+.I Analyze
+does not exist for GENIX.
+In order to use
+.I analyze
+you should use 
+.IR pstat (8)
+or
+.IR ps (1)
+with the options to look at either
+.I vmcore
+(if you have a crash)
+or
+.IR /dev/kmem .
+.IR ddt (1)
+with
+.B -u
+can also be used to look at
+.I vmcore
+for paging state.
+.SH FILES
+/vmunix		default system namelist
+.SH SEE ALSO
+ps(1), crash(8), pstat(8)

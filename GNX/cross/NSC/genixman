@@ -1,0 +1,32 @@
+#! /bin/sh
+
+# genixman.sh: version 1.2 of 9/16/83
+# Genix Cross-support Man Command Source File
+#
+# @(#)genixman.sh	1.2 (NSC) 9/16/83
+
+sec= fil= all=
+sec=\?
+cd /usr/NSC/man
+for i
+do
+	case $i in
+
+	[1-8])
+		sec=$i ;;
+
+	*)
+		fil=`echo cat$sec/$i.*`
+		case $fil in
+		*\*)
+			echo $i not found 1>&2 ;;
+		*)
+			all="$all $fil" ;;
+		esac
+	esac
+done
+case $all in
+	"")
+		exit ;;
+esac
+if test -t; then more $all; else cat $all; fi

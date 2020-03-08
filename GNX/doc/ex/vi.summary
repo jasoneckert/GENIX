@@ -1,0 +1,441 @@
+.ig
+	vi.summary: version 1.2 of 11/29/83
+	
+
+	@(#)vi.summary	1.2	(NSC)	11/29/83
+..
+.ds CH
+.ds CF
+.de TS
+.br
+.if !\\n(1T .RT
+.ul 0
+.ti \\n(.iu
+.if t .sp 0.25
+.if n .sp
+.if \\$1H .TQ
+.nr IX 1
+..
+.nr PS 9
+.ps 9
+.nr VS 11
+.vs 11
+.nr HM .50i
+.nr FM .25i
+.nr PO 0
+.po 0
+.nr LL 3.5i
+.ll 3.5i
+.de nc
+.bp
+..
+.de h
+.LG
+.B
+\\$1
+.R
+.NL
+..
+.LG
+.LG
+.B
+.ce
+Ex Quick Reference
+.R
+.NL
+.LP
+.LP
+.h "Entering/leaving ex"
+.TS
+aw(1.4i)b aw(1.8i).
+% ex \f2name\fP	edit \f2name\fP, start at end
+% ex +\f2n\fP \f2name\fP	... at line \f2n\fP
+% ex \-t \f2tag\fP	start at \f2tag\fP
+% ex \-r	list saved files
+% ex \-r \f2name\fP	recover file \f2name\fP
+% ex \f2name\fP ...	edit first; rest via \f3:n\fP
+% ex \-R \f2name\fP 	read only mode
+: x	exit, saving changes
+: q!	exit, discarding changes
+.TE
+.h "Ex states"
+.TS
+lw(1i) lw(2.0i).
+Command	T{
+Normal and initial state.  Input prompted for by \f3:\fP.
+Your kill character cancels partial command.
+T}
+Insert	T{
+Entered by \f3a\fP \f3i\fP and \f3c\fP.
+Arbitrary text then terminates with line having only \f3.\fP
+character on it or abnormally with interrupt.
+T}
+Open/visual	T{
+Entered by \f3open\fP or \f3vi\fP, terminates with \f3Q\fP
+or ^\e.
+T}
+.TE
+.h "Ex commands"
+.TS
+lw(.45i) lw(.08i)b lw(.45i) lw(.08i)b lw(.45i) lw(.08i)b.
+abbrev	ab	next	n	unabbrev	una
+append	a	number	nu	undo	u
+args	ar	open	o	unmap	unm
+change	c	preserve	pre	version	ve
+copy	co	print	p	visual	vi
+delete	d	put	pu	write	w
+edit	e	quit	q	xit	x
+file	f	read	re	yank	ya
+global	g	recover	rec	\f2window\fP	z
+insert	i	rewind	rew	\f2escape\fP	!
+join	j	set	se	\f2lshift\fP	<
+list	l	shell	sh	\f2print next\fP	CR
+map		source	so	\f2resubst\fP	&
+mark	ma	stop	st	\f2rshift\fP	>
+move	m	substitute	s	\f2scroll\fP	^D
+.TE
+.h "Ex command addresses"
+.TS
+lw(.3i)b lw(0.8i) lw(.3i)b lw(0.8i).
+\f2n\fP	line \f2n\fP	/\f2pat\fP	next with \f2pat\fP
+\&.	current	?\f2pat\fP	previous with \f2pat\fP
+$	last	\f2x\fP-\f2n\fP	\f2n\fP before \f2x\fP
++	next	\f2x\fP,\f2y\fP	\f2x\fP through \f2y\fP
+\-	previous	\(aa\f2x\fP	marked with \f2x\fP
++\f2n\fP	\f2n\fP forward	\(aa\(aa	previous context
+%	1,$
+.TE
+.nc
+.h "Specifying terminal type"
+.TS
+aw(1.7i)b aw(1.5i).
+% setenv TERM \f2type\fP	\f2csh\fP and all Version 6
+$ TERM=\f2type\fP; export TERM	\f2sh\fP in Version 7
+See also \f2tset\f1(1)
+.TE
+.h "Some terminal types"
+.TS
+lw(.4i) lw(.4i) lw(.4i) lw(.4i) lw(.4i).
+2621	43	adm31	dw1	h19
+2645	733	adm3a	dw2	i100
+300s	745	c100	gt40	mime
+33	act4	dm1520	gt42	owl
+37	act5	dm2500	h1500	t1061
+4014	adm3	dm3025	h1510	vt52
+.TE
+.h "Initializing options"
+.TS
+lw(.9i)b aw(1.5i).
+EXINIT	place \f3set\fP's here in environment var.
+set \f2x\fP	enable option
+set no\f2x\fP	disable option
+set \f2x\fP=\f2val\fP	give value \f2val\fP
+set	show changed options
+set all	show all options
+set \f2x\fP?	show value of option \f2x\fP
+.TE
+.h "Useful options"
+.TS
+lw(.9i)b lw(.3i) lw(1.0i).
+autoindent	ai	supply indent
+autowrite	aw	write before changing files
+ignorecase	ic	in scanning
+lisp		\f3( ) { }\fP are s-exp's
+list		print ^I for tab, $ at end
+magic		\f3. [ *\fP special in patterns
+number	nu	number lines
+paragraphs	para	macro names which start ...
+redraw		simulate smart terminal
+scroll		command mode lines
+sections	sect	macro names ...
+shiftwidth	sw	for \f3< >\fP, and input \f3^D\fP
+showmatch	sm	to \f3)\fP and \f3}\fP as typed
+slowopen	slow	choke updates during insert
+window		visual mode lines
+wrapscan	ws	around end of buffer?
+wrapmargin	wm	automatic line splitting
+.TE
+.LP
+.h "Scanning pattern formation"
+.TS
+aw(.9i)b aw(1.0i).
+\(ua	beginning of line
+$	end of line
+\f3.\f1	any character
+\e<	beginning of word
+\e>	end of word
+[\f2str\fP]	any char in \f2str\fP
+[\(ua\f2str\fP]	... not in \f2str\fP
+[\f2x\-y\fP]	... between \f2x\fP and \f2y\fP
+*	any number of preceding
+.TE
+.nc
+.LP
+.LG
+.LG
+.B
+.ce
+Vi Quick Reference
+.NL
+.R
+.LP
+.LP
+.h "Entering/leaving vi"
+.TS
+aw(1.4i)b aw(1.8i).
+% vi \f2name\fP	edit \f2name\fP at top
+% vi +\f2n\fP \f2name\fP	... at line \f2n\fP
+% vi + \f2name\fP	... at end
+% vi \-r	list saved files
+% vi \-r \f2name\fP	recover file \f2name\fP
+% vi \f2name\fP ...	edit first; rest via \f3:n\fP
+% vi \-t \f2tag\fP	start at \f2tag\fP
+% vi +/\f2pat\fP \f2name\fP	search for \f2pat\fP
+% view \f2name\fP	read only mode
+ZZ	exit from vi, saving changes
+^Z	stop vi for later resumption
+.TE
+.h "The display"
+.TS
+lw(.75i) lw(2.2i).
+Last line	T{
+Error messages, echoing input to \f3: / ?\fP and \f3!\f1,
+feedback about i/o and large changes.
+T}
+@ lines	On screen only, not in file.
+~ lines	Lines past end of file.
+^\f2x\fP	Control characters, ^? is delete.
+tabs	Expand to spaces, cursor at last.
+.TE
+.LP
+.h "Vi states"
+.TS
+lw(.75i) lw(2.2i).
+Command	T{
+Normal and initial state.  Others return here.
+ESC (escape) cancels partial command.
+T}
+Insert	T{
+Entered by \f3a i A I o O c C s S\fP \f3R\fP.
+Arbitrary text then terminates with ESC character,
+or abnormally with interrupt.
+T}
+Last line	T{
+Reading input for \f3: / ?\fP or \f3!\fP; terminate
+with ESC or CR to execute, interrupt to cancel.
+T}
+.TE
+.h "Counts before vi commands"
+.TS
+lw(1.5i) lw(1.7i)b.
+line/column number	z  G  |	
+scroll amount	^D  ^U
+replicate insert	a  i  A  I
+repeat effect	\f1most rest\fP
+.TE
+.h "Simple commands"
+.TS
+lw(1.5i)b lw(1.7i).
+dw	delete a word
+de	... leaving punctuation
+dd	delete a line
+3dd	... 3 lines
+i\f2text\fP\f1ESC\fP	insert text \f2abc\fP
+cw\f2new\fP\f1ESC\fP	change word to \f2new\fP
+ea\f2s\fP\f1ESC\fP	pluralize word
+xp	transpose characters
+.TE
+.nc
+.h "Interrupting, cancelling"
+.TS
+aw(0.75i)b aw(1.6i).
+ESC	end insert or incomplete cmd
+^?	(delete or rubout) interrupts
+^L	reprint screen if \f3^?\f1 scrambles it
+.TE
+.h "File manipulation"
+.TS
+aw(0.75i)b aw(1.6i).
+:w	write back changes
+:wq	write and quit
+:q	quit
+:q!	quit, discard changes
+:e \f2name\fP	edit file \f2name\fP
+:e!	reedit, discard changes
+:e + \f2name\fP	edit, starting at end
+:e +\f2n\f1	edit starting at line \f2n\f1
+:e #	edit alternate file
+^\(ua	synonym for \f3:e #\fP
+:w \f2name\fP	write file \f2name\fP
+:w! \f2name\fP	overwrite file \f2name\fP
+:sh	run shell, then return
+:!\f2cmd\fP	run \f2cmd\f1, then return
+:n	edit next file in arglist
+:n \f2args\fP	specify new arglist
+:f	show current file and line
+^G	synonym for \f3:f\fP
+:ta \f2tag\fP	to tag file entry \f2tag\fP
+^]	\f3:ta\fP, following word is \f2tag\fP
+.TE
+.h "Positioning within file"
+.TS
+aw(0.75i)b aw(1.6i).
+^F	forward screenfull
+^B	backward screenfull
+^D	scroll down half screen
+^U	scroll up half screen
+G	goto line (end default)
+/\f2pat\f1	next line matching \f2pat\f1
+?\f2pat\f1	prev line matching \f2pat\f1
+n	repeat last \f3/\f1 or \f3?\f1
+N	reverse last \f3/\f1 or \f3?\f1
+/\f2pat\fP/+\f2n\fP	n'th line after \f2pat\f1
+?\f2pat\fP?\-\f2n\fP	n'th line before \f2pat\f1
+]]	next section/function
+[[	previous section/function
+%	find matching \f3( ) {\fP or \f3}\fP
+.TE
+.h "Adjusting the screen"
+.TS
+aw(0.75i)b aw(1.6i).
+^L	clear and redraw
+^R	retype, eliminate @ lines
+z\f1CR\fP	redraw, current at window top
+z\-	... at bottom
+z\|.	... at center
+/\f2pat\fP/z\-	\f2pat\fP line at bottom
+z\f2n\fP\|.	use \f2n\fP line window
+^E	scroll window down 1 line
+^Y	scroll window up 1 line
+.TE
+.nc
+.h "Marking and returning
+.TS
+aw(0.5i)b aw(2.0i).
+\(ga\(ga	previous context
+\(aa\(aa	... at first non-white in line
+m\f2x\fP	mark position with letter \f2x\fP
+\(ga\f2x\fP	to mark \f2x\fP
+\(aa\f2x\fP	... at first non-white in line
+.TE
+.h "Line positioning"
+.TS
+aw(0.5i)b aw(2.0i).
+H	home window line
+L	last window line
+M	middle window line
++	next line, at first non-white
+\-	previous line, at first non-white
+\f1CR\fP	return, same as +
+\(da \f1or\fP j	next line, same column
+\(ua \f1or\fP k	previous line, same column
+.TE
+.h "Character positioning"
+.TS
+aw(0.5i)b aw(2.0i).
+\(ua	first non white
+0	beginning of line
+$	end of line
+h \f1or\fP \(->	forward
+l \f1or\fP \(<-	backwards
+^H	same as \f3\(<-\fP
+\f1space\fP	same as \f3\(->\fP
+f\f2x\fP	find \f2x\fP forward
+F\f2x\fP	\f3f\f1 backward
+t\f2x\fP	upto \f2x\fP forward
+T\f2x\fP	back upto \f2x\fP
+;	repeat last \f3f F t\fP or \f3T\fP
+,	inverse of \f3;\fP
+|	to specified column
+%	find matching \f3( { )\fP or \f3}\f1
+.TE
+.h "Words, sentences, paragraphs"
+.TS
+aw(0.5i)b aw(2.0i).
+w	word forward
+b	back word
+e	end of word
+)	to next sentence
+}	to next paragraph
+(	back sentence
+{	back paragraph
+W	blank delimited word
+B	back \f3W\fP
+E	to end of \f3W\fP
+.TE
+.h "Commands for \s-2LISP\s0"
+.TS
+aw(0.5i)b aw(2.0i).
+)	Forward s-expression
+}	... but don't stop at atoms
+(	Back s-expression
+{	... but don't stop at atoms
+.TE
+.nc
+.h "Corrections during insert"
+.TS
+aw(.5i)b aw(2.0i).
+^H	erase last character
+^W	erases last word
+\f1erase\fP	your erase, same as \f3^H\fP
+\f1kill\fP	your kill, erase input this line
+\e	escapes \f3^H\f1, your erase and kill
+\f1ESC\fP	ends insertion, back to command
+^?	interrupt, terminates insert
+^D	backtab over \f2autoindent\fP
+\(ua^D	kill \f2autoindent\fP, save for next
+0^D	... but at margin next also
+^V	quote non-printing character
+.TE
+.h "Insert and replace"
+.TS
+aw(.5i)b aw(2.0i).
+a	append after cursor
+i	insert before
+A	append at end of line
+I	insert before first non-blank
+o	open line below
+O	open above
+r\f2x\fP	replace single char with \f2x\fP
+R	replace characters
+.TE
+.h "Operators (double to affect lines)"
+.TS
+aw(0.5i)b aw(2.0i).
+d	delete
+c	change
+<	left shift
+>	right shift
+!	filter through command
+\&\=	indent for \s-2LISP\s0
+y	yank lines to buffer
+.TE
+.h "Miscellaneous operations"
+.TS
+aw(0.5i)b aw(2.0i).
+C	change rest of line
+D	delete rest of line
+s	substitute chars
+S	substitute lines
+J	join lines
+x	delete characters
+X	... before cursor
+Y	yank lines
+.TE
+.h "Yank and put"
+.TS
+aw(0.5i)b aw(2.0i).
+p	put back lines
+P	put before
+"\f2x\fPp	put from buffer \f2x\fP
+"\f2x\fPy	yank to buffer \f2x\fP
+"\f2x\fPd	delete into buffer \f2x\fP
+.TE
+.h "Undo, redo, retrieve"
+.TS
+aw(0.5i)b aw(2.0i).
+u	undo last change
+U	restore current line
+\f3.\fP	repeat last change
+"\f2d\fP\|p	retrieve \f2d\fP'th last delete
+.TE

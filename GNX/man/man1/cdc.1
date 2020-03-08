@@ -1,0 +1,330 @@
+.ig
+	@(#)cdc.1	1.4	11/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.tr ~
+.nr f 0
+.de SP
+.if n .ul
+\%[\f3\-\\$1\f1\&\\c
+.if n .ul 0
+\\$2\\$3
+..
+.de SF
+.if n .ul
+\%[\f3\-\\$1\f1]
+.if n .ul 0
+..
+.de ZZ
+.hc ^
+\f3^...\f1
+.hc
+..
+.de AR
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\f3\-\\$1\\f1\&
+\\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de C1
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\\$1
+\\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de A1
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\f3\-\\$1\f1[\f2\\$2\^\f1]
+\\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de A2
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 5
+.TP 15
+\f3\-\\$1\f1\f2\\$2\^\f1\&
+\\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+.nr f 1
+..
+.de FI
+.PP
+.TP 30
+\\$1
+\\$2
+.i0
+..
+.ds F) \f3\s-1FILES\s0\f1
+.ds W) \f2\s-1WARNINGS\s0\^\f1
+.ds X) \f2\s-1EXAMPLES\s0\^\f1
+.ds T) \f3\s-1TABLE\s0\f1
+.ds K) \f3\s-1DATA KEYWORDS\s0\f1
+.ds D) \f3\s-1DDDDD\s0\f1
+.ds M) \f3\s-1MR\s0\f1
+.ds R) \f3\s-1RELEASE NUMBER\s0\f1
+.ds S) \s-1SCCS\s0
+.ds I) \f2\s-1SID\s0\f1
+.de F1
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 13
+.TP 7
+\f3\\$1\f1\f2\\$2\^\f1\&
+\\$3
+.nr f 1
+..
+.de F2
+.if \\nf \{ \
+.    RE
+.    nr f 0 \}
+.PP
+.RS 13
+.TP 7
+\f3\\$1\f1[\f2\\$2\^\f1]
+\\$3
+.nr f 1
+..
+.TH CDC 1
+.SH NAME
+cdc \- change the delta commentary of an \s-1SCCS\s0 delta
+.SH SYNOPSIS
+.B cdc
+.B \-r\c
+.SM SID
+.SP m [mrlist]]
+.SP y [comment]]
+files
+.SH DESCRIPTION
+.I Cdc\^
+changes the
+.IR "delta commentary" ,
+for the \*(I) specified by the
+.B \-r
+keyletter,
+of each
+named \*(S) file.
+.PP
+.I "Delta commentary\^"
+is defined to be the Modification Request (\*(M)) and comment
+information normally specified via the
+.IR delta (1)
+command
+.RB ( \-m
+and
+.B \-y
+keyletters).
+.PP
+If a directory is named,
+.I cdc\^
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\*(S) files
+(last component of the path name does not begin with
+.BR s. )
+and unreadable files
+are silently ignored.
+If a name of
+.B \-
+is given, the standard input is read (see \%\*(W));
+each line of the standard input is taken to be the name of an \*(S) file
+to be processed.
+.PP
+Arguments to
+.IR cdc ,
+which may appear in any order, consist of
+.I keyletter\^
+arguments, and file names.
+.PP
+All the described
+.I keyletter\^
+arguments apply independently to each named file:
+.A2 r \s-1SID\s0 Used
+to specify the
+.IR S \s-1CCS\s0
+.IR ID entification
+(\*(I))
+string
+of a delta for
+which the delta commentary is to be changed.
+.A1 m mrlist If
+the \*(S) file has the
+.B v
+flag set
+(see
+.IR admin (1))
+then a
+list of \*(M) numbers to be added and/or deleted in
+the delta commentary of
+the \*(I) specified by the
+.B \-r
+keyletter
+.I may\^
+be supplied.
+A null \*(M) list has no effect.
+.C1 \& \*(M)
+entries are added to the list of \*(M)s in the same manner as that of
+.IR delta (1).
+In order to delete an \*(M), precede the \*(M) number
+with the character
+.B !
+(see \*(X)).
+If the \*(M) to be deleted is currently in the list of \*(M)s, it is
+removed
+and changed into a ``comment'' line.
+A list of all deleted \*(M)s is placed in the comment section
+of the delta commentary and preceded by a comment line stating
+that they were deleted.
+.C1 \& If
+.B \-m
+is not used and the standard input is a terminal, the prompt
+.B \s-1MR\s0s?
+is issued on the standard output before the standard input
+is read; if the standard input is not a terminal, no prompt is issued.
+The
+.B \s-1MR\s0s?
+prompt always precedes the
+.B comments?
+prompt
+(see
+.B \-y
+keyletter).
+.C1 \& \*(M)s
+in a list are separated by blanks and/or tab characters.
+An unescaped new-line character terminates the \*(M) list.
+.C1 \& Note
+that if the
+.B v
+flag has a value
+(see
+.IR admin (1)),
+it is taken to be the name of a program (or shell procedure) which validates
+the correctness of the \*(M) numbers.
+If a non-zero exit status is returned from the \*(M) number validation program,
+.I cdc\^
+terminates
+and the delta commentary remains unchanged.
+.A1 y comment Arbitrary
+text used to replace the
+.IR comment\^ (s)
+already existing
+for the delta specified by the
+.B \-r
+keyletter.
+The previous comments are kept and preceded by a comment
+line stating that they were changed.
+A null
+.I comment\^
+has no effect.
+.C1 \& If
+.B \-y
+is not specified and the standard input is a terminal, the
+prompt
+.B comments?
+is issued on the standard output before
+the standard input is read;
+if the standard input is not a terminal, no prompt is issued.
+An unescaped new-line character terminates the
+.I comment\^
+text.
+.i0
+.PP
+The exact permissions necessary to modify the \*(S) file
+are documented in the
+.IR "Source Code Control System User's Guide" .
+Simply stated,
+they are either (1)
+if you made the delta, you can change its delta commentary;
+or (2)
+if you own the file and directory you can modify the delta commentary.
+.SH EXAMPLES
+.RS 5n
+cdc \-r1\f3.\fP6 \-m"bl78-12345 !bl77-54321 bl79-00001" \-ytrouble s\f3.\fPfile
+.RE
+.PP
+adds bl78-12345 and bl79-00001 to the \*(M) list, removes bl77-54321
+from the \*(M) list, and adds the comment
+.B trouble
+to delta
+.RB 1 . 6
+of
+.RB s . file.
+.PP
+.RS 5n
+cdc \-r1\f3.\f1\&6 s\f3.\f1file
+.br
+\s-1MR\s0s? !bl77-54321 bl78-12345 bl79-00001
+.br
+comments? trouble
+.RE
+.PP
+does the same thing.
+.DT
+.SH WARNINGS
+If \*(S) file names are supplied to the
+.I cdc\^
+command via the standard input
+.RB ( \-
+on the command line),
+then the
+.B \-m
+and
+.B \-y
+keyletters must also be used.
+.SH FILES
+.PD 0
+.TP 10
+x-file
+(see
+.IR delta (1))
+.TP
+z-file
+(see
+.IR delta (1))
+.PD
+.SH "NOTE"
+In many cases,
+the
+.I fix
+entry point of the
+.I sccs
+command can be used to do much the same thing as
+.IR cdc ,
+but without the visual ugliness
+.I cdc
+produces in the new commentary.
+.SH "SEE ALSO"
+sccs(1),
+admin(1),
+delta(1),
+get(1),
+sccshelp(1),
+prs(1),
+prt(1),
+sccsfile(5).
+.br
+.I "Source Code Control System User's Guide\^"
+by L. E. Bonanni and C. A. Salemi.
+.SH DIAGNOSTICS
+Use
+.IR sccshelp (1)
+for explanations.
+.tr ~~

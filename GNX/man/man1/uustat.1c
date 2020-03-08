@@ -1,0 +1,187 @@
+.ig
+	@(#)uustat.1c	1.1	9/26/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH UUSTAT 1C
+.SH NAME
+uustat \- uucp status inquiry and job control
+.SH SYNOPSIS
+.B uustat
+[ option ] .\|.\|.
+.SH DESCRIPTION
+.I Uustat
+will display the status of, or cancel, previously specified
+uucp commands,
+or provide general status on 
+uucp
+connections to other systems.
+The following options are recognized:
+.PP
+.PD 0
+.TP 10
+.BI \-m mch\^
+Report the status of accessibility of machine
+.I mch.
+If
+.I mch\^
+is specified as
+.BR all ,
+then the status of all machines known to the
+local uucp are provided.
+.TP 10
+.BI \-k jobn\^
+Kill the uucp request whose job number is
+.I jobn.
+The killed
+uucp
+request must belong to the person
+issuing the
+.I uustat\^
+command
+unless he is the superuser.
+.TP 10
+.BI \-c hour\^
+Remove the status entries which are older than
+.I hour\^
+hours.
+This administrative option can only be initiated by the user
+"uucp"
+or the superuser.
+.TP 10
+.BI \-u user\^
+Report the status of all uucp requests issued by
+.I user.
+.TP 10
+.BI \-s sys\^
+Report the status of all uucp requests which communicate with remote system
+.I sys.
+.TP 10
+.BI \-o hour\^
+Report the status of all uucp requests which are older than
+.I hour\^
+hours.
+.TP 10
+.BI \-y hour\^
+Report the status of all uucp requests which are younger than
+.I hour\^
+hours.
+.TP 10
+.BI \-j all\^
+Report the status of 
+all the uucp requests.
+.TP
+.B \-v
+Report the 
+uucp
+status verbosely.
+If this option is not specified, a status code is printed
+with each
+uucp
+request.
+.sp
+.PP
+When no options are given,
+.I uustat\^
+outputs the status of all
+uucp
+requests issued by the current user.
+Note that only one of the options
+.BR \-j ,
+.BR \-m ,
+.BR \-k ,
+.BR \-c ,
+or the rest of other options
+may be specified.
+.PD
+.PP
+For example, the command
+.RS
+.PP
+uustat -uhdc -smhtsa -y72 -v
+.RE
+.PP
+will print the verbose status of all uucp requests that were
+issued by user 
+.I hdc\^
+to communicate with system
+.I mhtsa\^
+within the last
+.I 72
+hours.
+The meanings of the job request status are:
+.RS
+.PP
+job-number user remote-system command-time status-time status
+.RE
+.PP
+where the status may be either an octal number or a verbose
+description.
+The octal code corresponds to the following description:
+.PP
+.PD 0
+.TP 10
+OCTAL
+STATUS
+.TP 10
+00001
+the copy failed, but the reason cannot be determined
+.TP 10
+00002
+permission to access local file is denied
+.TP 10
+00004
+permission to access remote file is denied
+.TP 10
+00010
+bad UUCP command is generated
+.TP 10
+00020
+remote system cannot create temporary file
+.TP 10
+00040
+cannot copy to remote directory
+.TP 10
+00100
+cannot copy to local directory
+.TP 10
+00200
+local system cannot create temporary file
+.TP 10
+00400
+cannot execute UUCP
+.TP 10
+01000
+copy succeeded
+.TP 10
+02000
+copy finished, job deleted
+.TP 10
+04000
+job is queued
+.PD 0
+.PD
+.PP
+The meanings of the machine accessibility status are:
+.RS
+.PP
+system-name time status
+.RE
+.PP
+where
+.I time
+is the latest status time and
+.I status
+is a self-explanatory description of the machine status.
+.SH FILES
+/usr/spool/uucp   spool directory
+.br
+/usr/lib/uucp/L_stat   system status file
+.br
+/usr/lib/uucp/R_stat   request status file
+.SH SEE ALSO
+uucp(1C)
+.PP
+H. Che,
+.I Uustat - A UUCP Status
+.I Inquiry Program,
+3624-791031.01MF, 1979.

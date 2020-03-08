@@ -1,0 +1,84 @@
+.ig
+	@(#)sio.4	1.7	11/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH SIO 4
+.SH NAME
+sio \- eight port terminal i/o multiplexer
+.SH DESCRIPTION
+The serial i/o board provides 8 communication lines
+with partial modem control,
+adequate for
+.SM GENIX
+dialup use.
+Each line attached to the serial i/o board
+behaves as described in
+.IR tty (4).
+Lines may independently be set to run at any of 16 speeds.
+The encoding is given in
+.IR tty (4);
+however,
+200 baud is not supported and 
+19200 baud is available
+(although not recommended)
+using the
+.SM EXTA
+setting.
+.PP
+The sio driver currently takes an interrupt
+on every incoming character.
+In the future the driver may instead use
+the sio board's fifo and poll for input at each clock tick.
+.PP
+The file
+.I /usr/include/sys/sio.h
+contains definitions and declarations describing the sio board.
+.SH FILES
+.nf
+/dev/tty0[0-7]
+/dev/ttyd[0-7]	dialups
+.fi
+.SH "SEE ALSO"
+tty(4)
+.SH DIAGNOSTICS
+.B
+sio%d: unexpected interrupt %x.
+The driver got an unexpected kind of interrupt.
+The sio board can generate five different interrupts,
+one of which the driver does not use.
+Expected interrupts are
+.SM I_DONE,
+signifying
+.SM DMA
+completion,
+.SM I_FIFO,
+indicating that an incoming character has arrived
+(or that the fifo is \(34 full,
+when in
+.SM C_INT_MANY
+mode),
+.SM I_MODEM,
+indicating a line transition,
+and
+.SM I_ERROR,
+which is discussed below.
+The unexpected interrupt is
+.SM I_DIAG,
+which the board generates when completing internal diagnostics.
+Getting an unexpected interrupt is harmless in itself,
+but may be a sign of trouble elsewhere.
+.PP
+.B
+sio%d: fifo overrun.
+The fifo overflowed,
+causing one or more characters to be lost.
+.PP
+.B
+sio%d: dma transfer error.
+The sio board has generated its
+.SM I_ERROR
+interrupt,
+which signifies an error in transferring information
+from main memory to the sio board,
+resulting in garbled output.
+This message is a sign of hardware trouble.

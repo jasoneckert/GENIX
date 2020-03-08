@@ -1,0 +1,134 @@
+.ig
+	@(#)gettytab.5	1.3	8/1/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH GETTYTAB 5
+.SH NAME
+gettytab \- terminal line description database
+.SH SYNOPSIS
+/etc/gettytab
+.SH DESCRIPTION
+Each time a new instance of
+.IR getty (8)
+starts up,
+it reads
+.I gettytab
+to obtain information on what line characteristics
+are appropriate for the terminal port in question.
+.PP
+.I Gettytab
+is structured as a sequence of lines of the form:
+.RS
+.sp
+type nexttype speed initflags finalflags loginmsg
+.sp
+.RE
+Fields are separated by spaces.
+Blank lines and lines starting with the character `#' are comments.
+.PP
+.I Type
+and
+.I nexttype
+name entries in
+.IR gettytab ;
+.I type
+names the current entry,
+and
+.I nexttype
+gives the name of the next entry for
+.I getty
+to try
+(after it receives a break).
+Entries are usually arranged in cycles.
+Because
+.I init
+passes a single character to
+.I getty
+as argument,
+the
+.I type
+of the first entry in a cycle
+should consist of a single character.
+Entries that are not directly accessible may have multi-character
+.IR type s.
+.PP
+.I Speed
+gives the line speed to use;
+legal values are:
+.BR 0 ,
+.BR 50 ,
+.BR 75 ,
+.BR 110 ,
+.BR 134 ,
+.BR 134.5 ,
+.BR 150 ,
+.BR 200 ,
+.BR 300 ,
+.BR 600 ,
+.BR 1200 ,
+.BR 1800 ,
+.BR 2400 ,
+.BR 4800 ,
+.BR 9600 ,
+.BR 19200 ,
+.BR EXTA ,
+.BR EXTB ,
+and
+.BR ? .
+The last of these denotes unknown speed;
+it tells
+.I getty
+to apply its auto-baud routine to determine the true line speed.
+.PP
+.I Initflags
+and
+.I finalflags
+give mode flags
+(as in
+.IR /usr/include/sgtty.h )
+for
+.I getty
+to apply respectively
+when reading the login name and afterwards.
+Legal values are:
+.BR ANYP ,
+.BR BS1 ,
+.BR CBREAK ,
+.BR CR1 ,
+.BR CR2 ,
+.BR CR3 ,
+.BR CRMOD ,
+.BR ECHO ,
+.BR EVENP ,
+.BR FF1 ,
+.BR LCASE ,
+.BR NL1 ,
+.BR NL2 ,
+.BR NL3 ,
+.BR ODDP ,
+.BR RAW ,
+.BR TAB1 ,
+.BR TAB2 ,
+.BR TANDEM ,
+and
+.BR XTABS .
+Multiple values may be given,
+separated by `|'.
+.PP
+.I Loginmsg
+is a string to be printed immediately before the banner.
+Control characters and spaces are represented by C-style escapes.
+.SH EXAMPLE
+Here is a sample pair of entries:
+.sp
+.nf
+# VT100 and similar terminals:
+#	Cycles between 9600 and 19200 baud;
+#	makes the banner line double width.
+v v19200 9600 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD \e33<\e33[2J\e33#6
+v19200 v 19200 ANYP|RAW|NL1|CR1 ANYP|XTABS|ECHO|CRMOD \e33<\e33[2J\e33#6
+.fi
+.SH FILES
+/usr/include/sgtty.h	flag and speed values
+.SH "SEE ALSO"
+getty(8), init(8), tty(4), ttys(5)

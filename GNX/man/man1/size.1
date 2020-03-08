@@ -1,0 +1,35 @@
+.ig
+	@(#)size.1	1.4	9/20/83
+	@(#)Copyright (C) 1983 by National Semiconductor Corp.
+..
+.TH SIZE 1
+.SH NAME
+size \- size of an object file (nsize for cross-support)
+.SH SYNOPSIS
+.B size
+[
+.IR object "... ]"
+.sp
+.B nsize
+[
+.IR object "... ]"
+.SH DESCRIPTION
+.I Size
+prints the (decimal) number of bytes
+required by the
+text, data, and bss
+portions, and their sum in hex and decimal,
+of each object-file argument.
+If no file is specified,
+.I a.out
+is used.
+.SH "SEE ALSO"
+a.out(5)
+.SH CROSS-SUPPORT
+In a cross-software environment,
+.I size
+is called 
+.I nsize
+and the default name of the object file is 
+.IR a16.out .
+

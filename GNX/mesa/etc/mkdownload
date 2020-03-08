@@ -1,0 +1,55 @@
+# @(#)mkdownload.csh	1.2	11/17/83
+# @(#)Copyright (C) 1983 by National Semiconductor Corp.
+#
+# mkdownload - make a download tape from a running unix system
+#
+# see the newdisk document section under "making the download tape"
+#
+# by: L Noll Wed Oct 12 13:13:52 PDT 1983
+# check the file system
+/etc/fsck /dev/dc1a
+/bin/rm -rf /lost+found
+/etc/mklost+found
+# make the boot directory
+/bin/rm -rf /boot
+/bin/mkdir /boot
+/bin/chmod 0755 /boot
+# save special programs
+/bin/mv /bin/sh /boot
+/bin/mv /etc/init /boot
+/bin/mv /etc/fstab /boot
+# store the boot progs
+/bin/mv /bin/cp /boot/cp
+/bin/mv /bin/date /boot/date
+/bin/mv /etc/dump /boot/dump
+/bin/mv /bin/getv /boot/getv
+/bin/mv /bin/mt /boot/mt
+/bin/mv /bin/rm /boot/rm
+/boot/cp /bin/mv /boot/mv
+# store the stand-along progs
+/boot/mv /stand/dcutest /boot/dcutest
+/boot/mv /stand/mkpt /boot/mkpt
+/boot/mv /stand/mkfs /boot/mkfs
+/boot/mv /stand/restor /boot/restor
+# remove the software
+/boot/rm -rf /usr /stand /lib /.{login,cshrc,profile,logout}
+/boot/rm -rf /u
+/boot/rm -rf /p
+/boot/rm -f /etc/*
+/boot/rm -f /tmp/*
+/boot/rm -f /bin/*
+# move the speical progs back
+/boot/mv /boot/init /etc
+/boot/mv /boot/fstab /etc
+/boot/mv /boot/sh /bin
+# copy out the stand-along programs
+/boot/mt erase
+/boot/cp /boot/dcutest /dev/ntc0
+/boot/cp /boot/mkpt /dev/ntc0
+/boot/cp /boot/mkfs /dev/ntc0
+/boot/cp /boot/restor /dev/ntc0
+# remove the stand-along progs from the disk
+/boot/rm -f /boot/dcutest /boot/mkpt /boot/mkfs /boot/restor
+/boot/rm -f /boot/cp /boot/mt
+# dump the file system
+/boot/dump 0f /dev/rtc0 /dev/dc1a
